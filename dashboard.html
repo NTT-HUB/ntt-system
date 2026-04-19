@@ -264,7 +264,7 @@
         <h2 class="section-title">Advertisement Steps</h2>
 
         <div class="info-notice">
-          The <strong>Start</strong> step is managed by the system. You can only configure Step 1 and Step 2 links below.
+          ℹ️ The <strong>Start</strong> step is managed by the system. You can only configure Step 1 and Step 2 links below.
         </div>
 
         <div class="form-group">
@@ -282,7 +282,7 @@
         </div>
 
         <div class="warning-box">
-          <strong>Important:</strong>
+          <strong>⚠️ Important:</strong>
           Linkvertise requires unique URLs. Make sure each link has a different query parameter.
         </div>
 
@@ -608,25 +608,20 @@ end`;
       document.getElementById('decodeCode').textContent = code;
       document.getElementById('howToUseCode').textContent = '';
 
-      const howTo = `local you_hwid = gethwid() -- or your custom hwid
+      const howTo = `local you_hwid = gethwid()
 local function domain_control(x)
-    return game:HttpGet("https://s"..math.random(1,4)..".ntt-system.xyz/?type=data&hwid="..x)
+    return game:HttpGet("https://s"..math.random(1,4)..".ntt-system.xyz/?type=data&domain=${websiteDomain}&hwid="..x)
 end
-
 local done, fail = pcall(function()
     key = domain_control(you_hwid)
 end)
-
 if done then
     if string.find(key, "|") then
         print(key)
         key = key_decode(key, "${encodeKey}")
         key = string.split(key, "|")
         _G.table_key_system = {key[1], tonumber(key[2])}
-        print(_G.table_key_system[1], _G.table_key_system[2]) -- 1: key, 2: Time
-
-        -- Add your script execution here
-
+        print(_G.table_key_system[1], _G.table_key_system[2])
     else
         print("Fetch Failed or No Key Available")
     end
