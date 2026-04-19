@@ -76,6 +76,7 @@
   <div class="card">
     <h1 class="title">Get Your Key</h1>
     <p class="subtitle" id="domainLabel">Loading...</p>
+    <p style="text-align:center;font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;word-break:break-all;" id="hwidDisplay"></p>
 
     <div class="step-block" id="blockStart">
       <a href="#" class="btn btn-start" id="btnStart" target="_blank">▶ Start</a>
@@ -121,7 +122,12 @@
     const isCallback    = hasValidHash && (hasStartParam || hasStep1Param || hasStep2Param);
 
     let settings = null;
-    let hwid     = null;
+
+    // Nếu URL có ?hwid= (Roblox truyền vào) thì dùng luôn, không generate
+    const hwidFromUrl = urlParams.get('hwid');
+    let hwid = (hwidFromUrl && hwidFromUrl.length <= 50 && hwidFromUrl !== '{your_hwid}')
+      ? hwidFromUrl
+      : null;
 
     function generateHWID() {
       const c = document.createElement('canvas');
@@ -164,9 +170,10 @@
 
         settings = data.settings;
         document.getElementById('domainLabel').textContent = settings.website_domain;
+        document.getElementById('hwidDisplay').textContent = hwid ? `HWID: ${hwid}` : '';
         document.getElementById('btnStart').href = settings.start_link;
 
-        hwid = localStorage.getItem('ntt_hwid') || generateHWID();
+        hwid = hwid || localStorage.getItem('ntt_hwid') || generateHWID();
         localStorage.setItem('ntt_hwid', hwid);
 
         resetBlocks();
