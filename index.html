@@ -3,830 +3,482 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - NTT System</title>
+  <title>NTT System — Key Generator Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --primary: #00ff9d;
-      --primary-dark: #00cc7d;
-      --bg-dark: #0a0e1a;
-      --bg-darker: #050810;
-      --surface: #141824;
-      --surface-hover: #1a1f30;
-      --text: #e8ecf5;
-      --text-dim: #8892ab;
-      --border: #1f2937;
-      --warning: #fbbf24;
-      --error: #ff4d6d;
+      --green:   #00ff9d;
+      --green2:  #00cc7a;
+      --blue:    #6366f1;
+      --dark:    #050810;
+      --dark2:   #0a0e1a;
+      --surface: #111520;
+      --border:  #1a2035;
+      --text:    #dde3f0;
+      --dim:     #5a6580;
     }
 
-    body { font-family: 'IBM Plex Mono', monospace; background: var(--bg-dark); color: var(--text); min-height: 100vh; }
+    html { scroll-behavior: smooth; }
 
-    .header {
-      background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 1.5rem 2rem;
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* ── Grid bg ── */
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,255,157,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,157,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    /* ── Glow orbs ── */
+    .orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(120px); pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 500px; height: 500px; background: rgba(0,255,157,0.06); top: -100px; left: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: rgba(99,102,241,0.07); bottom: -100px; right: -100px; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
+      padding: 1.25rem 3rem;
+      background: rgba(5,8,16,0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }
 
-    .logo {
-      font-family: 'Oswald', sans-serif; font-size: 1.5rem; font-weight: 700;
-      background: linear-gradient(135deg, var(--primary), #6366f1);
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.75rem; letter-spacing: 0.1em;
+      background: linear-gradient(135deg, var(--green), var(--blue));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
-    .user-info { display: flex; align-items: center; gap: 1rem; }
-    .username  { color: var(--text); font-weight: 600; }
-
-    .btn-sm {
-      padding: 0.5rem 1rem;
-      background: var(--bg-darker); border: 1px solid var(--border);
-      border-radius: 6px; color: var(--text);
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.875rem;
-      cursor: pointer; transition: all 0.3s ease; text-decoration: none;
+    .nav-links { display: flex; align-items: center; gap: 2rem; }
+    .nav-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem; color: var(--dim);
+      text-decoration: none; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
     }
-    .btn-sm:hover { background: var(--surface-hover); border-color: var(--primary); color: var(--primary); }
+    .nav-links a:hover { color: var(--green); }
 
-    .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    .nav-btn {
+      padding: 0.5rem 1.25rem;
+      background: rgba(0,255,157,0.1);
+      border: 1px solid rgba(0,255,157,0.3);
+      border-radius: 6px;
+      color: var(--green) !important;
+      transition: all 0.2s !important;
+    }
+    .nav-btn:hover {
+      background: rgba(0,255,157,0.2) !important;
+      border-color: var(--green) !important;
+    }
 
-    .page-title { font-family: 'Oswald', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; }
-    .page-desc  { color: var(--text-dim); margin-bottom: 2rem; }
+    /* ── Hero ── */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+    }
 
-    .section {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem;
+    .hero-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.2em;
+      color: var(--green); text-transform: uppercase;
+      border: 1px solid rgba(0,255,157,0.2);
+      padding: 0.4rem 1rem; border-radius: 20px;
+      background: rgba(0,255,157,0.05);
+      margin-bottom: 2rem;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 9rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.5rem;
+      animation: fadeDown 0.8s 0.1s ease both;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, var(--green) 0%, var(--blue) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      font-size: 1.1rem; color: var(--dim); max-width: 520px;
+      line-height: 1.7; margin-bottom: 3rem;
+      animation: fadeDown 0.8s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeDown 0.8s 0.3s ease both;
+    }
+
+    .btn-main {
+      padding: 0.875rem 2rem;
+      background: linear-gradient(135deg, var(--green), var(--green2));
+      color: #050810; font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem; letter-spacing: 0.1em;
+      border: none; border-radius: 8px; cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: all 0.3s;
+      box-shadow: 0 0 30px rgba(0,255,157,0.2);
+    }
+    .btn-main:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(0,255,157,0.4); }
+
+    .btn-outline {
+      padding: 0.875rem 2rem;
+      background: transparent;
+      color: var(--text); font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem; letter-spacing: 0.1em;
+      border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+      text-decoration: none; display: inline-block;
+      transition: all 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--green); color: var(--green); transform: translateY(-3px); }
+
+    /* ── Scan line decoration ── */
+    .scanline {
+      position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      animation: fadeDown 0.8s 0.5s ease both;
+    }
+    .scanline span { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--dim); letter-spacing: 0.15em; }
+    .scanline-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--dim), transparent); animation: pulse 2s infinite; }
+
+    /* ── Stats section ── */
+    .stats-section {
+      position: relative; z-index: 1;
+      padding: 5rem 2rem;
+      display: flex; justify-content: center;
+    }
+
+    .stats-container {
+      max-width: 900px; width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3rem;
+      position: relative; overflow: hidden;
+    }
+
+    .stats-container::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green), var(--blue), transparent);
+    }
+
+    .stats-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.2em;
+      color: var(--green); text-transform: uppercase;
+      text-align: center; margin-bottom: 2.5rem;
+    }
+
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1px 1fr;
+      gap: 0; align-items: center;
+    }
+
+    .stat-divider { background: var(--border); height: 80px; }
+
+    .stat-item { text-align: center; padding: 1rem 2rem; }
+
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 6vw, 5rem);
+      line-height: 1;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      display: block;
+      transition: all 0.3s;
+    }
+
+    .stat-desc {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem; color: var(--dim);
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin-top: 0.5rem; display: block;
+    }
+
+    .stat-dot {
+      display: inline-block; width: 6px; height: 6px;
+      background: var(--green); border-radius: 50%;
+      margin-right: 0.5rem;
+      animation: blink 1.5s infinite;
+    }
+
+    /* ── Features ── */
+    .features-section {
+      position: relative; z-index: 1;
+      padding: 4rem 2rem 6rem;
+      max-width: 1000px; margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center; margin-bottom: 3rem;
+    }
+
+    .section-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem; letter-spacing: 0.2em;
+      color: var(--blue); text-transform: uppercase; margin-bottom: 1rem; display: block;
     }
 
     .section-title {
-      font-family: 'Oswald', sans-serif; font-size: 1.25rem;
-      margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: 0.05em;
     }
 
-    .form-group { margin-bottom: 1.5rem; }
-
-    label {
-      display: block; margin-bottom: 0.5rem;
-      font-size: 0.875rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.05em;
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
     }
 
-    .label-desc {
-      font-size: 0.75rem; color: var(--text-dim);
-      font-weight: 400; text-transform: none; letter-spacing: normal; margin-top: 0.25rem;
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px; padding: 2.5rem 2rem;
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+      text-align: center;
     }
 
-    input[type="text"], input[type="number"], input[type="password"], select {
-      width: 100%; padding: 0.875rem 1rem;
-      background: var(--bg-darker); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text);
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.9375rem;
-      transition: all 0.3s ease; outline: none;
+    @media (max-width: 640px) {
+      .features-grid { grid-template-columns: 1fr; }
     }
-    input:focus, select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0,255,157,0.1);
+
+    .feature-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,255,157,0.03), transparent);
+      opacity: 0; transition: opacity 0.3s;
     }
-    input::placeholder { color: var(--text-dim); }
 
-    .char-counter { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
-    .char-counter.warning { color: var(--warning); }
-    .char-counter.error   { color: var(--error); }
+    .feature-card:hover { border-color: rgba(0,255,157,0.2); transform: translateY(-4px); }
+    .feature-card:hover::after { opacity: 1; }
 
-    .radio-group  { display: flex; gap: 1rem; }
-    .radio-option { flex: 1; position: relative; }
-    .radio-option input[type="radio"] { position: absolute; opacity: 0; }
-    .radio-label {
-      display: block; padding: 1rem;
-      background: var(--bg-darker); border: 2px solid var(--border);
-      border-radius: 8px; text-align: center;
-      cursor: pointer; transition: all 0.3s ease; font-weight: 600;
+    .feature-icon {
+      font-size: 2.5rem; margin-bottom: 1rem; display: block;
     }
-    .radio-option input[type="radio"]:checked + .radio-label {
-      background: rgba(0,255,157,0.1); border-color: var(--primary); color: var(--primary);
+
+    .feature-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; letter-spacing: 0.08em;
+      color: var(--text);
     }
-    .radio-label:hover { border-color: var(--primary); }
 
-    .link-inputs { display: none; margin-top: 1rem; }
-    .link-inputs.active { display: block; animation: slideDown 0.3s ease; }
+    /* ── Footer ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
 
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem; letter-spacing: 0.1em;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    .footer-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem; color: var(--dim); letter-spacing: 0.1em;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .link-item { background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
-    .link-item:last-child { margin-bottom: 0; }
-    .link-label  { font-size: 0.875rem; color: var(--text-dim); margin-bottom: 0.5rem; }
-    .link-preview {
-      background: var(--surface); border: 1px solid var(--border);
-      padding: 0.75rem; border-radius: 6px;
-      font-size: 0.875rem; color: var(--primary); word-break: break-all; margin-top: 0.5rem;
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.2; }
     }
 
-    .btn-primary {
-      width: 100%; padding: 1rem;
-      background: var(--primary); color: var(--bg-dark);
-      border: none; border-radius: 8px;
-      font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.05em;
-      cursor: pointer; transition: all 0.3s ease;
-    }
-    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,255,157,0.3); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
-    .message { padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.875rem; font-weight: 600; display: none; }
-    .message.show { display: block; animation: slideDown 0.3s ease; }
-    .message.success { background: rgba(0,255,157,0.1); border: 1px solid var(--primary); color: var(--primary); }
-    .message.error   { background: rgba(255,77,109,0.1); border: 1px solid var(--error);   color: var(--error); }
-
-    .warning-box {
-      background: rgba(251,191,36,0.1); border: 1px solid var(--warning);
-      border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;
-      font-size: 0.875rem; color: var(--warning);
-    }
-    .warning-box strong { display: block; margin-bottom: 0.5rem; }
-
-    .info-notice {
-      background: rgba(0,255,157,0.05); border: 1px solid rgba(0,255,157,0.2);
-      border-radius: 8px; padding: 1rem; margin-bottom: 1rem;
-      font-size: 0.875rem; color: var(--text-dim);
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 1; }
     }
 
-    @media (max-width: 768px) {
-      .radio-group { flex-direction: column; }
-      .container   { padding: 1rem; }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-divider { display: none; }
+      footer { justify-content: center; text-align: center; }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">NTT SYSTEM</div>
-    <div class="user-info">
-      <span class="username" id="userDisplay">Loading...</span>
-      <button class="btn-sm" id="logoutBtn">Logout</button>
+  <div class="grid-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  
+  <nav>
+    <div class="nav-logo">NTT SYSTEM</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#stats">Stats</a>
+      <a href="/auth.html" class="nav-btn">Login</a>
     </div>
-  </div>
+  </nav>
 
-  <div class="container">
-    <h1 class="page-title">Dashboard</h1>
-    <p class="page-desc">Manage your key generator settings</p>
-
-    
-    <div style="background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 16px; padding: 2.5rem; margin-bottom: 2rem; text-align: center; box-shadow: 0 8px 24px rgba(0,255,157,0.2);">
-      <div style="font-size: 0.875rem; color: rgba(10,14,26,0.8); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 600;">Total Keys Created</div>
-      <div style="font-family: 'Oswald', sans-serif; font-size: 4rem; font-weight: 800; color: var(--bg-dark); line-height: 1;" id="totalKeys">0</div>
-
-    </div>
-
-    
-    <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; background: var(--bg-darker); padding: 0.5rem; border-radius: 12px;">
-      <button class="tab-btn active" data-tab="main"    style="flex:1;padding:0.875rem;background:var(--surface);border:none;color:var(--primary);font-family:'Oswald',sans-serif;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;border-radius:8px;transition:all 0.3s ease;">Main</button>
-      <button class="tab-btn"        data-tab="account" style="flex:1;padding:0.875rem;background:transparent;border:none;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;border-radius:8px;transition:all 0.3s ease;">Account</button>
-    </div>
-
-    <div id="message" class="message"></div>
-
-    
-    <div id="mainTab" class="tab-content">
-
-      
-      <div class="section">
-        <h2 class="section-title">Website Configuration</h2>
-        <div class="form-group">
-          <label>
-            Website Domain Name
-            <span class="label-desc">Custom name for your website (default is username, max 15 chars)</span>
-          </label>
-          <input type="text" id="websiteDomain" placeholder="e.g., myhub, myproject..." maxlength="15">
-          <div class="char-counter" id="websiteCounter">0/15 characters</div>
-        </div>
-        <button type="button" class="btn-primary" id="saveWebsiteBtn" style="margin-top:1rem;">Save Website Settings</button>
-      </div>
-
-      
-      <div class="section">
-        <h2 class="section-title">Key Settings</h2>
-        <div class="form-group">
-          <label>
-            Key Domain Prefix
-            <span class="label-desc">Max 6 characters — keys will look like: prefix_xxxxxxx</span>
-          </label>
-          <input type="text" id="keyDomain" placeholder="KEY" value="KEY" maxlength="6">
-          <div class="char-counter" id="keyCounter">3/6 characters</div>
-        </div>
-        <div class="form-group">
-          <label>Key Preview</label>
-          <div class="link-preview" id="keyPreview">KEY_1234567</div>
-        </div>
-        <div class="form-group">
-          <label>
-            Encode Key
-            <span class="label-desc">Secret key for encoding/decoding (default: ntt-hub, max 10 chars)</span>
-          </label>
-          <input type="text" id="encodeKey" placeholder="ntt-hub" value="ntt-hub" maxlength="10">
-        </div>
-        <button type="button" class="btn-primary" id="saveKeyBtn" style="margin-top:1rem;">Save Key Settings</button>
-      </div>
-
-      
-      <div class="section">
-        <h2 class="section-title">Discord Notifications</h2>
-        <div class="form-group">
-          <label>
-            Discord Webhook URL
-            <span class="label-desc">Receive notifications when users generate keys (optional)</span>
-          </label>
-          <input type="text" id="discordWebhook" placeholder="https://discord.com/api/webhooks/..." maxlength="200">
-        </div>
-        <button type="button" class="btn-primary" id="saveDiscordBtn" style="margin-top:1rem;">Save Discord Settings</button>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">Linkvertise Configuration</h2>
-        <div class="form-group">
-          <label>
-            Linkvertise API Token
-            <span class="label-desc">Your anti-bypass API token from Linkvertise</span>
-          </label>
-          <input type="text" id="linkvertiseToken" placeholder="Enter your Linkvertise API token" maxlength="200">
-        </div>
-        <button type="button" class="btn-primary" id="saveLinkvertiseBtn" style="margin-top:1rem;">Save Linkvertise Settings</button>
-      </div>
-
-      <div class="section">
-        <h2 class="section-title">Advertisement Steps</h2>
-
-        <div class="info-notice">
-          ℹ️ The <strong>Start</strong> step is managed by the system. You can only configure Step 1 and Step 2 links below.
-        </div>
-
-        <div class="form-group">
-          <label>Number of Ad Steps</label>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" name="adSteps" id="adStep1" value="1" checked>
-              <label for="adStep1" class="radio-label">1 Step</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" name="adSteps" id="adStep2" value="2">
-              <label for="adStep2" class="radio-label">2 Steps</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="warning-box">
-          <strong>⚠️ Important:</strong>
-          Linkvertise requires unique URLs. Make sure each link has a different query parameter.
-        </div>
-
-        <div id="linkInputs" class="link-inputs">
-          
-          <div class="link-item">
-            <div class="link-label">Step 1 — Linkvertise Shortened URL</div>
-            <input type="text" id="step1Link" placeholder="https://linkvertise.com/...">
-            <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
-            <div class="link-preview" id="step1Dest">Loading...</div>
-          </div>
-
-          
-          <div class="link-item" id="step2Container" style="display:none;">
-            <div class="link-label">Step 2 — Linkvertise Shortened URL</div>
-            <input type="text" id="step2Link" placeholder="https://linkvertise.com/...">
-            <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
-            <div class="link-preview" id="step2Dest">Loading...</div>
-          </div>
-        </div>
-
-        <button type="button" class="btn-primary" id="saveAdStepsBtn" style="margin-top:1rem;">Save Ad Steps Settings</button>
-      </div>
-
-      
-      <div class="section" style="margin-top:2rem;">
-        <h2 class="section-title">Link Get Key</h2>
-
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
-          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Your Link</strong></div>
-          <div style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:0.875rem;" id="keyUrlDisplay">
-            Loading...
-          </div>
-        </div>
-
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;">
-          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Link Get Key</strong></div>
-          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;" id="keyUrlHwid">
-            Loading...
-          </div>
-        </div>
-      </div>
-
-      <div class="section" style="margin-top:1.5rem;">
-        <h2 class="section-title">Code Decode</h2>
-
-        <div style="position:relative;border-radius:8px;overflow:hidden;">
-          <button id="copyCodeBtn" style="position:absolute;top:0.75rem;right:0.75rem;z-index:10;padding:0.4rem 0.9rem;background:var(--primary);color:var(--bg-dark);border:none;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;">Get Data Key</button>
-          <pre style="margin:0;border-radius:8px;"><code class="language-lua" id="decodeCode" style="font-size:0.85rem;padding-right:5rem;display:block;">Loading...</code></pre>
-        </div>
-      </div>
-
-      
-      <div class="section" style="margin-top:1.5rem;">
-        <h2 class="section-title">How to Use</h2>
-        <div style="position:relative;border-radius:8px;overflow:hidden;">
-          <button id="copyHowToUseBtn" style="position:absolute;top:0.75rem;right:0.75rem;z-index:10;padding:0.4rem 0.9rem;background:var(--primary);color:var(--bg-dark);border:none;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;">Copy Code</button>
-          <pre style="margin:0;border-radius:8px;"><code class="language-lua" id="howToUseCode" style="font-size:0.85rem;padding-right:5rem;display:block;">Loading...</code></pre>
-        </div>
-      </div>
-
+  
+  <section class="hero">
+    <div class="hero-tag">⬡ Key Generator Platform</div>
+    <h1 class="hero-title">NTT<br><span>SYSTEM</span></h1>
+    <p class="hero-sub">
+      Anti-bypass key authentication platform powered by Linkvertise.
+      Easy setup, high security — ready to use in your scripts.
+    </p>
+    <div class="hero-actions">
+      <a href="/auth.html" class="btn-main">Get Started Free</a>
+      <a href="#features" class="btn-outline">View Features</a>
     </div>
 
-    
-    <div id="accountTab" class="tab-content" style="display:none;">
-
-      
-      <div class="section">
-        <h2 class="section-title">Change Username</h2>
-        <div class="form-group">
-          <label>Current Username</label>
-          <input type="text" id="currentUsername" readonly style="background:var(--surface);cursor:not-allowed;">
-        </div>
-        <div class="form-group">
-          <label>
-            New Username
-            <span class="label-desc">3-15 characters, letters, numbers, spaces, underscore only</span>
-          </label>
-          <input type="text" id="newUsername" placeholder="Enter new username" minlength="3" maxlength="15" pattern="[a-zA-Z0-9_ ]+">
-        </div>
-        <div class="form-group">
-          <label>
-            Confirm Password
-            <span class="label-desc">Enter your password to confirm</span>
-          </label>
-          <input type="password" id="usernameConfirmPassword" placeholder="Enter your password" autocomplete="current-password">
-        </div>
-        <button type="button" class="btn-primary" id="changeUsernameBtn" style="margin-bottom:2rem;">Update Username</button>
-      </div>
-
-      
-      <div class="section">
-        <h2 class="section-title">Change Password</h2>
-        <div class="form-group">
-          <label>Current Password</label>
-          <input type="password" id="currentPassword" placeholder="Enter current password" autocomplete="current-password">
-        </div>
-        <div class="form-group">
-          <label>New Password <span class="label-desc">6-20 characters</span></label>
-          <input type="password" id="newPassword" placeholder="Enter new password" minlength="6" maxlength="20" autocomplete="new-password">
-        </div>
-        <div class="form-group">
-          <label>Confirm New Password</label>
-          <input type="password" id="confirmPassword" placeholder="Confirm new password" minlength="6" maxlength="20" autocomplete="new-password">
-        </div>
-        <button type="button" class="btn-primary" id="changePasswordBtn">Update Password</button>
-      </div>
-
+    <div class="scanline">
+      <span>scroll</span>
+      <div class="scanline-line"></div>
     </div>
-  </div>
+  </section>
+
+  
+  <section class="stats-section" id="stats">
+    <div class="stats-container">
+      <div class="stats-label"><span class="stat-dot"></span>Live Statistics</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number" id="statKeys">—</span>
+          <span class="stat-desc">Total Keys Generated</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number" id="statUsers">—</span>
+          <span class="stat-desc">Registered Users</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <section class="features-section" id="features">
+    <div class="section-header">
+      <span class="section-tag">
+      <h2 class="section-title">Everything You Need</h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🔑</span>
+        <div class="feature-title">Custom Key</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📡</span>
+        <div class="feature-title">Discord Webhook</div>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🛡️</span>
+        <div class="feature-title">Protect Key</div>
+      </div>
+    </div>
+  </section>
+
+  
+  <footer>
+    <div class="footer-logo">NTT SYSTEM</div>
+    <div class="footer-text">© 2025 NTT SYSTEM — ALL RIGHTS RESERVED</div>
+    <div class="footer-text">ntt-system.pages.dev</div>
+  </footer>
 
   <script type="module">
     const API_BASE = 'https://api.ntt-system.xyz';
 
-    let currentUser = null;
+    function animateCount(el, target) {
+      const duration = 1500;
+      const start    = performance.now();
+      const from     = 0;
 
-    async function checkAuth() {
-      const token = localStorage.getItem('token');
-      if (!token) { window.location.href = '/auth.html'; return; }
+      function update(now) {
+        const elapsed  = now - start;
+        const progress = Math.min(elapsed / duration, 1);
 
-      try {
-        const res  = await fetch(`${API_BASE}/?type=verify`, { headers: { 'Authorization': `Bearer ${token}` } });
-        const data = await res.json();
-
-        if (!data.success) throw new Error('invalid');
-
-        currentUser = data.user;
-        document.getElementById('userDisplay').textContent = data.user.username;
-        loadSettings();
-        loadTotalKeys();
-      } catch {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/auth.html';
+        const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        const value = Math.floor(from + (target - from) * ease);
+        el.textContent = value.toLocaleString();
+        if (progress < 1) requestAnimationFrame(update);
       }
+      requestAnimationFrame(update);
     }
 
-    async function loadSettings() {
+    async function loadStats() {
       try {
-        const res  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
-        const data = await res.json();
-
-        if (data.success && data.settings) {
-          const s = data.settings;
-          document.getElementById('websiteDomain').value    = s.website_domain || '';
-          document.getElementById('keyDomain').value        = s.key_domain     || 'KEY';
-
-          const wdLen = (s.website_domain || '').length;
-          const kdLen = (s.key_domain || 'KEY').length;
-          const wc = document.getElementById('websiteCounter');
-          const kc = document.getElementById('keyCounter');
-          if (wc) { wc.textContent = `${wdLen}/15 characters`; wc.className = 'char-counter' + (wdLen >= 15 ? ' error' : wdLen > 12 ? ' warning' : ''); }
-          if (kc) { kc.textContent = `${kdLen}/6 characters`;  kc.className = 'char-counter' + (kdLen >= 6  ? ' error' : kdLen  > 4  ? ' warning' : ''); }
-          document.getElementById('encodeKey').value        = s.encode_key     || 'ntt-hub';
-          document.getElementById('linkvertiseToken').value = s.linkvertise_token || '';
-          document.getElementById('discordWebhook').value   = s.discord_webhook   || '';
-
-          const steps = s.ad_steps || 1;
-          document.getElementById(`adStep${steps}`).checked = true;
-
-          if (s.step1_link) document.getElementById('step1Link').value = s.step1_link;
-          if (s.step2_link) document.getElementById('step2Link').value = s.step2_link;
-
-          updateLinkInputs();
-          updatePreviews();
-          updateDecodeCode();
-        }
-      } catch (e) { console.error('Failed to load settings:', e); }
-    }
-
-    async function loadTotalKeys() {
-      try {
-        const res  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
-        const data = await res.json();
-        if (data.success) document.getElementById('totalKeys').textContent = data.settings?.total_keys || 0;
-
-      } catch {
-        document.getElementById('totalKeys').textContent       = '0';
-        document.getElementById('systemTotalKeys').textContent = '0';
-      }
-    }
-
-    document.getElementById('websiteDomain').addEventListener('input', (e) => {
-      const counter = document.getElementById('websiteCounter');
-      const len = e.target.value.length;
-      counter.textContent = `${len}/15 characters`;
-      counter.className   = 'char-counter' + (len >= 15 ? ' error' : len > 12 ? ' warning' : '');
-      updatePreviews();
-    });
-
-    document.getElementById('websiteDomain').addEventListener('blur', (e) => {
-      const sanitized = e.target.value
-        .trim().toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9\-]/g, '')
-        .slice(0, 15);
-      if (sanitized !== e.target.value) {
-        e.target.value = sanitized;
-        const counter = document.getElementById('websiteCounter');
-        counter.textContent = sanitized.length + '/15 characters';
-        counter.className = 'char-counter';
-        updatePreviews();
-        updateDecodeCode();
-      }
-    });
-
-    document.getElementById('keyDomain').addEventListener('input', (e) => {
-      const counter = document.getElementById('keyCounter');
-      const len = e.target.value.length;
-      counter.textContent = `${len}/6 characters`;
-      counter.className   = 'char-counter' + (len >= 6 ? ' error' : len > 4 ? ' warning' : '');
-      updateKeyPreview();
-    });
-
-    function updateKeyPreview() {
-      const d = document.getElementById('keyDomain').value.toUpperCase() || 'KEY';
-      document.getElementById('keyPreview').textContent = `${d}_1234567`;
-    }
-
-    function updatePreviews() {
-      const base = window.location.origin;
-      document.getElementById('step1Dest').textContent = `${base}/key.html?step1_done`;
-      document.getElementById('step2Dest').textContent = `${base}/key.html?step2_done`;
-    }
-
-    function updateLinkInputs() {
-      const steps = document.querySelector('input[name="adSteps"]:checked').value;
-      document.getElementById('linkInputs').classList.add('active');
-
-      const step2Container = document.getElementById('step2Container');
-      const step2Link      = document.getElementById('step2Link');
-
-      if (steps === '2') {
-        step2Container.style.display = 'block';
-        step2Link.required = true;
-      } else {
-        step2Container.style.display = 'none';
-        step2Link.required = false;
-      }
-    }
-
-    document.querySelectorAll('input[name="adSteps"]').forEach(r => r.addEventListener('change', updateLinkInputs));
-
-    function showMessage(txt, type = 'error') {
-      const el = document.getElementById('message');
-      el.textContent = txt;
-      el.className   = `message ${type} show`;
-      setTimeout(() => el.classList.remove('show'), 5000);
-    }
-
-    function rehighlight() {
-      if (typeof hljs === 'undefined') return;
-      document.querySelectorAll('code.language-lua').forEach(el => {
-        el.removeAttribute('data-highlighted');
-        hljs.highlightElement(el);
-      });
-    }
-
-    function updateDecodeCode() {
-      const encodeKey     = document.getElementById('encodeKey').value.trim()     || 'ntt-hub';
-      const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser?.username || 'username';
-
-      const base    = window.location.origin;
-      const apiBase = API_BASE;
-      const elKeyUrl  = document.getElementById('keyUrlDisplay');
-      const elKeyHwid = document.getElementById('keyUrlHwid');
-      if (elKeyUrl)  elKeyUrl.textContent  = `${base}/key.html?domain=${websiteDomain}`;
-      if (elKeyHwid) elKeyHwid.textContent = `${base}/key.html?domain=${websiteDomain}&hwid=you_hwid`;
-
-      const code = `local function key_split(str, sep)
-    local result = {}
-    for part in string.gmatch(str, "([^" .. sep .. "]+)") do
-        table.insert(result, part)
-    end
-    return result
-end
-
-local function key_simpleHash(str)
-    local hash = 0
-    for i = 1, #str do
-        hash = (hash * 131 + string.byte(str, i)) % 2^32
-    end
-    return hash
-end
-
-local function key_fromHex(hex)
-    return (hex:gsub('..', function(cc)
-        return string.char(tonumber(cc, 16))
-    end))
-end
-
-local function key_decode(data, baseKey)
-    local parts = key_split(data, "|")
-    if #parts < 3 then return nil end
-
-    local timeEncoded = parts[1]
-    local t           = tonumber(parts[2])
-    local encodedStr  = parts[3]
-
-    if not t or not encodedStr then return nil end
-
-    local check = tostring(math.floor(key_simpleHash(tostring(t) .. "salt")))
-    if check ~= timeEncoded then return "time out" end
-
-    if math.abs(os.time() - t) > 5*60 then return "time out" end
-
-    encodedStr = key_fromHex(encodedStr)
-    local rawKey    = tostring(baseKey) .. ":" .. tostring(t)
-    local hashedKey = key_simpleHash(rawKey)
-
-    local result = {}
-    for i = 1, #encodedStr do
-        local byte    = string.byte(encodedStr, i)
-        local k       = (hashedKey + i * 7) % 256
-        local decoded = (byte - k) % 256
-        decoded = bit32.bxor(decoded, k)
-        table.insert(result, string.char(decoded))
-    end
-
-    return table.concat(result)
-end`;
-
-      document.getElementById('decodeCode').textContent = code;
-      document.getElementById('howToUseCode').textContent = '';
-
-      const howTo = `local you_hwid = gethwid()
-local function domain_control(x)
-    return game:HttpGet("https://s"..math.random(1,4)..".ntt-system.xyz/?type=data&hwid="..x)
-end
-local done, fail = pcall(function()
-    key = domain_control(you_hwid)
-end)
-if done then
-    if string.find(key, "|") then
-        print(key)
-        key = key_decode(key, "${encodeKey}")
-        key = string.split(key, "|")
-        _G.table_key_system = {key[1], tonumber(key[2])}
-        print(_G.table_key_system[1], _G.table_key_system[2])
-    else
-        print("Fetch Failed or No Key Available")
-    end
-else
-    print(fail)
-end`;
-
-      document.getElementById('howToUseCode').textContent = howTo;
-      if (typeof hljs !== 'undefined') rehighlight();
-    }
-
-    document.getElementById('encodeKey').addEventListener('input',    updateDecodeCode);
-    document.getElementById('websiteDomain').addEventListener('input', updateDecodeCode);
-
-    document.getElementById('copyCodeBtn').addEventListener('click', () => {
-      navigator.clipboard.writeText(document.getElementById('decodeCode').textContent).then(() => {
-        const btn = document.getElementById('copyCodeBtn');
-        btn.textContent = '✓ Copied!';
-        setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
-      });
-    });
-
-    document.getElementById('copyHowToUseBtn').addEventListener('click', () => {
-      navigator.clipboard.writeText(document.getElementById('howToUseCode').textContent).then(() => {
-        const btn = document.getElementById('copyHowToUseBtn');
-        btn.textContent = '✓ Copied!';
-        setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
-      });
-    });
-
-    async function savePartial(patch, btnId, successMsg) {
-      const btn  = document.getElementById(btnId);
-      const orig = btn.textContent;
-      btn.disabled = true; btn.textContent = 'Saving...';
-
-      try {
-        const getRes  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-        });
-        let getData = { success: false, settings: null };
-        try { getData = await getRes.json(); } catch {}
-
-        const full = getData.success && getData.settings ? {
-          user_id:           currentUser.id,
-          website_domain:    getData.settings.website_domain    || currentUser.username,
-          key_domain:        getData.settings.key_domain        || 'KEY',
-          encode_key:        getData.settings.encode_key        || 'ntt-hub',
-          linkvertise_token: getData.settings.linkvertise_token || '',
-          discord_webhook:   getData.settings.discord_webhook   || '',
-          ad_steps:          getData.settings.ad_steps          || 1,
-          step1_link:        getData.settings.step1_link        || '',
-          step2_link:        getData.settings.step2_link        || '',
-          ...patch,
-        } : { user_id: currentUser.id, ...patch };
-
-        const saveRes  = await fetch(`${API_BASE}/?type=save_settings`, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-          body:    JSON.stringify(full),
-        });
-        const saveData = await saveRes.json();
-
-        if (saveData.success) {
-          showMessage(successMsg, 'success');
-
-          if (saveData.website_domain) {
-            document.getElementById('websiteDomain').value = saveData.website_domain;
-          }
-          updateDecodeCode();
-          updatePreviews();
-        }
-        else showMessage(saveData.error || 'Failed to save');
-      } catch { showMessage('Connection error'); }
-      finally  { btn.disabled = false; btn.textContent = orig; }
-    }
-
-    document.getElementById('saveWebsiteBtn').addEventListener('click', async () => {
-      const wd = document.getElementById('websiteDomain').value.trim() || currentUser.username;
-      await savePartial({ website_domain: wd }, 'saveWebsiteBtn', 'Website settings saved!');
-    });
-
-    document.getElementById('saveKeyBtn').addEventListener('click', async () => {
-      const kd = document.getElementById('keyDomain').value.trim() || 'KEY';
-      if (kd.length > 6) { showMessage('Key domain must be 6 characters or less'); return; }
-      const ek = document.getElementById('encodeKey').value.trim() || 'ntt-hub';
-      await savePartial({ key_domain: kd, encode_key: ek }, 'saveKeyBtn', 'Key settings saved!');
-    });
-
-    document.getElementById('saveLinkvertiseBtn').addEventListener('click', async () => {
-      const lt = document.getElementById('linkvertiseToken').value.trim();
-      if (!lt) { showMessage('Linkvertise token is required'); return; }
-      await savePartial({ linkvertise_token: lt }, 'saveLinkvertiseBtn', 'Linkvertise settings saved!');
-    });
-
-    document.getElementById('saveDiscordBtn').addEventListener('click', async () => {
-      const dw = document.getElementById('discordWebhook').value.trim();
-      await savePartial({ discord_webhook: dw }, 'saveDiscordBtn', 'Discord settings saved!');
-    });
-
-    document.getElementById('saveAdStepsBtn').addEventListener('click', async () => {
-      const steps = parseInt(document.querySelector('input[name="adSteps"]:checked').value);
-      const s1    = document.getElementById('step1Link').value.trim();
-      const s2    = document.getElementById('step2Link').value.trim();
-      await savePartial({ ad_steps: steps, step1_link: s1, step2_link: s2 }, 'saveAdStepsBtn', 'Ad steps settings saved!');
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/auth.html';
-    });
-
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tab = btn.dataset.tab;
-        document.querySelectorAll('.tab-btn').forEach(b => {
-          b.style.background = 'transparent';
-          b.style.color      = 'var(--text-dim)';
-          b.classList.remove('active');
-        });
-        btn.style.background = 'var(--surface)';
-        btn.style.color      = 'var(--primary)';
-        btn.classList.add('active');
-
-        document.getElementById('mainTab').style.display    = tab === 'main'    ? 'block' : 'none';
-        document.getElementById('accountTab').style.display = tab === 'account' ? 'block' : 'none';
-      });
-    });
-
-    document.getElementById('changeUsernameBtn').addEventListener('click', async () => {
-      const nu  = document.getElementById('newUsername').value.trim();
-      const cpw = document.getElementById('usernameConfirmPassword').value;
-      if (!nu)  { showMessage('Please enter a new username'); return; }
-      if (!cpw) { showMessage('Please enter your password to confirm'); return; }
-      if (!/^[a-zA-Z0-9_ ]+$/.test(nu)) { showMessage('Invalid characters in username'); return; }
-      if (nu.length < 3 || nu.length > 15) { showMessage('Username must be 3-15 characters'); return; }
-      if (nu === currentUser.username)     { showMessage('New username is the same as current'); return; }
-
-      const btn = document.getElementById('changeUsernameBtn');
-      btn.disabled = true; btn.textContent = 'Updating...';
-
-      try {
-        const res  = await fetch(`${API_BASE}/?type=change_username`, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-          body:    JSON.stringify({ user_id: currentUser.id, new_username: nu, password: cpw }),
-        });
+        const res  = await fetch(`${API_BASE}/?type=get_stats`);
         const data = await res.json();
 
         if (data.success) {
-          showMessage('Username updated successfully!', 'success');
-          currentUser.username = nu;
-          document.getElementById('currentUsername').value   = nu;
-          document.getElementById('userDisplay').textContent = nu;
-          document.getElementById('newUsername').value              = '';
-          document.getElementById('usernameConfirmPassword').value = '';
-        } else {
-          showMessage(data.error || 'Failed to update username');
+          const keysEl  = document.getElementById('statKeys');
+          const usersEl = document.getElementById('statUsers');
+          animateCount(keysEl,  data.total_keys  || 0);
+          animateCount(usersEl, data.total_users || 0);
         }
-      } catch { showMessage('Connection error'); }
-      finally  { btn.disabled = false; btn.textContent = 'Update Username'; }
-    });
-
-    document.getElementById('changePasswordBtn').addEventListener('click', async () => {
-      const cp = document.getElementById('currentPassword').value;
-      const np = document.getElementById('newPassword').value;
-      const cf = document.getElementById('confirmPassword').value;
-
-      if (!cp || !np || !cf) { showMessage('Please fill in all password fields'); return; }
-      if (np.length < 6 || np.length > 20) { showMessage('New password must be 6-20 characters'); return; }
-      if (np !== cf) { showMessage('New passwords do not match'); return; }
-
-      const btn = document.getElementById('changePasswordBtn');
-      btn.disabled = true; btn.textContent = 'Updating...';
-
-      try {
-        const res  = await fetch(`${API_BASE}/?type=change_password`, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-          body:    JSON.stringify({ user_id: currentUser.id, current_password: cp, new_password: np }),
-        });
-        const data = await res.json();
-
-        if (data.success) {
-          showMessage('Password updated successfully!', 'success');
-          document.getElementById('currentPassword').value = '';
-          document.getElementById('newPassword').value     = '';
-          document.getElementById('confirmPassword').value = '';
-        } else {
-          showMessage(data.error || 'Failed to update password');
-        }
-      } catch { showMessage('Connection error'); }
-      finally  { btn.disabled = false; btn.textContent = 'Update Password'; }
-    });
-
-    checkAuth();
-    updateLinkInputs();
-    updateDecodeCode();
-    if (typeof hljs !== 'undefined') {
-      document.addEventListener('DOMContentLoaded', () => rehighlight());
+      } catch {
+        document.getElementById('statKeys').textContent  = '0';
+        document.getElementById('statUsers').textContent = '0';
+      }
     }
 
-    setTimeout(() => {
-      if (currentUser) document.getElementById('currentUsername').value = currentUser.username;
-    }, 1000);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadStats();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    observer.observe(document.getElementById('stats'));
   </script>
 </body>
 </html>
