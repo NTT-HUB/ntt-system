@@ -422,6 +422,13 @@
           const s = data.settings;
           document.getElementById('websiteDomain').value    = s.website_domain || '';
           document.getElementById('keyDomain').value        = s.key_domain     || 'KEY';
+          // Update counters sau khi set value
+          const wdLen = (s.website_domain || '').length;
+          const kdLen = (s.key_domain || 'KEY').length;
+          const wc = document.getElementById('websiteCounter');
+          const kc = document.getElementById('keyCounter');
+          if (wc) { wc.textContent = `${wdLen}/15 characters`; wc.className = 'char-counter' + (wdLen >= 15 ? ' error' : wdLen > 12 ? ' warning' : ''); }
+          if (kc) { kc.textContent = `${kdLen}/6 characters`;  kc.className = 'char-counter' + (kdLen >= 6  ? ' error' : kdLen  > 4  ? ' warning' : ''); }
           document.getElementById('encodeKey').value        = s.encode_key     || 'ntt-hub';
           document.getElementById('linkvertiseToken').value = s.linkvertise_token || '';
           document.getElementById('discordWebhook').value   = s.discord_webhook   || '';
