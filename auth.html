@@ -438,11 +438,13 @@
             <input 
               type="text" 
               id="registerUsername" 
-              placeholder="Choose username" 
+              placeholder="Choose username (letters, numbers, _ only)" 
               required
               autocomplete="username"
               minlength="3"
               maxlength="15"
+              pattern="[a-zA-Z0-9_]+"
+              title="Username can only contain letters, numbers, and underscores"
             >
           </div>
 
@@ -573,6 +575,12 @@
         return;
       }
 
+      // Validate username: only alphanumeric and underscore
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        showMessage('Username can only contain letters, numbers, and underscores (no spaces or special characters)');
+        return;
+      }
+
       if (username.length < 3) {
         showMessage('Username must be at least 3 characters');
         return;
@@ -631,16 +639,26 @@
     if (token) {
       // Verify token
       fetch(`${API_BASE}/?type=verify`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        method: 'GET',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Verify failed');
+        return res.json();
+      })
       .then(data => {
         if (data.success) {
           window.location.href = '/dashboard.html';
+        } else {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
         }
       })
-      .catch(() => {
-        // Token invalid, stay on login page
+      .catch((error) => {
+        console.log('Token verification failed:', error);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       });
