@@ -312,16 +312,16 @@
         <h2 class="section-title">Link Get Key</h2>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
-          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>API Data URL:</strong></div>
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>User Get Key URL:</strong></div>
           <div style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:0.875rem;" id="keyUrlDisplay">
             Loading...
           </div>
         </div>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;">
-          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Usage with HWID:</strong></div>
-          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;" id="hwIdUrlDisplay">
-            <span id="urlBase" style="color:var(--text);">...</span>/key?id=<span id="usernameInUrl" style="color:var(--primary);">username</span>&hwid=<span style="color:var(--warning);">{your_hwid}</span>
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Roblox Script URL:</strong></div>
+          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;">
+            <span id="urlBase" style="color:var(--text);">...</span>/?type=data&hwid=<span style="color:var(--warning);">{your_hwid}</span>
           </div>
         </div>
       </div>
@@ -388,7 +388,7 @@
   </div>
 
   <script type="module">
-    import API_BASE from './api-base.js';
+    const API_BASE = 'https://api.ntt-system.xyz';
 
     let currentUser = null;
 
@@ -534,10 +534,11 @@
       const encodeKey     = document.getElementById('encodeKey').value.trim()     || 'ntt-hub';
       const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser?.username || 'username';
 
-      const base = window.location.origin;
-      document.getElementById('keyUrlDisplay').textContent  = `${base}/key?id=${websiteDomain}`;
+      const base    = window.location.origin;
+      const apiBase = API_BASE;
+      document.getElementById('keyUrlDisplay').textContent  = `${base}/key.html?domain=${websiteDomain}`;
       document.getElementById('usernameInUrl').textContent  = websiteDomain;
-      document.getElementById('urlBase').textContent        = base;
+      document.getElementById('urlBase').textContent        = apiBase;
 
       const code = `local function key_split(str, sep)
     local result = {}
