@@ -150,7 +150,7 @@
       const data = navigator.userAgent + fp + screen.width + screen.height + navigator.language;
       let h = 0;
       for (let i = 0; i < data.length; i++) { h = ((h << 5) - h) + data.charCodeAt(i); h = h & h; }
-      return 'HWID_' + Math.abs(h).toString(36).toUpperCase();
+      return ('HWID_' + Math.abs(h).toString(36).toUpperCase()).slice(0, 50);
     }
 
     function showError(msg) {
