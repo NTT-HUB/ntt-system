@@ -352,23 +352,24 @@
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
 
-      const curHwid = hwid || localStorage.getItem('ntt_hwid') || null;
-      hwid = curHwid;
+      // Nếu có key cũ đúng domain → dùng hwid từ localStorage để hiện lại
+      if (savedKey && savedDomain === domain) {
+        hwid = savedHwid; // dùng hwid đã lưu khi tạo key
+        document.getElementById('domainLabel').textContent = domain;
+        await showKey(savedKey);
+        return;
+      }
 
-      // Nếu domain hoặc hwid khác → xóa key cũ ngay
-      if (savedKey && (savedDomain !== domain || savedHwid !== curHwid)) {
+      // Khác domain → xóa key cũ
+      if (savedKey && savedDomain !== domain) {
         localStorage.removeItem('ntt_generated_key');
         localStorage.removeItem('ntt_key_domain');
         localStorage.removeItem('ntt_key_hwid');
         localStorage.removeItem('ntt_key_expiry');
       }
 
-      // Đúng domain + đúng hwid → hiện key cũ
-      if (savedKey && savedDomain === domain && savedHwid === curHwid) {
-        document.getElementById('domainLabel').textContent = domain;
-        await showKey(savedKey);
-        return;
-      }
+      const curHwid = hwid || localStorage.getItem('ntt_hwid') || null;
+      hwid = curHwid;
 
       await loadSettings();
     }
