@@ -13,109 +13,142 @@
       --primary: #00ff9d; --primary-dark: #00cc7d;
       --bg-dark: #0a0e1a; --bg-darker: #050810;
       --surface: #141824; --text: #e8ecf5; --text-dim: #8892ab;
-      --border: #1f2937; --success: #00ff9d; --pending: #fbbf24; --error: #ff4d6d;
+      --border: #1f2937; --success: #00ff9d; --error: #ff4d6d;
     }
-    body { font-family: 'IBM Plex Mono', monospace; background: var(--bg-dark); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow-x: hidden; }
-    .bg-grid { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; z-index: 0; pointer-events: none; }
-    .container { position: relative; z-index: 1; width: 100%; max-width: 500px; padding: 2rem; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; box-shadow: 0 20px 60px rgba(0,0,0,0.5); animation: slideUp 0.6s ease; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    .title { font-family: 'Oswald', sans-serif; font-size: 2rem; text-align: center; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--primary), #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .subtitle { text-align: center; color: var(--text-dim); font-size: 0.875rem; margin-bottom: 2rem; }
-    .steps { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
-    .step { background: var(--bg-darker); border: 2px solid var(--border); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; transition: all 0.3s ease; position: relative; overflow: hidden; }
-    .step::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 100%; background: linear-gradient(90deg, rgba(0,255,157,0.1), transparent); transition: width 0.3s ease; }
-    .step.completed::before { width: 100%; }
-    .step.completed { border-color: var(--success); }
-    .step.active-step { border-color: var(--pending); }
-    .step-number { width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.125rem; flex-shrink: 0; transition: all 0.3s ease; position: relative; z-index: 1; }
-    .step.completed .step-number { background: var(--success); border-color: var(--success); color: var(--bg-dark); }
-    .step.active-step .step-number { background: var(--pending); border-color: var(--pending); color: var(--bg-dark); }
-    .step-content { flex: 1; position: relative; z-index: 1; }
-    .step-title { font-weight: 600; margin-bottom: 0.25rem; }
-    .step-desc { font-size: 0.875rem; color: var(--text-dim); }
-    .step-action { position: relative; z-index: 1; }
-    .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-family: 'Oswald', sans-serif; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
-    .btn-primary { background: var(--primary); color: var(--bg-dark); }
-    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,255,157,0.4); }
-    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
-    .btn-success { background: rgba(0,255,157,0.2); color: var(--success); border: 1px solid var(--success); cursor: default; }
-    .checkmark { display: inline-block; margin-right: 0.5rem; }
-    .create-key-section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border); display: none; }
-    .create-key-section.active { display: block; animation: slideUp 0.4s ease; }
-    .btn-create { width: 100%; padding: 1.25rem; background: linear-gradient(135deg, var(--primary), #6366f1); color: var(--bg-dark); font-size: 1rem; }
-    .btn-create:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,255,157,0.5); }
-    .key-result { margin-top: 1.5rem; display: none; }
-    .key-result.active { display: block; animation: slideUp 0.4s ease; }
-    .key-box { background: var(--bg-darker); border: 1px solid var(--success); border-radius: 8px; padding: 1rem; text-align: center; margin-bottom: 1rem; }
-    .key-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; }
-    .key-value { font-size: 1.25rem; font-weight: 700; color: var(--success); word-break: break-all; }
-    .copy-btn { width: 100%; padding: 0.875rem; background: var(--surface); border: 1px solid var(--border); color: var(--text); }
-    .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
-    .info-box { background: rgba(0,255,157,0.05); border: 1px solid rgba(0,255,157,0.2); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--text-dim); }
-    .error-box { background: rgba(255,77,109,0.1); border: 1px solid var(--error); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: 0.875rem; color: var(--error); text-align: center; display: none; }
-    @media (max-width: 640px) { .container { padding: 1rem; } .card { padding: 1.5rem; } .title { font-size: 1.5rem; } }
+    body {
+      font-family: 'IBM Plex Mono', monospace;
+      background: var(--bg-dark); color: var(--text);
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 2rem;
+    }
+    .bg-grid {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 50px 50px; z-index: 0; pointer-events: none;
+    }
+    .card {
+      position: relative; z-index: 1;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 2.5rem;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: up 0.5s ease;
+    }
+    @keyframes up { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+
+    .title {
+      font-family: 'Oswald', sans-serif; font-size: 1.75rem;
+      text-align: center; margin-bottom: 0.35rem;
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .subtitle { text-align: center; color: var(--text-dim); font-size: 0.8rem; margin-bottom: 2rem; }
+
+    /* Mỗi nút là 1 block riêng, ẩn mặc định */
+    .step-block { display: none; margin-bottom: 0.75rem; animation: up 0.4s ease; }
+    .step-block.show { display: block; }
+
+    .btn {
+      width: 100%; padding: 1rem;
+      border: none; border-radius: 10px;
+      font-family: 'Oswald', sans-serif; font-size: 1rem;
+      font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.25s; text-decoration: none;
+      display: block; text-align: center;
+    }
+    .btn-start {
+      background: linear-gradient(135deg, var(--primary), #00cc7d);
+      color: var(--bg-dark);
+    }
+    .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,255,157,0.35); }
+
+    .btn-step {
+      background: rgba(0,255,157,0.08);
+      border: 1px solid rgba(0,255,157,0.25);
+      color: var(--primary);
+    }
+    .btn-step:hover { background: rgba(0,255,157,0.15); transform: translateY(-2px); }
+
+    .btn-generate {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: var(--bg-dark);
+    }
+    .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,255,157,0.3); }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Key result — chỉ hiện key, không có gì khác */
+    .key-result {
+      display: none; animation: up 0.4s ease; text-align: center;
+    }
+    .key-result.show { display: block; }
+
+    .key-box {
+      background: var(--bg-darker);
+      border: 1px solid var(--success);
+      border-radius: 10px; padding: 1.5rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .key-label {
+      font-size: 0.7rem; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;
+    }
+    .key-value {
+      font-size: 1.3rem; font-weight: 700;
+      color: var(--success); word-break: break-all; line-height: 1.4;
+    }
+    .btn-copy {
+      width: 100%; padding: 0.875rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem;
+      cursor: pointer; transition: all 0.25s;
+    }
+    .btn-copy:hover { border-color: var(--primary); color: var(--primary); }
+
+    .error-msg {
+      display: none; margin-top: 0.75rem; padding: 0.75rem 1rem;
+      background: rgba(255,77,109,0.1); border: 1px solid var(--error);
+      border-radius: 8px; font-size: 0.8rem; color: var(--error); text-align: center;
+    }
+    .error-msg.show { display: block; }
   </style>
 </head>
 <body>
   <div class="bg-grid"></div>
-  <div class="container">
-    <div class="card">
-      <h1 class="title">Get Your Key</h1>
-      <p class="subtitle" id="domainDisplay">Loading...</p>
 
-      <div class="steps">
-        <div class="step" id="startCard">
-          <div class="step-number">S</div>
-          <div class="step-content">
-            <div class="step-title">Start</div>
-            <div class="step-desc">Complete this step first</div>
-          </div>
-          <div class="step-action">
-            <a href="#" class="btn btn-primary" id="startBtn" target="_blank">Start</a>
-          </div>
-        </div>
+  <div class="card">
+    <h1 class="title">Get Your Key</h1>
+    <p class="subtitle" id="domainLabel">Loading...</p>
 
-        <div class="step" id="step1Card" style="display:none;">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <div class="step-title">Complete Step 1</div>
-            <div class="step-desc">Visit the link and complete the checkpoint</div>
-          </div>
-          <div class="step-action">
-            <button class="btn btn-primary" id="step1Btn" disabled>Start</button>
-          </div>
-        </div>
-
-        <div class="step" id="step2Card" style="display:none;">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <div class="step-title">Complete Step 2</div>
-            <div class="step-desc">Visit the second link and complete</div>
-          </div>
-          <div class="step-action">
-            <button class="btn btn-primary" id="step2Btn" disabled>Start</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="create-key-section" id="createSection">
-        <button class="btn btn-create" id="createKeyBtn">Generate Key</button>
-        <div class="key-result" id="keyResult">
-          <div class="key-box">
-            <div class="key-label">Your Key</div>
-            <div class="key-value" id="keyValue">LOADING...</div>
-          </div>
-          <button class="btn copy-btn" id="copyBtn">Copy Key</button>
-          <div class="info-box">
-            ✓ Key expires in 24 hours<br>
-            ✓ Total keys created: <span id="keyCount">0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="error-box" id="errorBox"></div>
+    <!-- Chỉ hiện nút nào đúng lượt -->
+    <div class="step-block" id="blockStart">
+      <a href="#" class="btn btn-start" id="btnStart" target="_blank">▶ Start</a>
     </div>
+
+    <div class="step-block" id="blockStep1">
+      <button class="btn btn-step" id="btnStep1">Step 1</button>
+    </div>
+
+    <div class="step-block" id="blockStep2">
+      <button class="btn btn-step" id="btnStep2">Step 2</button>
+    </div>
+
+    <div class="step-block" id="blockGenerate">
+      <button class="btn btn-generate" id="btnGenerate">Generate Key</button>
+    </div>
+
+    <!-- Chỉ hiện key sau khi tạo xong -->
+    <div class="key-result" id="keyResult">
+      <div class="key-box">
+        <div class="key-label">Your Key</div>
+        <div class="key-value" id="keyValue"></div>
+      </div>
+      <button class="btn-copy" id="btnCopy">Copy Key</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
   </div>
 
   <script type="module">
@@ -124,14 +157,8 @@
     const urlParams = new URLSearchParams(window.location.search);
     const hash      = urlParams.get('hash') || '';
 
-    // domain: từ URL trước, hoặc localStorage khi Linkvertise redirect về không có ?domain
     let domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
 
-    // Callback types — Linkvertise destination phải dùng các param này:
-    // Start:  /key.html?start_done&hash={hash}
-    // Step1:  /key.html?step1_done&hash={hash}
-    // Step2:  /key.html?step2_done&hash={hash}
-    // Nhận cả dạng cũ (?start/?step1/?step2) lẫn dạng mới (?start_done/?step1_done/?step2_done)
     const isStartDone = urlParams.has('start_done') || urlParams.has('start');
     const isStep1Done = urlParams.has('step1_done') || urlParams.has('step1');
     const isStep2Done = urlParams.has('step2_done') || urlParams.has('step2');
@@ -142,164 +169,128 @@
     let hwid     = null;
 
     function generateHWID() {
-      const canvas = document.createElement('canvas');
-      const ctx    = canvas.getContext('2d');
-      ctx.textBaseline = 'top'; ctx.font = '14px Arial';
-      ctx.fillText('NTT fingerprint', 2, 2);
-      const fp   = canvas.toDataURL();
-      const data = navigator.userAgent + fp + screen.width + screen.height + navigator.language;
+      const c = document.createElement('canvas');
+      const x = c.getContext('2d');
+      x.textBaseline = 'top'; x.font = '14px Arial';
+      x.fillText('NTT', 2, 2);
+      const data = navigator.userAgent + c.toDataURL() + screen.width + screen.height;
       let h = 0;
       for (let i = 0; i < data.length; i++) { h = ((h << 5) - h) + data.charCodeAt(i); h = h & h; }
       return ('HWID_' + Math.abs(h).toString(36).toUpperCase()).slice(0, 50);
     }
 
     function showError(msg) {
-      const b = document.getElementById('errorBox');
-      b.textContent = msg; b.style.display = 'block';
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg; el.classList.add('show');
     }
 
-    function checkSavedKey() {
-      const savedKey    = localStorage.getItem('ntt_generated_key');
-      const savedDomain = localStorage.getItem('ntt_key_domain');
-      const savedHwid   = localStorage.getItem('ntt_key_hwid');
-      const curHwid     = generateHWID();
+    function show(id) {
+      document.getElementById(id).classList.add('show');
+    }
+    function hide(id) {
+      document.getElementById(id).classList.remove('show');
+      document.getElementById(id).style.display = 'none';
+    }
 
-      // Khác domain hoặc khác hwid → xóa key cũ, không hiện
-      if (savedKey && (savedDomain !== domain || savedHwid !== curHwid)) {
-        localStorage.removeItem('ntt_generated_key');
-        localStorage.removeItem('ntt_key_domain');
-        localStorage.removeItem('ntt_key_hwid');
-        return false;
-      }
-
-      // Đúng domain + đúng hwid → hiện lại key
-      if (savedKey && savedDomain === domain && savedHwid === curHwid) {
-        document.getElementById('domainDisplay').textContent = domain;
-        markStepComplete('start');
-        document.getElementById('step1Card').style.display = 'flex';
-        markStepComplete(1);
-        const section = document.getElementById('createSection');
-        section.style.display = 'block';
-        section.classList.add('active');
-        document.getElementById('createKeyBtn').style.display = 'none';
-        document.getElementById('keyValue').textContent = savedKey;
-        document.getElementById('keyResult').classList.add('active');
-        return true;
-      }
-      return false;
+    // Ẩn tất cả các block trước
+    function resetBlocks() {
+      ['blockStart','blockStep1','blockStep2','blockGenerate'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('show'); el.style.display = 'none';
+      });
     }
 
     async function loadSettings() {
-      if (!domain) { showError('No domain specified'); return; }
+      if (!domain) { showError('No domain specified.'); return; }
       try {
         const res  = await fetch(`${API_BASE}/?type=get_settings_by_domain&domain=${encodeURIComponent(domain)}`);
         const data = await res.json();
-        if (!data.success) { showError('Domain not found'); return; }
+        if (!data.success) { showError('Domain not found.'); return; }
 
         settings = data.settings;
-        document.getElementById('domainDisplay').textContent = settings.website_domain;
-
-        // Start link của hệ thống, destination phải là: /key.html?start_done&hash={hash}
-        document.getElementById('startBtn').href = settings.start_link;
-
-        if (settings.ad_steps === 2) document.getElementById('step2Card').style.display = 'flex';
+        document.getElementById('domainLabel').textContent = settings.website_domain;
+        document.getElementById('btnStart').href = settings.start_link;
 
         hwid = localStorage.getItem('ntt_hwid') || generateHWID();
         localStorage.setItem('ntt_hwid', hwid);
 
-        await checkProgress();
-        setInterval(checkProgress, 4000);
-      } catch { showError('Failed to load settings'); }
+        await renderProgress();
+        setInterval(renderProgress, 4000);
+      } catch { showError('Failed to load.'); }
     }
 
-    document.getElementById('startBtn').addEventListener('click', () => {
-      // Lưu domain + hwid trước khi rời trang sang Linkvertise
-      localStorage.setItem('ntt_domain', domain);
-      localStorage.setItem('ntt_hwid', hwid || generateHWID());
-    });
-
-    async function checkProgress() {
+    async function renderProgress() {
       if (!hwid || !settings) return;
+
+      // Kiểm tra key đã lưu
+      const savedKey    = localStorage.getItem('ntt_generated_key');
+      const savedDomain = localStorage.getItem('ntt_key_domain');
+      const savedHwid   = localStorage.getItem('ntt_key_hwid');
+      if (savedKey && savedDomain === domain && savedHwid === hwid) {
+        showKey(savedKey); return;
+      }
+
       try {
         const res  = await fetch(`${API_BASE}/?type=progress&hwid=${encodeURIComponent(hwid)}`);
         const data = await res.json();
-        if (!data.status) return;
 
-        if (data.start) {
-          markStepComplete('start');
+        resetBlocks();
+
+        if (!data.status) {
+          // Chưa có session → chỉ hiện nút Start
+          show('blockStart');
+          return;
         }
 
         if (data.step1) {
-          // step1 done = start cũng done
-          markStepComplete('start');
-          markStepComplete(1);
-          if (settings.ad_steps === 1) {
-            showCreateButton();
-          } else if (data.step2) {
-            markStepComplete(2);
-            showCreateButton();
+          if (settings.ad_steps === 2 && !data.step2) {
+            // Xong step1, cần step2
+            show('blockStep2');
           } else {
-            enableStep2();
+            // Đủ điều kiện → hiện Generate
+            show('blockGenerate');
           }
         } else if (data.start) {
-          // start done nhưng chưa step1
-          enableStep1();
+          // Xong Start → hiện Step 1
+          show('blockStep1');
+        } else {
+          // Chưa làm gì → Start
+          show('blockStart');
         }
       } catch {}
     }
 
-    function enableStep1() {
-      const card = document.getElementById('step1Card');
-      card.style.display = 'flex'; card.classList.add('active-step');
-      const btn = document.getElementById('step1Btn');
-      btn.disabled = false;
-      btn.onclick = () => {
-        localStorage.setItem('ntt_domain', domain);
-        localStorage.setItem('ntt_hwid', hwid);
-        window.open(settings.step1_link, '_blank');
-      };
+    function showKey(key) {
+      resetBlocks();
+      document.getElementById('keyValue').textContent = key;
+      document.getElementById('keyResult').classList.add('show');
     }
 
-    function enableStep2() {
-      const card = document.getElementById('step2Card');
-      card.style.display = 'flex'; card.classList.add('active-step');
-      const btn = document.getElementById('step2Btn');
-      btn.disabled = false;
-      btn.onclick = () => {
-        localStorage.setItem('ntt_domain', domain);
-        localStorage.setItem('ntt_hwid', hwid);
-        window.open(settings.step2_link, '_blank');
-      };
-    }
+    // Start btn
+    document.getElementById('btnStart').addEventListener('click', () => {
+      localStorage.setItem('ntt_domain', domain);
+      localStorage.setItem('ntt_hwid', hwid || generateHWID());
+    });
 
-    function markStepComplete(step) {
-      const id   = step === 'start' ? 'startCard' : `step${step}Card`;
-      const card = document.getElementById(id);
-      card.classList.remove('active-step'); card.classList.add('completed');
-      const btn = card.querySelector('.btn');
-      btn.className = 'btn btn-success';
-      btn.innerHTML = '<span class="checkmark">✓</span> Completed';
-      btn.style.pointerEvents = 'none';
-    }
+    // Step 1 btn
+    document.getElementById('btnStep1').addEventListener('click', () => {
+      if (!settings?.step1_link) return;
+      localStorage.setItem('ntt_domain', domain);
+      localStorage.setItem('ntt_hwid', hwid);
+      window.open(settings.step1_link, '_blank');
+    });
 
-    function showCreateButton() {
-      const s = document.getElementById('createSection');
-      s.style.display = 'block'; s.classList.add('active');
-    }
+    // Step 2 btn
+    document.getElementById('btnStep2').addEventListener('click', () => {
+      if (!settings?.step2_link) return;
+      localStorage.setItem('ntt_domain', domain);
+      localStorage.setItem('ntt_hwid', hwid);
+      window.open(settings.step2_link, '_blank');
+    });
 
-    async function completeStep(step) {
-      try {
-        const res  = await fetch(`${API_BASE}/?type=complete_step`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hwid, step, hash, domain }),
-        });
-        const data = await res.json();
-        return data.success;
-      } catch { return false; }
-    }
-
-    document.getElementById('createKeyBtn').addEventListener('click', async () => {
-      const btn = document.getElementById('createKeyBtn');
+    // Generate btn
+    document.getElementById('btnGenerate').addEventListener('click', async () => {
+      const btn = document.getElementById('btnGenerate');
       btn.disabled = true; btn.textContent = 'Generating...';
       try {
         const res  = await fetch(`${API_BASE}/?type=create_key`, {
@@ -308,84 +299,86 @@
         });
         const data = await res.json();
         if (data.success) {
-          document.getElementById('keyValue').textContent = data.key;
-          document.getElementById('keyCount').textContent = data.total_keys || 1;
-          document.getElementById('keyResult').classList.add('active');
-          btn.style.display = 'none';
-          // Lưu key để không mất khi reload — gắn với hwid + domain
-          localStorage.setItem('ntt_generated_key',    data.key);
-          localStorage.setItem('ntt_key_domain',       domain);
-          localStorage.setItem('ntt_key_hwid',         hwid);
+          localStorage.setItem('ntt_generated_key', data.key);
+          localStorage.setItem('ntt_key_domain', domain);
+          localStorage.setItem('ntt_key_hwid', hwid);
           localStorage.removeItem('ntt_domain');
           localStorage.removeItem('ntt_hwid');
+          showKey(data.key);
         } else {
-          showError(data.error || 'Failed to create key');
+          showError(data.error || 'Failed.');
           btn.disabled = false; btn.textContent = 'Generate Key';
         }
       } catch {
-        showError('Connection error');
+        showError('Connection error.');
         btn.disabled = false; btn.textContent = 'Generate Key';
       }
     });
 
-    document.getElementById('copyBtn').addEventListener('click', () => {
+    // Copy btn
+    document.getElementById('btnCopy').addEventListener('click', () => {
       navigator.clipboard.writeText(document.getElementById('keyValue').textContent).then(() => {
-        const btn = document.getElementById('copyBtn');
+        const btn = document.getElementById('btnCopy');
         btn.textContent = '✓ Copied!';
         setTimeout(() => { btn.textContent = 'Copy Key'; }, 2000);
       });
     });
 
-    // ═══════════════════════════════════════════════════════
-    // INIT
-    // ═══════════════════════════════════════════════════════
-    async function init() {
+    // ── INIT ─────────────────────────────────────────────
+    async function completeStep(step) {
+      try {
+        const res  = await fetch(`${API_BASE}/?type=complete_step`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hwid, step, hash, domain }),
+        });
+        return (await res.json()).success;
+      } catch { return false; }
+    }
 
-      // ── Callback từ Linkvertise (có start_done / step1_done / step2_done) ──
+    async function init() {
+      // Callback từ Linkvertise
       if (isCallback) {
-        // domain: ưu tiên từ URL, fallback localStorage (khi admin link không có domain)
         domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
         hwid   = localStorage.getItem('ntt_hwid') || generateHWID();
 
-        if (!domain) {
-          showError('Session lost. Please go back and start over.');
-          return;
-        }
-
+        if (!domain) { showError('Session lost. Please start over.'); return; }
         if (!hasValidHash) {
-          showError('Invalid access detected.');
-          setTimeout(() => window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`), 1500);
+          showError('Invalid access.');
+          setTimeout(() => window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`), 1200);
           return;
         }
 
-        // Lưu lại để chắc chắn
         localStorage.setItem('ntt_domain', domain);
-        localStorage.setItem('ntt_hwid',   hwid);
+        localStorage.setItem('ntt_hwid', hwid);
 
         const step = isStartDone ? 'start' : isStep1Done ? 1 : 2;
         const ok   = await completeStep(step);
-
-        if (ok) {
-          window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
-        } else {
-          showError('Verification failed. Redirecting...');
-          setTimeout(() => window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`), 2000);
-        }
+        window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
         return;
       }
 
-      // ── Normal flow: ?domain=xxx ─────────────────────────
-      if (urlParams.get('domain')) {
-        localStorage.setItem('ntt_domain', domain);
-      }
+      // Normal load
+      if (urlParams.get('domain')) localStorage.setItem('ntt_domain', domain);
+      if (!domain) { showError('No domain specified.'); return; }
 
-      if (!domain) {
-        showError('No domain specified. Please use the correct link.');
+      // Kiểm tra key đã có trước khi load settings
+      const savedKey    = localStorage.getItem('ntt_generated_key');
+      const savedDomain = localStorage.getItem('ntt_key_domain');
+      const savedHwid   = localStorage.getItem('ntt_key_hwid');
+      const curHwid     = generateHWID();
+
+      if (savedKey && savedDomain === domain && savedHwid === curHwid) {
+        document.getElementById('domainLabel').textContent = domain;
+        showKey(savedKey);
         return;
       }
 
-      // Nếu đã có key đúng domain + hwid → hiện luôn, không cần load lại
-      if (checkSavedKey()) return;
+      // Xóa key cũ nếu domain/hwid khác
+      if (savedKey) {
+        localStorage.removeItem('ntt_generated_key');
+        localStorage.removeItem('ntt_key_domain');
+        localStorage.removeItem('ntt_key_hwid');
+      }
 
       await loadSettings();
     }
