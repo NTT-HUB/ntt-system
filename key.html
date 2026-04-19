@@ -171,6 +171,8 @@
     async function renderProgress() {
       if (!hwid || !settings) return;
 
+      if (document.getElementById('keyResult').classList.contains('show')) return;
+
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
@@ -237,15 +239,16 @@
 
     async function showKey(key, secondsLeft) {
       resetBlocks();
-      document.getElementById('keyValue').textContent = key;
+      document.getElementById('keyResult').style.display = '';
       document.getElementById('keyResult').classList.add('show');
+      document.getElementById('keyValue').textContent = key;
 
       if (secondsLeft !== undefined) {
         startCountdown(secondsLeft);
       } else {
 
         try {
-          const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}`);
+          const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}&domain=${encodeURIComponent(domain)}`);
           const d = await r.json();
           startCountdown(d.left || 0);
         } catch {
