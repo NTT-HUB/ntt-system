@@ -606,8 +606,13 @@ end`;
       document.getElementById('decodeCode').textContent = code;
       document.getElementById('howToUseCode').textContent = '';
 
-      const howTo = `local done, fail = pcall(function()
-    key = game:HttpGet(_G.getlink)
+      const howTo = `local you_hwid = gethwid() -- or your custom hwid
+local function domain_control(x)
+    return game:HttpGet("https://s"..math.random(1,4)..".ntt-system.xyz/?type=data&hwid="..x)
+end
+
+local done, fail = pcall(function()
+    key = domain_control(you_hwid)
 end)
 
 if done then
@@ -616,6 +621,7 @@ if done then
         key = key_decode(key, "${encodeKey}")
         key = string.split(key, "|")
         _G.table_key_system = {key[1], tonumber(key[2])}
+        print(_G.table_key_system[1], _G.table_key_system[2]) -- 1: key, 2: Time
 
         -- Add your script execution here
 
