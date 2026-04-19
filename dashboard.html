@@ -8,11 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
       --primary: #00ff9d;
@@ -28,323 +24,141 @@
       --error: #ff4d6d;
     }
 
-    body {
-      font-family: 'IBM Plex Mono', monospace;
-      background: var(--bg-dark);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    body { font-family: 'IBM Plex Mono', monospace; background: var(--bg-dark); color: var(--text); min-height: 100vh; }
 
     .header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      background: var(--surface); border-bottom: 1px solid var(--border);
       padding: 1.5rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
     }
 
     .logo {
-      font-family: 'Oswald', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 700;
+      font-family: 'Oswald', sans-serif; font-size: 1.5rem; font-weight: 700;
       background: linear-gradient(135deg, var(--primary), #6366f1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .username {
-      color: var(--text);
-      font-weight: 600;
-    }
+    .user-info { display: flex; align-items: center; gap: 1rem; }
+    .username  { color: var(--text); font-weight: 600; }
 
     .btn-sm {
       padding: 0.5rem 1rem;
-      background: var(--bg-darker);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
+      background: var(--bg-darker); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.875rem;
+      cursor: pointer; transition: all 0.3s ease; text-decoration: none;
     }
+    .btn-sm:hover { background: var(--surface-hover); border-color: var(--primary); color: var(--primary); }
 
-    .btn-sm:hover {
-      background: var(--surface-hover);
-      border-color: var(--primary);
-      color: var(--primary);
-    }
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    .page-title {
-      font-family: 'Oswald', sans-serif;
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .page-desc {
-      color: var(--text-dim);
-      margin-bottom: 2rem;
-    }
+    .page-title { font-family: 'Oswald', sans-serif; font-size: 2rem; margin-bottom: 0.5rem; }
+    .page-desc  { color: var(--text-dim); margin-bottom: 2rem; }
 
     .section {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 1.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem;
     }
 
     .section-title {
-      font-family: 'Oswald', sans-serif;
-      font-size: 1.25rem;
-      margin-bottom: 1.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-family: 'Oswald', sans-serif; font-size: 1.25rem;
+      margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em;
     }
 
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
+    .form-group { margin-bottom: 1.5rem; }
 
     label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      display: block; margin-bottom: 0.5rem;
+      font-size: 0.875rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
     }
 
     .label-desc {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      font-weight: 400;
-      text-transform: none;
-      letter-spacing: normal;
-      margin-top: 0.25rem;
+      font-size: 0.75rem; color: var(--text-dim);
+      font-weight: 400; text-transform: none; letter-spacing: normal; margin-top: 0.25rem;
     }
 
-    input[type="text"],
-    input[type="number"],
-    select {
-      width: 100%;
-      padding: 0.875rem 1rem;
-      background: var(--bg-darker);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.9375rem;
-      transition: all 0.3s ease;
-      outline: none;
+    input[type="text"], input[type="number"], input[type="password"], select {
+      width: 100%; padding: 0.875rem 1rem;
+      background: var(--bg-darker); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.9375rem;
+      transition: all 0.3s ease; outline: none;
     }
-
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    select:focus {
+    input:focus, select:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.1);
+      box-shadow: 0 0 0 3px rgba(0,255,157,0.1);
     }
+    input::placeholder { color: var(--text-dim); }
 
-    input::placeholder {
-      color: var(--text-dim);
-    }
+    .char-counter { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
+    .char-counter.warning { color: var(--warning); }
+    .char-counter.error   { color: var(--error); }
 
-    .char-counter {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      margin-top: 0.25rem;
-    }
-
-    .char-counter.warning {
-      color: var(--warning);
-    }
-
-    .char-counter.error {
-      color: var(--error);
-    }
-
-    .radio-group {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .radio-option {
-      flex: 1;
-      position: relative;
-    }
-
-    .radio-option input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-    }
-
+    .radio-group  { display: flex; gap: 1rem; }
+    .radio-option { flex: 1; position: relative; }
+    .radio-option input[type="radio"] { position: absolute; opacity: 0; }
     .radio-label {
-      display: block;
-      padding: 1rem;
-      background: var(--bg-darker);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 600;
+      display: block; padding: 1rem;
+      background: var(--bg-darker); border: 2px solid var(--border);
+      border-radius: 8px; text-align: center;
+      cursor: pointer; transition: all 0.3s ease; font-weight: 600;
     }
-
     .radio-option input[type="radio"]:checked + .radio-label {
-      background: rgba(0, 255, 157, 0.1);
-      border-color: var(--primary);
-      color: var(--primary);
+      background: rgba(0,255,157,0.1); border-color: var(--primary); color: var(--primary);
     }
+    .radio-label:hover { border-color: var(--primary); }
 
-    .radio-label:hover {
-      border-color: var(--primary);
-    }
-
-    .link-inputs {
-      display: none;
-      margin-top: 1rem;
-    }
-
-    .link-inputs.active {
-      display: block;
-      animation: slideDown 0.3s ease;
-    }
+    .link-inputs { display: none; margin-top: 1rem; }
+    .link-inputs.active { display: block; animation: slideDown 0.3s ease; }
 
     @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    .link-item {
-      background: var(--bg-darker);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .link-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .link-label {
-      font-size: 0.875rem;
-      color: var(--text-dim);
-      margin-bottom: 0.5rem;
-    }
-
+    .link-item { background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    .link-item:last-child { margin-bottom: 0; }
+    .link-label  { font-size: 0.875rem; color: var(--text-dim); margin-bottom: 0.5rem; }
     .link-preview {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 0.75rem;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      color: var(--primary);
-      word-break: break-all;
-      margin-top: 0.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 0.75rem; border-radius: 6px;
+      font-size: 0.875rem; color: var(--primary); word-break: break-all; margin-top: 0.5rem;
     }
 
     .btn-primary {
-      width: 100%;
-      padding: 1rem;
-      background: var(--primary);
-      color: var(--bg-dark);
-      border: none;
-      border-radius: 8px;
-      font-family: 'Oswald', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      width: 100%; padding: 1rem;
+      background: var(--primary); color: var(--bg-dark);
+      border: none; border-radius: 8px;
+      font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      cursor: pointer; transition: all 0.3s ease;
     }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,255,157,0.3); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 255, 157, 0.3);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-
-    .message {
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      display: none;
-    }
-
-    .message.show {
-      display: block;
-      animation: slideDown 0.3s ease;
-    }
-
-    .message.success {
-      background: rgba(0, 255, 157, 0.1);
-      border: 1px solid var(--primary);
-      color: var(--primary);
-    }
-
-    .message.error {
-      background: rgba(255, 77, 109, 0.1);
-      border: 1px solid var(--error);
-      color: var(--error);
-    }
+    .message { padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.875rem; font-weight: 600; display: none; }
+    .message.show { display: block; animation: slideDown 0.3s ease; }
+    .message.success { background: rgba(0,255,157,0.1); border: 1px solid var(--primary); color: var(--primary); }
+    .message.error   { background: rgba(255,77,109,0.1); border: 1px solid var(--error);   color: var(--error); }
 
     .warning-box {
-      background: rgba(251, 191, 36, 0.1);
-      border: 1px solid var(--warning);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.875rem;
-      color: var(--warning);
+      background: rgba(251,191,36,0.1); border: 1px solid var(--warning);
+      border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;
+      font-size: 0.875rem; color: var(--warning);
     }
+    .warning-box strong { display: block; margin-bottom: 0.5rem; }
 
-    .warning-box strong {
-      display: block;
-      margin-bottom: 0.5rem;
+    .info-notice {
+      background: rgba(0,255,157,0.05); border: 1px solid rgba(0,255,157,0.2);
+      border-radius: 8px; padding: 1rem; margin-bottom: 1rem;
+      font-size: 0.875rem; color: var(--text-dim);
     }
 
     @media (max-width: 768px) {
-      .radio-group {
-        flex-direction: column;
-      }
-
-      .container {
-        padding: 1rem;
-      }
+      .radio-group { flex-direction: column; }
+      .container   { padding: 1rem; }
     }
   </style>
 </head>
@@ -361,152 +175,107 @@
     <h1 class="page-title">Dashboard</h1>
     <p class="page-desc">Manage your key generator settings</p>
 
-    <!-- Total Keys Display -->
-    <div style="background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 16px; padding: 2.5rem; margin-bottom: 2rem; text-align: center; box-shadow: 0 8px 24px rgba(0, 255, 157, 0.2);">
-      <div style="font-size: 0.875rem; color: rgba(10, 14, 26, 0.8); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 600;">Total Keys Created</div>
+    <!-- Total Keys -->
+    <div style="background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 16px; padding: 2.5rem; margin-bottom: 2rem; text-align: center; box-shadow: 0 8px 24px rgba(0,255,157,0.2);">
+      <div style="font-size: 0.875rem; color: rgba(10,14,26,0.8); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 600;">Total Keys Created</div>
       <div style="font-family: 'Oswald', sans-serif; font-size: 4rem; font-weight: 800; color: var(--bg-dark); line-height: 1;" id="totalKeys">0</div>
-      <div style="font-size: 0.75rem; color: rgba(10, 14, 26, 0.6); margin-top: 0.5rem;">System Total: <span id="systemTotalKeys">0</span> keys</div>
+      <div style="font-size: 0.75rem; color: rgba(10,14,26,0.6); margin-top: 0.5rem;">System Total: <span id="systemTotalKeys">0</span> keys</div>
     </div>
 
-    <!-- Tabs Navigation -->
+    <!-- Tabs -->
     <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; background: var(--bg-darker); padding: 0.5rem; border-radius: 12px;">
-      <button class="tab-btn active" data-tab="main" style="flex: 1; padding: 0.875rem; background: var(--surface); border: none; color: var(--primary); font-family: 'Oswald', sans-serif; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; border-radius: 8px; transition: all 0.3s ease;">Main</button>
-      <button class="tab-btn" data-tab="account" style="flex: 1; padding: 0.875rem; background: transparent; border: none; color: var(--text-dim); font-family: 'Oswald', sans-serif; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; border-radius: 8px; transition: all 0.3s ease;">Account</button>
+      <button class="tab-btn active" data-tab="main"    style="flex:1;padding:0.875rem;background:var(--surface);border:none;color:var(--primary);font-family:'Oswald',sans-serif;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;border-radius:8px;transition:all 0.3s ease;">Main</button>
+      <button class="tab-btn"        data-tab="account" style="flex:1;padding:0.875rem;background:transparent;border:none;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;border-radius:8px;transition:all 0.3s ease;">Account</button>
     </div>
 
     <div id="message" class="message"></div>
 
-    <!-- Main Tab Content -->
-    <div id="mainTab" class="tab-content" style="display: block;">
+    <!-- ══ MAIN TAB ════════════════════════════════════════ -->
+    <div id="mainTab" class="tab-content">
 
-    <form id="settingsForm">
       <!-- Website Domain -->
       <div class="section">
         <h2 class="section-title">Website Configuration</h2>
-        
         <div class="form-group">
           <label>
             Website Domain Name
             <span class="label-desc">Custom name for your website (default is username, max 15 chars)</span>
           </label>
-          <input 
-            type="text" 
-            id="websiteDomain" 
-            placeholder="e.g., myhub, myproject, etc."
-            maxlength="15"
-          >
+          <input type="text" id="websiteDomain" placeholder="e.g., myhub, myproject..." maxlength="15">
           <div class="char-counter" id="websiteCounter">0/15 characters</div>
         </div>
-
-        <button type="button" class="btn-primary" id="saveWebsiteBtn" style="margin-top: 1rem;">
-          Save Website Settings
-        </button>
+        <button type="button" class="btn-primary" id="saveWebsiteBtn" style="margin-top:1rem;">Save Website Settings</button>
       </div>
 
-      <!-- Key Domain -->
+      <!-- Key Settings -->
       <div class="section">
         <h2 class="section-title">Key Settings</h2>
-        
         <div class="form-group">
           <label>
             Key Domain Prefix
-            <span class="label-desc">Max 6 characters - Keys will be generated as: prefix_xxxxxxx</span>
+            <span class="label-desc">Max 6 characters — keys will look like: prefix_xxxxxxx</span>
           </label>
-          <input 
-            type="text" 
-            id="keyDomain" 
-            placeholder="KEY"
-            value="KEY"
-            maxlength="6"
-            required
-          >
+          <input type="text" id="keyDomain" placeholder="KEY" value="KEY" maxlength="6">
           <div class="char-counter" id="keyCounter">3/6 characters</div>
         </div>
-
         <div class="form-group">
           <label>Key Preview</label>
           <div class="link-preview" id="keyPreview">KEY_1234567</div>
         </div>
-
         <div class="form-group">
           <label>
             Encode Key
             <span class="label-desc">Secret key for encoding/decoding (default: ntt-hub, max 10 chars)</span>
           </label>
-          <input 
-            type="text" 
-            id="encodeKey" 
-            placeholder="ntt-hub"
-            value="ntt-hub"
-            maxlength="10"
-            required
-          >
+          <input type="text" id="encodeKey" placeholder="ntt-hub" value="ntt-hub" maxlength="10">
         </div>
-
-        <button type="button" class="btn-primary" id="saveKeyBtn" style="margin-top: 1rem;">
-          Save Key Settings
-        </button>
+        <button type="button" class="btn-primary" id="saveKeyBtn" style="margin-top:1rem;">Save Key Settings</button>
       </div>
 
-      <!-- Linkvertise API -->
+      <!-- Linkvertise -->
       <div class="section">
         <h2 class="section-title">Linkvertise Configuration</h2>
-        
         <div class="form-group">
           <label>
             Linkvertise API Token
             <span class="label-desc">Your anti-bypass API token from Linkvertise</span>
           </label>
-          <input 
-            type="text" 
-            id="linkvertiseToken" 
-            placeholder="Enter your Linkvertise API token"
-            maxlength="50"
-            required
-          >
+          <input type="text" id="linkvertiseToken" placeholder="Enter your Linkvertise API token" maxlength="200">
         </div>
-
-        <button type="button" class="btn-primary" id="saveLinkvertiseBtn" style="margin-top: 1rem;">
-          Save Linkvertise Settings
-        </button>
+        <button type="button" class="btn-primary" id="saveLinkvertiseBtn" style="margin-top:1rem;">Save Linkvertise Settings</button>
       </div>
 
       <!-- Discord Webhook -->
       <div class="section">
         <h2 class="section-title">Discord Notifications</h2>
-        
         <div class="form-group">
           <label>
             Discord Webhook URL
             <span class="label-desc">Receive notifications when users generate keys (optional)</span>
           </label>
-          <input 
-            type="text" 
-            id="discordWebhook" 
-            placeholder="https://discord.com/api/webhooks/..."
-            maxlength="200"
-          >
+          <input type="text" id="discordWebhook" placeholder="https://discord.com/api/webhooks/..." maxlength="200">
         </div>
-
-        <button type="button" class="btn-primary" id="saveDiscordBtn" style="margin-top: 1rem;">
-          Save Discord Settings
-        </button>
+        <button type="button" class="btn-primary" id="saveDiscordBtn" style="margin-top:1rem;">Save Discord Settings</button>
       </div>
 
-      <!-- Ad Steps -->
+      <!-- Ad Steps — chỉ cho user đặt link step1 và step2 -->
       <div class="section">
         <h2 class="section-title">Advertisement Steps</h2>
-        
+
+        <div class="info-notice">
+          ℹ️ The <strong>Start</strong> step is managed by the system. You can only configure Step 1 and Step 2 links below.
+        </div>
+
         <div class="form-group">
           <label>Number of Ad Steps</label>
           <div class="radio-group">
             <div class="radio-option">
-              <input type="radio" name="adSteps" id="step1" value="1" checked>
-              <label for="step1" class="radio-label">1 Step</label>
+              <input type="radio" name="adSteps" id="adStep1" value="1" checked>
+              <label for="adStep1" class="radio-label">1 Step</label>
             </div>
             <div class="radio-option">
-              <input type="radio" name="adSteps" id="step2" value="2">
-              <label for="step2" class="radio-label">2 Steps</label>
+              <input type="radio" name="adSteps" id="adStep2" value="2">
+              <label for="adStep2" class="radio-label">2 Steps</label>
             </div>
           </div>
         </div>
@@ -516,192 +285,105 @@
           Linkvertise requires unique URLs. Make sure each link has a different query parameter.
         </div>
 
-        <!-- Link Inputs -->
         <div id="linkInputs" class="link-inputs">
-          <!-- Step 1 Link -->
+          <!-- Step 1 -->
           <div class="link-item">
-            <div class="link-label">Step 1 - Linkvertise Shortened URL</div>
-            <input 
-              type="text" 
-              id="step1Link" 
-              placeholder="https://linkvertise.com/..."
-              required
-            >
-            <div class="link-label" style="margin-top: 1rem;">Destination URL (copy this to Linkvertise):</div>
+            <div class="link-label">Step 1 — Linkvertise Shortened URL</div>
+            <input type="text" id="step1Link" placeholder="https://linkvertise.com/...">
+            <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
             <div class="link-preview" id="step1Dest">https://ntt-system.pages.dev/key?domain=USERNAME&step1</div>
           </div>
 
-          <!-- Step 2 Link (only if 2 steps selected) -->
-          <div class="link-item" id="step2Container" style="display: none;">
-            <div class="link-label">Step 2 - Linkvertise Shortened URL</div>
-            <input 
-              type="text" 
-              id="step2Link" 
-              placeholder="https://linkvertise.com/..."
-            >
-            <div class="link-label" style="margin-top: 1rem;">Destination URL (copy this to Linkvertise):</div>
+          <!-- Step 2 -->
+          <div class="link-item" id="step2Container" style="display:none;">
+            <div class="link-label">Step 2 — Linkvertise Shortened URL</div>
+            <input type="text" id="step2Link" placeholder="https://linkvertise.com/...">
+            <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
             <div class="link-preview" id="step2Dest">https://ntt-system.pages.dev/key?domain=USERNAME&step2</div>
           </div>
         </div>
 
-        <button type="button" class="btn-primary" id="saveAdStepsBtn" style="margin-top: 1rem;">
-          Save Ad Steps Settings
-        </button>
+        <button type="button" class="btn-primary" id="saveAdStepsBtn" style="margin-top:1rem;">Save Ad Steps Settings</button>
       </div>
 
-      <button type="submit" class="btn-primary" id="saveBtn" style="display: none;">
-        Save Settings
-      </button>
-    </form>
+      <!-- Decode Code -->
+      <div class="section" style="margin-top:2rem;">
+        <h2 class="section-title">Code: Decode Key</h2>
 
-    <!-- Decode Code Section -->
-    <div class="section" style="margin-top: 2rem;">
-      <h2 class="section-title">Code: Decode Key</h2>
-      
-      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-        <div style="font-size: 0.875rem; color: var(--text-dim); margin-bottom: 0.5rem;">
-          <strong>Your Key URL:</strong>
-        </div>
-        <div style="font-family: 'IBM Plex Mono', monospace; color: var(--primary); font-size: 0.875rem;" id="keyUrlDisplay">
-          https://ntt-system.pages.dev/key?id=username
-        </div>
-      </div>
-
-      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-        <div style="font-size: 0.875rem; color: var(--text-dim); margin-bottom: 0.5rem;">
-          <strong>Usage Instructions:</strong>
-        </div>
-        <div style="font-family: 'IBM Plex Mono', monospace; color: var(--text); font-size: 0.875rem;">
-          https://ntt-system.pages.dev/key?id=<span id="usernameInUrl" style="color: var(--primary);">username</span>&hwid=<span style="color: var(--warning);">{your_hwid}</span>
-        </div>
-      </div>
-
-      <div class="warning-box" style="margin-bottom: 1rem;">
-        <strong>📋 Copy this code to use in your Roblox script</strong>
-      </div>
-      
-      <div style="background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; position: relative;">
-        <button id="copyCodeBtn" style="position: absolute; top: 1rem; right: 1rem; padding: 0.5rem 1rem; background: var(--primary); color: var(--bg-dark); border: none; border-radius: 6px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 600;">
-          Copy Code
-        </button>
-        <pre id="decodeCode" style="margin: 0; color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 0.875rem; overflow-x: auto; white-space: pre-wrap; padding-right: 5rem;">Loading...</pre>
-      </div>
-    </div>
-
-    <!-- How to Use Section -->
-    <div class="section" style="margin-top: 1.5rem;">
-      <h2 class="section-title">How to Use</h2>
-      <div style="background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; position: relative;">
-        <button id="copyHowToUseBtn" style="position: absolute; top: 1rem; right: 1rem; padding: 0.5rem 1rem; background: var(--primary); color: var(--bg-dark); border: none; border-radius: 6px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 600;">
-          Copy Code
-        </button>
-        <pre id="howToUseCode" style="margin: 0; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; font-size: 0.875rem; overflow-x: auto; white-space: pre-wrap; line-height: 1.6; padding-right: 5rem;">local done, fail = pcall(function()
-    key = game:HttpGet(_G.getlink)
-end)
-
-if done then
-    if string.find(key, "|") then
-        print(key)
-        key = key_decode(key, "<span id="encodeKeyPlaceholder" style="color: var(--primary);">ntt-hub</span>")
-        key = string.split(key, "|")
-        _G.table_key_system = {key[1], tonumber(key[2])}
-        
-        -- You can add script execution here without requiring key input
-        
-    else
-        print("Fetch Failed or No Key Available")
-    end
-else
-    print(fail)
-end</pre>
-      </div>
-    </div>
-
-      <button type="submit" class="btn-primary" id="saveBtn" style="display: none;">
-        Save Settings
-      </button>
-    </form>
-    </div>
-
-    <!-- Account Tab Content -->
-    <div id="accountTab" class="tab-content" style="display: none;">
-      <form id="accountForm">
-        <!-- Change Username -->
-        <div class="section">
-          <h2 class="section-title">Change Username</h2>
-          
-          <div class="form-group">
-            <label>Current Username</label>
-            <input type="text" id="currentUsername" readonly style="background: var(--surface); cursor: not-allowed;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>API Data URL:</strong></div>
+          <div style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:0.875rem;" id="keyUrlDisplay">
+            https://ntt-system.pages.dev/key?id=username
           </div>
-
-          <div class="form-group">
-            <label>
-              New Username
-              <span class="label-desc">3-15 characters, letters, numbers, spaces, underscore only</span>
-            </label>
-            <input 
-              type="text" 
-              id="newUsername" 
-              placeholder="Enter new username"
-              minlength="3"
-              maxlength="15"
-              pattern="[a-zA-Z0-9_ ]+"
-            >
-          </div>
-
-          <button type="button" class="btn-primary" id="changeUsernameBtn" style="margin-bottom: 2rem;">
-            Update Username
-          </button>
         </div>
 
-        <!-- Change Password -->
-        <div class="section">
-          <h2 class="section-title">Change Password</h2>
-          
-          <div class="form-group">
-            <label>Current Password</label>
-            <input 
-              type="password" 
-              id="currentPassword" 
-              placeholder="Enter current password"
-              autocomplete="current-password"
-            >
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Usage with HWID:</strong></div>
+          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;">
+            https://ntt-system.pages.dev/key?id=<span id="usernameInUrl" style="color:var(--primary);">username</span>&hwid=<span style="color:var(--warning);">{your_hwid}</span>
           </div>
-
-          <div class="form-group">
-            <label>
-              New Password
-              <span class="label-desc">6-20 characters</span>
-            </label>
-            <input 
-              type="password" 
-              id="newPassword" 
-              placeholder="Enter new password"
-              minlength="6"
-              maxlength="20"
-              autocomplete="new-password"
-            >
-          </div>
-
-          <div class="form-group">
-            <label>Confirm New Password</label>
-            <input 
-              type="password" 
-              id="confirmPassword" 
-              placeholder="Confirm new password"
-              minlength="6"
-              maxlength="20"
-              autocomplete="new-password"
-            >
-          </div>
-
-          <button type="button" class="btn-primary" id="changePasswordBtn">
-            Update Password
-          </button>
         </div>
-      </form>
-    </div>
+
+        <div class="warning-box" style="margin-bottom:1rem;">
+          <strong>📋 Copy this Lua code into your Roblox script</strong>
+        </div>
+
+        <div style="background:var(--bg-darker);border:1px solid var(--border);border-radius:8px;padding:1rem;position:relative;">
+          <button id="copyCodeBtn" style="position:absolute;top:1rem;right:1rem;padding:0.5rem 1rem;background:var(--primary);color:var(--bg-dark);border:none;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;">Copy Code</button>
+          <pre id="decodeCode" style="margin:0;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;overflow-x:auto;white-space:pre-wrap;padding-right:5rem;">Loading...</pre>
+        </div>
+      </div>
+
+      <!-- How to Use -->
+      <div class="section" style="margin-top:1.5rem;">
+        <h2 class="section-title">How to Use</h2>
+        <div style="background:var(--bg-darker);border:1px solid var(--border);border-radius:8px;padding:1rem;position:relative;">
+          <button id="copyHowToUseBtn" style="position:absolute;top:1rem;right:1rem;padding:0.5rem 1rem;background:var(--primary);color:var(--bg-dark);border:none;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;">Copy Code</button>
+          <pre id="howToUseCode" style="margin:0;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;overflow-x:auto;white-space:pre-wrap;line-height:1.6;padding-right:5rem;">Loading...</pre>
+        </div>
+      </div>
+
+    </div><!-- end mainTab -->
+
+    <!-- ══ ACCOUNT TAB ════════════════════════════════════ -->
+    <div id="accountTab" class="tab-content" style="display:none;">
+
+      <!-- Change Username -->
+      <div class="section">
+        <h2 class="section-title">Change Username</h2>
+        <div class="form-group">
+          <label>Current Username</label>
+          <input type="text" id="currentUsername" readonly style="background:var(--surface);cursor:not-allowed;">
+        </div>
+        <div class="form-group">
+          <label>
+            New Username
+            <span class="label-desc">3-15 characters, letters, numbers, spaces, underscore only</span>
+          </label>
+          <input type="text" id="newUsername" placeholder="Enter new username" minlength="3" maxlength="15" pattern="[a-zA-Z0-9_ ]+">
+        </div>
+        <button type="button" class="btn-primary" id="changeUsernameBtn" style="margin-bottom:2rem;">Update Username</button>
+      </div>
+
+      <!-- Change Password -->
+      <div class="section">
+        <h2 class="section-title">Change Password</h2>
+        <div class="form-group">
+          <label>Current Password</label>
+          <input type="password" id="currentPassword" placeholder="Enter current password" autocomplete="current-password">
+        </div>
+        <div class="form-group">
+          <label>New Password <span class="label-desc">6-20 characters</span></label>
+          <input type="password" id="newPassword" placeholder="Enter new password" minlength="6" maxlength="20" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <input type="password" id="confirmPassword" placeholder="Confirm new password" minlength="6" maxlength="20" autocomplete="new-password">
+        </div>
+        <button type="button" class="btn-primary" id="changePasswordBtn">Update Password</button>
+      </div>
+
+    </div><!-- end accountTab -->
   </div>
 
   <script type="module">
@@ -709,108 +391,76 @@ end</pre>
 
     let currentUser = null;
 
-    // Check auth
+    // ── Auth check ────────────────────────────────────────
     async function checkAuth() {
       const token = localStorage.getItem('token');
-      if (!token) {
-        window.location.href = '/auth.html';
-        return;
-      }
+      if (!token) { window.location.href = '/auth.html'; return; }
 
       try {
-        const response = await fetch(`${API_BASE}/?type=verify`, {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        const res  = await fetch(`${API_BASE}/?type=verify`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
 
-        if (!response.ok) {
-          throw new Error('Verify failed');
-        }
-
-        const data = await response.json();
-        if (!data.success) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          window.location.href = '/auth.html';
-          return;
-        }
+        if (!data.success) throw new Error('invalid');
 
         currentUser = data.user;
         document.getElementById('userDisplay').textContent = data.user.username;
         loadSettings();
         loadTotalKeys();
-      } catch (error) {
-        console.error('Auth check failed:', error);
+      } catch {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.href = '/auth.html';
       }
     }
 
-    // Load existing settings
+    // ── Load settings ─────────────────────────────────────
     async function loadSettings() {
       try {
-        const response = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
-        const data = await response.json();
-        
+        const res  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
+        const data = await res.json();
+
         if (data.success && data.settings) {
-          document.getElementById('websiteDomain').value = data.settings.website_domain || '';
-          document.getElementById('keyDomain').value = data.settings.key_domain || 'KEY';
-          document.getElementById('encodeKey').value = data.settings.encode_key || 'ntt-hub';
-          document.getElementById('linkvertiseToken').value = data.settings.linkvertise_token || '';
-          document.getElementById('discordWebhook').value = data.settings.discord_webhook || '';
-          
-          const steps = data.settings.ad_steps || 1;
-          document.getElementById(`step${steps}`).checked = true;
-          
-          if (data.settings.step1_link) {
-            document.getElementById('step1Link').value = data.settings.step1_link;
-          }
-          if (data.settings.step2_link) {
-            document.getElementById('step2Link').value = data.settings.step2_link;
-          }
-          
+          const s = data.settings;
+          document.getElementById('websiteDomain').value    = s.website_domain || '';
+          document.getElementById('keyDomain').value        = s.key_domain     || 'KEY';
+          document.getElementById('encodeKey').value        = s.encode_key     || 'ntt-hub';
+          document.getElementById('linkvertiseToken').value = s.linkvertise_token || '';
+          document.getElementById('discordWebhook').value   = s.discord_webhook   || '';
+
+          const steps = s.ad_steps || 1;
+          document.getElementById(`adStep${steps}`).checked = true;
+
+          if (s.step1_link) document.getElementById('step1Link').value = s.step1_link;
+          if (s.step2_link) document.getElementById('step2Link').value = s.step2_link;
+
           updateLinkInputs();
           updatePreviews();
           updateDecodeCode();
         }
-      } catch (error) {
-        console.error('Failed to load settings:', error);
-      }
+      } catch { console.error('Failed to load settings'); }
     }
 
     async function loadTotalKeys() {
       try {
-        const response = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
-        const data = await response.json();
-        
-        if (data.success && data.settings) {
-          document.getElementById('totalKeys').textContent = data.settings.total_keys || 0;
-        }
+        const res  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
+        const data = await res.json();
+        if (data.success) document.getElementById('totalKeys').textContent = data.settings?.total_keys || 0;
 
-        // Load system total
-        const systemResponse = await fetch(`${API_BASE}/?type=get_system_total`);
-        const systemData = await systemResponse.json();
-        
-        if (systemData.success) {
-          document.getElementById('systemTotalKeys').textContent = systemData.total || 0;
-        }
-      } catch (error) {
-        document.getElementById('totalKeys').textContent = '0';
+        const sysRes  = await fetch(`${API_BASE}/?type=get_system_total`);
+        const sysData = await sysRes.json();
+        if (sysData.success) document.getElementById('systemTotalKeys').textContent = sysData.total || 0;
+      } catch {
+        document.getElementById('totalKeys').textContent       = '0';
         document.getElementById('systemTotalKeys').textContent = '0';
       }
     }
 
-    // Character counters
+    // ── Char counters ─────────────────────────────────────
     document.getElementById('websiteDomain').addEventListener('input', (e) => {
       const counter = document.getElementById('websiteCounter');
       const len = e.target.value.length;
       counter.textContent = `${len}/15 characters`;
-      counter.className = 'char-counter';
-      if (len > 12) counter.classList.add('warning');
-      if (len >= 15) counter.classList.add('error');
+      counter.className   = 'char-counter' + (len >= 15 ? ' error' : len > 12 ? ' warning' : '');
       updatePreviews();
     });
 
@@ -818,122 +468,56 @@ end</pre>
       const counter = document.getElementById('keyCounter');
       const len = e.target.value.length;
       counter.textContent = `${len}/6 characters`;
-      counter.className = 'char-counter';
-      if (len > 4) counter.classList.add('warning');
-      if (len >= 6) counter.classList.add('error');
+      counter.className   = 'char-counter' + (len >= 6 ? ' error' : len > 4 ? ' warning' : '');
       updateKeyPreview();
     });
 
-    // Update key preview
     function updateKeyPreview() {
-      const domain = document.getElementById('keyDomain').value.toUpperCase() || 'KEY';
-      document.getElementById('keyPreview').textContent = `${domain}_1234567`;
+      const d = document.getElementById('keyDomain').value.toUpperCase() || 'KEY';
+      document.getElementById('keyPreview').textContent = `${d}_1234567`;
     }
 
-    // Update destination previews
     function updatePreviews() {
-      const websiteDomain = document.getElementById('websiteDomain').value || currentUser?.username || 'USERNAME';
+      const wd      = document.getElementById('websiteDomain').value || currentUser?.username || 'USERNAME';
       const baseUrl = 'https://ntt-system.pages.dev/key';
-      
-      document.getElementById('step1Dest').textContent = `${baseUrl}?domain=${websiteDomain}&step1`;
-      document.getElementById('step2Dest').textContent = `${baseUrl}?domain=${websiteDomain}&step2`;
+      document.getElementById('step1Dest').textContent = `${baseUrl}?domain=${wd}&step1`;
+      document.getElementById('step2Dest').textContent = `${baseUrl}?domain=${wd}&step2`;
     }
 
-    // Show/hide step 2
     function updateLinkInputs() {
       const steps = document.querySelector('input[name="adSteps"]:checked').value;
-      const linkInputs = document.getElementById('linkInputs');
+      document.getElementById('linkInputs').classList.add('active');
+
       const step2Container = document.getElementById('step2Container');
-      
-      linkInputs.classList.add('active');
-      
+      const step2Link      = document.getElementById('step2Link');
+
       if (steps === '2') {
         step2Container.style.display = 'block';
-        document.getElementById('step2Link').required = true;
+        step2Link.required = true;
       } else {
         step2Container.style.display = 'none';
-        document.getElementById('step2Link').required = false;
+        step2Link.required = false;
       }
     }
 
-    document.querySelectorAll('input[name="adSteps"]').forEach(radio => {
-      radio.addEventListener('change', updateLinkInputs);
-    });
+    document.querySelectorAll('input[name="adSteps"]').forEach(r => r.addEventListener('change', updateLinkInputs));
 
-    // Messages
-    function showMessage(text, type = 'error') {
-      const messageEl = document.getElementById('message');
-      messageEl.textContent = text;
-      messageEl.className = `message ${type} show`;
-      setTimeout(() => messageEl.classList.remove('show'), 5000);
+    // ── Messages ──────────────────────────────────────────
+    function showMessage(txt, type = 'error') {
+      const el = document.getElementById('message');
+      el.textContent = txt;
+      el.className   = `message ${type} show`;
+      setTimeout(() => el.classList.remove('show'), 5000);
     }
 
-    // Save settings
-    document.getElementById('settingsForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const keyDomain = document.getElementById('keyDomain').value.trim() || 'KEY';
-      if (keyDomain.length > 6) {
-        showMessage('Key domain must be 6 characters or less');
-        return;
-      }
-
-      const settings = {
-        user_id: currentUser.id,
-        website_domain: document.getElementById('websiteDomain').value.trim() || currentUser.username,
-        key_domain: keyDomain,
-        encode_key: document.getElementById('encodeKey').value.trim() || 'ntt-hub',
-        linkvertise_token: document.getElementById('linkvertiseToken').value.trim(),
-        discord_webhook: document.getElementById('discordWebhook').value.trim(),
-        ad_steps: parseInt(document.querySelector('input[name="adSteps"]:checked').value),
-        step1_link: document.getElementById('step1Link').value.trim(),
-        step2_link: document.getElementById('step2Link').value.trim(),
-      };
-
-      const btn = document.getElementById('saveBtn');
-      btn.disabled = true;
-      btn.textContent = 'Saving...';
-
-      try {
-        const response = await fetch(`${API_BASE}/?type=save_settings`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify(settings)
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          showMessage('Settings saved successfully!', 'success');
-          updateDecodeCode();
-          
-          setTimeout(() => {
-            const domain = document.getElementById('websiteDomain').value.trim() || currentUser.username;
-            window.location.href = `/key-generator.html?domain=${domain}`;
-          }, 1500);
-        } else {
-          showMessage(data.error || 'Failed to save settings');
-        }
-      } catch (error) {
-        showMessage('Connection error. Please try again.');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Save Settings';
-      }
-    });
-
+    // ── Decode code ───────────────────────────────────────
     function updateDecodeCode() {
-      const encodeKey = document.getElementById('encodeKey').value.trim() || 'ntt-hub';
+      const encodeKey     = document.getElementById('encodeKey').value.trim()     || 'ntt-hub';
       const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser?.username || 'username';
-      
-      // Update URL displays
-      document.getElementById('encodeKeyPlaceholder').textContent = encodeKey;
-      document.getElementById('keyUrlDisplay').textContent = `https://ntt-system.pages.dev/key?id=${websiteDomain}`;
-      document.getElementById('usernameInUrl').textContent = websiteDomain;
-      
+
+      document.getElementById('keyUrlDisplay').textContent  = `https://ntt-system.pages.dev/key?id=${websiteDomain}`;
+      document.getElementById('usernameInUrl').textContent  = websiteDomain;
+
       const code = `local function key_split(str, sep)
     local result = {}
     for part in string.gmatch(str, "([^" .. sep .. "]+)") do
@@ -958,361 +542,246 @@ end
 
 local function key_decode(data, baseKey)
     local parts = key_split(data, "|")
-    if #parts < 3 then
-        return nil
-    end
-    
+    if #parts < 3 then return nil end
+
     local timeEncoded = parts[1]
-    local t = tonumber(parts[2])
-    local encodedStr = parts[3]
-    
-    if not t or not encodedStr then
-        return nil
-    end
-    
+    local t           = tonumber(parts[2])
+    local encodedStr  = parts[3]
+
+    if not t or not encodedStr then return nil end
+
     local check = tostring(math.floor(key_simpleHash(tostring(t) .. "salt")))
-    if check ~= timeEncoded then
-        return "time out"
-    end
-    
-    if math.abs(os.time() - t) > 5*60 then
-        return "time out"
-    end
-    
+    if check ~= timeEncoded then return "time out" end
+
+    if math.abs(os.time() - t) > 5*60 then return "time out" end
+
     encodedStr = key_fromHex(encodedStr)
-    local rawKey = tostring(baseKey) .. ":" .. tostring(t)
+    local rawKey    = tostring(baseKey) .. ":" .. tostring(t)
     local hashedKey = key_simpleHash(rawKey)
-    
+
     local result = {}
     for i = 1, #encodedStr do
-        local byte = string.byte(encodedStr, i)
-        local k = (hashedKey + i * 7) % 256
+        local byte    = string.byte(encodedStr, i)
+        local k       = (hashedKey + i * 7) % 256
         local decoded = (byte - k) % 256
         decoded = bit32.bxor(decoded, k)
         table.insert(result, string.char(decoded))
     end
-    
+
     return table.concat(result)
 end`;
-      
+
       document.getElementById('decodeCode').textContent = code;
+
+      const howTo = `local done, fail = pcall(function()
+    key = game:HttpGet(_G.getlink)
+end)
+
+if done then
+    if string.find(key, "|") then
+        print(key)
+        key = key_decode(key, "${encodeKey}")
+        key = string.split(key, "|")
+        _G.table_key_system = {key[1], tonumber(key[2])}
+
+        -- Add your script execution here
+
+    else
+        print("Fetch Failed or No Key Available")
+    end
+else
+    print(fail)
+end`;
+
+      document.getElementById('howToUseCode').textContent = howTo;
     }
 
-    document.getElementById('encodeKey').addEventListener('input', updateDecodeCode);
+    document.getElementById('encodeKey').addEventListener('input',    updateDecodeCode);
     document.getElementById('websiteDomain').addEventListener('input', updateDecodeCode);
 
+    // ── Copy buttons ──────────────────────────────────────
     document.getElementById('copyCodeBtn').addEventListener('click', () => {
-      const code = document.getElementById('decodeCode').textContent;
-      navigator.clipboard.writeText(code).then(() => {
+      navigator.clipboard.writeText(document.getElementById('decodeCode').textContent).then(() => {
         const btn = document.getElementById('copyCodeBtn');
         btn.textContent = '✓ Copied!';
-        btn.style.background = 'var(--success)';
-        setTimeout(() => {
-          btn.textContent = 'Copy Code';
-          btn.style.background = 'var(--primary)';
-        }, 2000);
+        setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
       });
     });
 
-    // Copy How to Use code
     document.getElementById('copyHowToUseBtn').addEventListener('click', () => {
-      const code = document.getElementById('howToUseCode').textContent;
-      navigator.clipboard.writeText(code).then(() => {
+      navigator.clipboard.writeText(document.getElementById('howToUseCode').textContent).then(() => {
         const btn = document.getElementById('copyHowToUseBtn');
         btn.textContent = '✓ Copied!';
-        btn.style.background = 'var(--success)';
-        setTimeout(() => {
-          btn.textContent = 'Copy Code';
-          btn.style.background = 'var(--primary)';
-        }, 2000);
+        setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
       });
     });
 
-    // Logout
+    // ── Partial save helper ───────────────────────────────
+    async function savePartial(patch, btnId, successMsg) {
+      const btn  = document.getElementById(btnId);
+      const orig = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Saving...';
+
+      try {
+        const getRes  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
+        const getData = await getRes.json();
+
+        // Base defaults — start_link não existe mais
+        const full = getData.success && getData.settings ? {
+          user_id:           currentUser.id,
+          website_domain:    getData.settings.website_domain    || currentUser.username,
+          key_domain:        getData.settings.key_domain        || 'KEY',
+          encode_key:        getData.settings.encode_key        || 'ntt-hub',
+          linkvertise_token: getData.settings.linkvertise_token || '',
+          discord_webhook:   getData.settings.discord_webhook   || '',
+          ad_steps:          getData.settings.ad_steps          || 1,
+          step1_link:        getData.settings.step1_link        || '',
+          step2_link:        getData.settings.step2_link        || '',
+          ...patch,
+        } : { user_id: currentUser.id, ...patch };
+
+        const saveRes  = await fetch(`${API_BASE}/?type=save_settings`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body:    JSON.stringify(full),
+        });
+        const saveData = await saveRes.json();
+
+        if (saveData.success) { showMessage(successMsg, 'success'); updateDecodeCode(); }
+        else showMessage(saveData.error || 'Failed to save');
+      } catch { showMessage('Connection error'); }
+      finally  { btn.disabled = false; btn.textContent = orig; }
+    }
+
+    // ── Section save buttons ──────────────────────────────
+    document.getElementById('saveWebsiteBtn').addEventListener('click', async () => {
+      const wd = document.getElementById('websiteDomain').value.trim() || currentUser.username;
+      await savePartial({ website_domain: wd }, 'saveWebsiteBtn', 'Website settings saved!');
+    });
+
+    document.getElementById('saveKeyBtn').addEventListener('click', async () => {
+      const kd = document.getElementById('keyDomain').value.trim() || 'KEY';
+      if (kd.length > 6) { showMessage('Key domain must be 6 characters or less'); return; }
+      const ek = document.getElementById('encodeKey').value.trim() || 'ntt-hub';
+      await savePartial({ key_domain: kd, encode_key: ek }, 'saveKeyBtn', 'Key settings saved!');
+    });
+
+    document.getElementById('saveLinkvertiseBtn').addEventListener('click', async () => {
+      const lt = document.getElementById('linkvertiseToken').value.trim();
+      if (!lt) { showMessage('Linkvertise token is required'); return; }
+      await savePartial({ linkvertise_token: lt }, 'saveLinkvertiseBtn', 'Linkvertise settings saved!');
+    });
+
+    document.getElementById('saveDiscordBtn').addEventListener('click', async () => {
+      const dw = document.getElementById('discordWebhook').value.trim();
+      await savePartial({ discord_webhook: dw }, 'saveDiscordBtn', 'Discord settings saved!');
+    });
+
+    document.getElementById('saveAdStepsBtn').addEventListener('click', async () => {
+      const steps = parseInt(document.querySelector('input[name="adSteps"]:checked').value);
+      const s1    = document.getElementById('step1Link').value.trim();
+      const s2    = document.getElementById('step2Link').value.trim();
+      await savePartial({ ad_steps: steps, step1_link: s1, step2_link: s2 }, 'saveAdStepsBtn', 'Ad steps settings saved!');
+    });
+
+    // ── Logout ────────────────────────────────────────────
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/auth.html';
     });
 
-    // Helper function for saving partial settings
-    async function saveSettingsPartial(partialSettings, btnId, successMessage) {
-      const btn = document.getElementById(btnId);
-      const originalText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = 'Saving...';
-
-      try {
-        const response = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
-        const currentData = await response.json();
-        
-        const fullSettings = currentData.success && currentData.settings ? {
-          user_id: currentUser.id,
-          website_domain: currentData.settings.website_domain || currentUser.username,
-          key_domain: currentData.settings.key_domain || 'KEY',
-          encode_key: currentData.settings.encode_key || 'ntt-hub',
-          linkvertise_token: currentData.settings.linkvertise_token || '',
-          discord_webhook: currentData.settings.discord_webhook || '',
-          ad_steps: currentData.settings.ad_steps || 1,
-          step1_link: currentData.settings.step1_link || '',
-          step2_link: currentData.settings.step2_link || '',
-          ...partialSettings
-        } : {
-          user_id: currentUser.id,
-          ...partialSettings
-        };
-
-        const saveResponse = await fetch(`${API_BASE}/?type=save_settings`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify(fullSettings)
-        });
-
-        const data = await saveResponse.json();
-
-        if (data.success) {
-          showMessage(successMessage, 'success');
-          updateDecodeCode();
-        } else {
-          showMessage(data.error || 'Failed to save');
-        }
-      } catch (error) {
-        showMessage('Connection error');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
-      }
-    }
-
-    // Save Website Settings
-    if (document.getElementById('saveWebsiteBtn')) {
-      document.getElementById('saveWebsiteBtn').addEventListener('click', async () => {
-        const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser.username;
-        await saveSettingsPartial(
-          { website_domain: websiteDomain },
-          'saveWebsiteBtn',
-          'Website settings saved!'
-        );
-      });
-    }
-
-    // Save Key Settings
-    if (document.getElementById('saveKeyBtn')) {
-      document.getElementById('saveKeyBtn').addEventListener('click', async () => {
-        const keyDomain = document.getElementById('keyDomain').value.trim() || 'KEY';
-        if (keyDomain.length > 6) {
-          showMessage('Key domain must be 6 characters or less');
-          return;
-        }
-        
-        const encodeKey = document.getElementById('encodeKey').value.trim() || 'ntt-hub';
-        
-        await saveSettingsPartial(
-          { key_domain: keyDomain, encode_key: encodeKey },
-          'saveKeyBtn',
-          'Key settings saved!'
-        );
-      });
-    }
-
-    // Save Linkvertise Settings
-    if (document.getElementById('saveLinkvertiseBtn')) {
-      document.getElementById('saveLinkvertiseBtn').addEventListener('click', async () => {
-        const linkvertiseToken = document.getElementById('linkvertiseToken').value.trim();
-        
-        if (!linkvertiseToken) {
-          showMessage('Linkvertise token is required');
-          return;
-        }
-        
-        await saveSettingsPartial(
-          { linkvertise_token: linkvertiseToken },
-          'saveLinkvertiseBtn',
-          'Linkvertise settings saved!'
-        );
-      });
-    }
-
-    // Save Discord Settings
-    if (document.getElementById('saveDiscordBtn')) {
-      document.getElementById('saveDiscordBtn').addEventListener('click', async () => {
-        const discordWebhook = document.getElementById('discordWebhook').value.trim();
-        
-        await saveSettingsPartial(
-          { discord_webhook: discordWebhook },
-          'saveDiscordBtn',
-          'Discord settings saved!'
-        );
-      });
-    }
-
-    // Save Ad Steps Settings
-    if (document.getElementById('saveAdStepsBtn')) {
-      document.getElementById('saveAdStepsBtn').addEventListener('click', async () => {
-        const adSteps = parseInt(document.querySelector('input[name="adSteps"]:checked').value);
-        const step1Link = document.getElementById('step1Link').value.trim();
-        const step2Link = document.getElementById('step2Link').value.trim();
-        
-        await saveSettingsPartial(
-          { ad_steps: adSteps, step1_link: step1Link, step2_link: step2Link },
-          'saveAdStepsBtn',
-          'Ad steps settings saved!'
-        );
-      });
-    }
-
-    // Initialize
-    checkAuth();
-    updateLinkInputs();
-    updateDecodeCode();
-
-    // Tab switching
+    // ── Tabs ──────────────────────────────────────────────
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const tabName = btn.dataset.tab;
-        
-        // Update buttons
+        const tab = btn.dataset.tab;
         document.querySelectorAll('.tab-btn').forEach(b => {
-          b.classList.remove('active');
           b.style.background = 'transparent';
-          b.style.color = 'var(--text-dim)';
+          b.style.color      = 'var(--text-dim)';
+          b.classList.remove('active');
         });
-        btn.classList.add('active');
         btn.style.background = 'var(--surface)';
-        btn.style.color = 'var(--primary)';
-        
-        // Update content
-        document.getElementById('mainTab').style.display = tabName === 'main' ? 'block' : 'none';
-        document.getElementById('accountTab').style.display = tabName === 'account' ? 'block' : 'none';
+        btn.style.color      = 'var(--primary)';
+        btn.classList.add('active');
+
+        document.getElementById('mainTab').style.display    = tab === 'main'    ? 'block' : 'none';
+        document.getElementById('accountTab').style.display = tab === 'account' ? 'block' : 'none';
       });
     });
 
-    // Load current username for account tab
-    function loadAccountInfo() {
-      if (currentUser) {
-        document.getElementById('currentUsername').value = currentUser.username;
-      }
-    }
-
-    // Change username
+    // ── Account: change username ──────────────────────────
     document.getElementById('changeUsernameBtn').addEventListener('click', async () => {
-      const newUsername = document.getElementById('newUsername').value.trim();
-      
-      if (!newUsername) {
-        showMessage('Please enter a new username');
-        return;
-      }
-
-      if (!/^[a-zA-Z0-9_ ]+$/.test(newUsername)) {
-        showMessage('Username can only contain letters, numbers, spaces, and underscores');
-        return;
-      }
-
-      if (newUsername.length < 3 || newUsername.length > 15) {
-        showMessage('Username must be 3-15 characters');
-        return;
-      }
-
-      if (newUsername === currentUser.username) {
-        showMessage('New username is the same as current username');
-        return;
-      }
+      const nu = document.getElementById('newUsername').value.trim();
+      if (!nu) { showMessage('Please enter a new username'); return; }
+      if (!/^[a-zA-Z0-9_ ]+$/.test(nu)) { showMessage('Invalid characters in username'); return; }
+      if (nu.length < 3 || nu.length > 15) { showMessage('Username must be 3-15 characters'); return; }
+      if (nu === currentUser.username)     { showMessage('New username is the same as current'); return; }
 
       const btn = document.getElementById('changeUsernameBtn');
-      btn.disabled = true;
-      btn.textContent = 'Updating...';
+      btn.disabled = true; btn.textContent = 'Updating...';
 
       try {
-        const response = await fetch(`${API_BASE}/?type=change_username`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({ user_id: currentUser.id, new_username: newUsername })
+        const res  = await fetch(`${API_BASE}/?type=change_username`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body:    JSON.stringify({ user_id: currentUser.id, new_username: nu }),
         });
-
-        const data = await response.json();
+        const data = await res.json();
 
         if (data.success) {
           showMessage('Username updated successfully!', 'success');
-          currentUser.username = newUsername;
-          document.getElementById('currentUsername').value = newUsername;
-          document.getElementById('userDisplay').textContent = newUsername;
-          document.getElementById('newUsername').value = '';
+          currentUser.username = nu;
+          document.getElementById('currentUsername').value   = nu;
+          document.getElementById('userDisplay').textContent = nu;
+          document.getElementById('newUsername').value       = '';
         } else {
           showMessage(data.error || 'Failed to update username');
         }
-      } catch (error) {
-        showMessage('Connection error');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Update Username';
-      }
+      } catch { showMessage('Connection error'); }
+      finally  { btn.disabled = false; btn.textContent = 'Update Username'; }
     });
 
-    // Change password
+    // ── Account: change password ──────────────────────────
     document.getElementById('changePasswordBtn').addEventListener('click', async () => {
-      const currentPassword = document.getElementById('currentPassword').value;
-      const newPassword = document.getElementById('newPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
+      const cp = document.getElementById('currentPassword').value;
+      const np = document.getElementById('newPassword').value;
+      const cf = document.getElementById('confirmPassword').value;
 
-      if (!currentPassword || !newPassword || !confirmPassword) {
-        showMessage('Please fill in all password fields');
-        return;
-      }
-
-      if (newPassword.length < 6 || newPassword.length > 20) {
-        showMessage('New password must be 6-20 characters');
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        showMessage('New passwords do not match');
-        return;
-      }
+      if (!cp || !np || !cf) { showMessage('Please fill in all password fields'); return; }
+      if (np.length < 6 || np.length > 20) { showMessage('New password must be 6-20 characters'); return; }
+      if (np !== cf) { showMessage('New passwords do not match'); return; }
 
       const btn = document.getElementById('changePasswordBtn');
-      btn.disabled = true;
-      btn.textContent = 'Updating...';
+      btn.disabled = true; btn.textContent = 'Updating...';
 
       try {
-        const response = await fetch(`${API_BASE}/?type=change_password`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify({
-            user_id: currentUser.id,
-            current_password: currentPassword,
-            new_password: newPassword
-          })
+        const res  = await fetch(`${API_BASE}/?type=change_password`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+          body:    JSON.stringify({ user_id: currentUser.id, current_password: cp, new_password: np }),
         });
-
-        const data = await response.json();
+        const data = await res.json();
 
         if (data.success) {
           showMessage('Password updated successfully!', 'success');
           document.getElementById('currentPassword').value = '';
-          document.getElementById('newPassword').value = '';
+          document.getElementById('newPassword').value     = '';
           document.getElementById('confirmPassword').value = '';
         } else {
           showMessage(data.error || 'Failed to update password');
         }
-      } catch (error) {
-        showMessage('Connection error');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Update Password';
-      }
+      } catch { showMessage('Connection error'); }
+      finally  { btn.disabled = false; btn.textContent = 'Update Password'; }
     });
 
-    // Load account info when switching to account tab
-    setTimeout(loadAccountInfo, 1000);
+    // ── Init ──────────────────────────────────────────────
+    checkAuth();
+    updateLinkInputs();
+    updateDecodeCode();
+
+    setTimeout(() => {
+      if (currentUser) document.getElementById('currentUsername').value = currentUser.username;
+    }, 1000);
   </script>
 </body>
 </html>
