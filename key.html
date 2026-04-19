@@ -8,11 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
       --primary: #00ff9d;
@@ -40,25 +36,17 @@
     }
 
     .bg-grid {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image:
         linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
       background-size: 50px 50px;
-      z-index: 0;
-      pointer-events: none;
+      z-index: 0; pointer-events: none;
     }
 
     .container {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 500px;
-      padding: 2rem;
+      position: relative; z-index: 1;
+      width: 100%; max-width: 500px; padding: 2rem;
     }
 
     .card {
@@ -66,19 +54,13 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 2.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
       animation: slideUp 0.6s ease;
     }
 
     @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     .title {
@@ -98,12 +80,7 @@
       margin-bottom: 2rem;
     }
 
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
+    .steps { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
 
     .step {
       background: var(--bg-darker);
@@ -120,214 +97,109 @@
 
     .step::before {
       content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 100%;
-      background: linear-gradient(90deg, rgba(0, 255, 157, 0.1), transparent);
+      position: absolute; top: 0; left: 0;
+      width: 0; height: 100%;
+      background: linear-gradient(90deg, rgba(0,255,157,0.1), transparent);
       transition: width 0.3s ease;
     }
 
-    .step.completed::before {
-      width: 100%;
-    }
-
-    .step.completed {
-      border-color: var(--success);
-    }
-
-    .step.pending {
-      border-color: var(--pending);
-    }
+    .step.completed::before { width: 100%; }
+    .step.completed { border-color: var(--success); }
+    .step.pending   { border-color: var(--pending); }
 
     .step-number {
-      width: 40px;
-      height: 40px;
+      width: 40px; height: 40px;
       border-radius: 50%;
       background: var(--surface);
       border: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.125rem;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.125rem;
       flex-shrink: 0;
       transition: all 0.3s ease;
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
     }
 
     .step.completed .step-number {
-      background: var(--success);
-      border-color: var(--success);
-      color: var(--bg-dark);
+      background: var(--success); border-color: var(--success); color: var(--bg-dark);
     }
-
     .step.pending .step-number {
-      background: var(--pending);
-      border-color: var(--pending);
-      color: var(--bg-dark);
+      background: var(--pending); border-color: var(--pending); color: var(--bg-dark);
     }
 
-    .step-content {
-      flex: 1;
-      position: relative;
-      z-index: 1;
-    }
-
-    .step-title {
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .step-desc {
-      font-size: 0.875rem;
-      color: var(--text-dim);
-    }
-
-    .step-action {
-      position: relative;
-      z-index: 1;
-    }
+    .step-content { flex: 1; position: relative; z-index: 1; }
+    .step-title   { font-weight: 600; margin-bottom: 0.25rem; }
+    .step-desc    { font-size: 0.875rem; color: var(--text-dim); }
+    .step-action  { position: relative; z-index: 1; }
 
     .btn {
       padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 8px;
+      border: none; border-radius: 8px;
       font-family: 'Oswald', sans-serif;
-      font-size: 0.875rem;
-      font-weight: 700;
+      font-size: 0.875rem; font-weight: 700;
       text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
+      cursor: pointer; transition: all 0.3s ease;
+      text-decoration: none; display: inline-block;
     }
 
-    .btn-primary {
-      background: var(--primary);
-      color: var(--bg-dark);
-    }
-
+    .btn-primary { background: var(--primary); color: var(--bg-dark); }
     .btn-primary:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 255, 157, 0.4);
+      box-shadow: 0 4px 12px rgba(0,255,157,0.4);
     }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
-    }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
     .btn-success {
-      background: rgba(0, 255, 157, 0.2);
-      color: var(--success);
-      border: 1px solid var(--success);
-      cursor: default;
+      background: rgba(0,255,157,0.2); color: var(--success);
+      border: 1px solid var(--success); cursor: default;
     }
 
-    .checkmark {
-      display: inline-block;
-      margin-right: 0.5rem;
-    }
+    .checkmark { display: inline-block; margin-right: 0.5rem; }
 
     .create-key-section {
-      margin-top: 2rem;
-      padding-top: 2rem;
+      margin-top: 2rem; padding-top: 2rem;
       border-top: 1px solid var(--border);
       display: none;
     }
-
-    .create-key-section.active {
-      display: block;
-      animation: slideUp 0.4s ease;
-    }
+    .create-key-section.active { display: block; animation: slideUp 0.4s ease; }
 
     .btn-create {
-      width: 100%;
-      padding: 1.25rem;
+      width: 100%; padding: 1.25rem;
       background: linear-gradient(135deg, var(--primary), #6366f1);
-      color: var(--bg-dark);
-      font-size: 1rem;
+      color: var(--bg-dark); font-size: 1rem;
     }
-
     .btn-create:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0, 255, 157, 0.5);
+      box-shadow: 0 8px 24px rgba(0,255,157,0.5);
     }
 
-    .key-result {
-      margin-top: 1.5rem;
-      display: none;
-    }
-
-    .key-result.active {
-      display: block;
-      animation: slideUp 0.4s ease;
-    }
+    .key-result { margin-top: 1.5rem; display: none; }
+    .key-result.active { display: block; animation: slideUp 0.4s ease; }
 
     .key-box {
-      background: var(--bg-darker);
-      border: 1px solid var(--success);
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      margin-bottom: 1rem;
+      background: var(--bg-darker); border: 1px solid var(--success);
+      border-radius: 8px; padding: 1rem; text-align: center; margin-bottom: 1rem;
     }
-
-    .key-label {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .key-value {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--success);
-      word-break: break-all;
-    }
+    .key-label { font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .key-value { font-size: 1.25rem; font-weight: 700; color: var(--success); word-break: break-all; }
 
     .copy-btn {
-      width: 100%;
-      padding: 0.875rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
+      width: 100%; padding: 0.875rem;
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
     }
-
-    .copy-btn:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
+    .copy-btn:hover { border-color: var(--primary); color: var(--primary); }
 
     .info-box {
-      background: rgba(0, 255, 157, 0.05);
-      border: 1px solid rgba(0, 255, 157, 0.2);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-top: 1rem;
-      font-size: 0.875rem;
-      color: var(--text-dim);
+      background: rgba(0,255,157,0.05);
+      border: 1px solid rgba(0,255,157,0.2);
+      border-radius: 8px; padding: 1rem;
+      margin-top: 1rem; font-size: 0.875rem; color: var(--text-dim);
     }
 
     @media (max-width: 640px) {
-      .container {
-        padding: 1rem;
-      }
-
-      .card {
-        padding: 1.5rem;
-      }
-
-      .title {
-        font-size: 1.5rem;
-      }
+      .container { padding: 1rem; }
+      .card { padding: 1.5rem; }
+      .title { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -340,8 +212,8 @@
       <p class="subtitle" id="domainDisplay">Loading...</p>
 
       <div class="steps">
-        <!-- Start Step -->
-        <div class="step" id="startCard" style="display: flex;">
+        <!-- Start Step — link do hệ thống kiểm soát -->
+        <div class="step" id="startCard">
           <div class="step-number">S</div>
           <div class="step-content">
             <div class="step-title">Start</div>
@@ -364,7 +236,7 @@
           </div>
         </div>
 
-        <!-- Step 2 (if enabled) -->
+        <!-- Step 2 (nếu được bật) -->
         <div class="step" id="step2Card" style="display: none;">
           <div class="step-number">2</div>
           <div class="step-content">
@@ -378,20 +250,15 @@
       </div>
 
       <!-- Create Key Section -->
-      <div class="create-key-section" id="createSection" style="display: none;">
-        <button class="btn btn-create" id="createKeyBtn">
-          Generate Key
-        </button>
+      <div class="create-key-section" id="createSection">
+        <button class="btn btn-create" id="createKeyBtn">Generate Key</button>
 
-        <!-- Key Result -->
         <div class="key-result" id="keyResult">
           <div class="key-box">
             <div class="key-label">Your Key</div>
             <div class="key-value" id="keyValue">LOADING...</div>
           </div>
-          <button class="btn copy-btn" id="copyBtn">
-            Copy Key
-          </button>
+          <button class="btn copy-btn" id="copyBtn">Copy Key</button>
           <div class="info-box">
             ✓ Key expires in 24 hours<br>
             ✓ Total keys created: <span id="keyCount">0</span>
@@ -404,24 +271,23 @@
   <script type="module">
     import API_BASE from './api-base.js';
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const domain = urlParams.get('domain');
-    const startCallback = urlParams.get('start');
-    const step1Callback = urlParams.get('step1');
-    const step2Callback = urlParams.get('step2');
-    
-    let settings = null;
-    let hwid = null;
+    const urlParams      = new URLSearchParams(window.location.search);
+    const domain         = urlParams.get('domain');
+    const startCallback  = urlParams.get('start');
+    const step1Callback  = urlParams.get('step1');
+    const step2Callback  = urlParams.get('step2');
 
-    // Generate HWID (simple browser fingerprint)
+    let settings = null;
+    let hwid     = null;
+
+    // ── HWID ───────────────────────────────────────────────
     function generateHWID() {
       const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+      const ctx    = canvas.getContext('2d');
       ctx.textBaseline = 'top';
       ctx.font = '14px Arial';
       ctx.fillText('Browser fingerprint', 2, 2);
       const fingerprint = canvas.toDataURL();
-      
       const data = navigator.userAgent + fingerprint + screen.width + screen.height;
       let hash = 0;
       for (let i = 0; i < data.length; i++) {
@@ -431,11 +297,11 @@
       return 'HWID_' + Math.abs(hash).toString(36).toUpperCase();
     }
 
-    // Load settings
+    // ── Load settings ──────────────────────────────────────
     async function loadSettings() {
       try {
         const response = await fetch(`${API_BASE}/?type=get_settings_by_domain&domain=${domain}`);
-        const data = await response.json();
+        const data     = await response.json();
 
         if (!data.success) {
           alert('Invalid domain or settings not found');
@@ -445,19 +311,16 @@
         settings = data.settings;
         document.getElementById('domainDisplay').textContent = settings.website_domain;
 
-        // Setup Start button - use user's start link
-        const startLink = settings.start_link || 'https://linkvertise.com/1292597/ntt-start/1';
-        document.getElementById('startBtn').href = startLink;
+        // Start link luôn là của hệ thống — trả về từ API, không phải user đặt
+        document.getElementById('startBtn').href = settings.start_link;
 
-        // Setup step buttons
+        // Hiện step 2 nếu được bật
         if (settings.ad_steps === 2) {
           document.getElementById('step2Card').style.display = 'flex';
         }
 
-        // Check progress
         hwid = generateHWID();
-        
-        // Check if domain is stored in localStorage
+
         const storedDomain = localStorage.getItem('ntt_current_domain');
         if (storedDomain === domain) {
           checkProgress();
@@ -467,26 +330,26 @@
       }
     }
 
-    // Store domain when clicking Start
-    document.getElementById('startBtn').addEventListener('click', (e) => {
+    // Lưu domain khi click Start
+    document.getElementById('startBtn').addEventListener('click', () => {
       localStorage.setItem('ntt_current_domain', domain);
     });
 
-    // Check completion status
+    // ── Check progress ─────────────────────────────────────
     async function checkProgress() {
       try {
         const response = await fetch(`${API_BASE}/?type=progress&hwid=${hwid}`);
-        const data = await response.json();
+        const data     = await response.json();
 
         if (data.status) {
           if (data.start) {
             markStepComplete('start');
             enableStep1();
           }
-          
+
           if (data.step1) {
             markStepComplete(1);
-            
+
             if (settings.ad_steps === 1) {
               showCreateButton();
             } else if (data.step2) {
@@ -502,45 +365,38 @@
       }
     }
 
-    // Enable step 1 after start is done
     function enableStep1() {
       document.getElementById('step1Card').style.display = 'flex';
-      const step1Btn = document.getElementById('step1Btn');
-      step1Btn.disabled = false;
-      step1Btn.onclick = () => {
-        window.open(settings.step1_link, '_blank');
-      };
+      const btn = document.getElementById('step1Btn');
+      btn.disabled = false;
+      btn.onclick  = () => window.open(settings.step1_link, '_blank');
     }
 
-    // Enable step 2
     function enableStep2() {
       document.getElementById('step2Card').style.display = 'flex';
-      const step2Btn = document.getElementById('step2Btn');
-      step2Btn.disabled = false;
-      step2Btn.onclick = () => {
-        window.open(settings.step2_link, '_blank');
-      };
+      const btn = document.getElementById('step2Btn');
+      btn.disabled = false;
+      btn.onclick  = () => window.open(settings.step2_link, '_blank');
     }
 
-    // Mark step as complete
     function markStepComplete(step) {
       const cardId = step === 'start' ? 'startCard' : `step${step}Card`;
-      const card = document.getElementById(cardId);
+      const card   = document.getElementById(cardId);
       card.classList.add('completed');
-      
+
       const btn = card.querySelector('.btn');
       btn.className = 'btn btn-success';
       btn.innerHTML = '<span class="checkmark">✓</span> Completed';
       btn.style.pointerEvents = 'none';
     }
 
-    // Show create key button
     function showCreateButton() {
-      document.getElementById('createSection').style.display = 'block';
-      document.getElementById('createSection').classList.add('active');
+      const section = document.getElementById('createSection');
+      section.style.display = 'block';
+      section.classList.add('active');
     }
 
-    // Create key
+    // ── Create key ─────────────────────────────────────────
     document.getElementById('createKeyBtn').addEventListener('click', async () => {
       const btn = document.getElementById('createKeyBtn');
       btn.disabled = true;
@@ -548,13 +404,13 @@
 
       try {
         const response = await fetch(`${API_BASE}/?type=create_key`, {
-          method: 'POST',
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+          body:    JSON.stringify({
             hwid,
-            domain: settings.website_domain,
-            key_prefix: settings.key_domain
-          })
+            domain:     settings.website_domain,
+            key_prefix: settings.key_domain,
+          }),
         });
 
         const data = await response.json();
@@ -569,73 +425,64 @@
           btn.disabled = false;
           btn.textContent = 'Generate Key';
         }
-      } catch (error) {
+      } catch {
         alert('Connection error');
         btn.disabled = false;
         btn.textContent = 'Generate Key';
       }
     });
 
-    // Copy key
+    // ── Copy key ───────────────────────────────────────────
     document.getElementById('copyBtn').addEventListener('click', () => {
       const keyValue = document.getElementById('keyValue').textContent;
       navigator.clipboard.writeText(keyValue).then(() => {
         const btn = document.getElementById('copyBtn');
         btn.textContent = '✓ Copied!';
-        setTimeout(() => {
-          btn.textContent = 'Copy Key';
-        }, 2000);
+        setTimeout(() => { btn.textContent = 'Copy Key'; }, 2000);
       });
     });
 
-    // Initialize
+    // ── Init ───────────────────────────────────────────────
     if (!domain) {
       alert('No domain specified');
     } else {
       loadSettings();
-      
-      // Handle callbacks from Linkvertise
+
       if (startCallback !== null) {
-        // User returned from Start link
         const hash = urlParams.get('hash');
         if (hash && domain) {
           fetch(`${API_BASE}/?type=complete_step`, {
-            method: 'POST',
+            method:  'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ hwid: generateHWID(), step: 'start', hash })
+            body:    JSON.stringify({ hwid: generateHWID(), step: 'start', hash }),
           }).then(() => {
             window.history.replaceState({}, '', `/key-generator.html?domain=${domain}`);
             window.location.reload();
           });
         }
       } else if (step1Callback !== null) {
-        // User returned from Step 1
         const hash = urlParams.get('hash');
         hwid = generateHWID();
-        
         fetch(`${API_BASE}/?type=complete_step`, {
-          method: 'POST',
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hwid, step: 1, hash })
+          body:    JSON.stringify({ hwid, step: 1, hash }),
         }).then(() => {
           window.history.replaceState({}, '', `/key-generator.html?domain=${domain}`);
           window.location.reload();
         });
       } else if (step2Callback !== null) {
-        // User returned from Step 2
         const hash = urlParams.get('hash');
         hwid = generateHWID();
-        
         fetch(`${API_BASE}/?type=complete_step`, {
-          method: 'POST',
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hwid, step: 2, hash })
+          body:    JSON.stringify({ hwid, step: 2, hash }),
         }).then(() => {
           window.history.replaceState({}, '', `/key-generator.html?domain=${domain}`);
           window.location.reload();
         });
       } else {
-        // Poll progress every 3 seconds
         setInterval(checkProgress, 3000);
       }
     }
