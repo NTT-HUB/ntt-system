@@ -175,14 +175,14 @@
     <h1 class="page-title">Dashboard</h1>
     <p class="page-desc">Manage your key generator settings</p>
 
-    <!-- Total Keys -->
+    
     <div style="background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 16px; padding: 2.5rem; margin-bottom: 2rem; text-align: center; box-shadow: 0 8px 24px rgba(0,255,157,0.2);">
       <div style="font-size: 0.875rem; color: rgba(10,14,26,0.8); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 600;">Total Keys Created</div>
       <div style="font-family: 'Oswald', sans-serif; font-size: 4rem; font-weight: 800; color: var(--bg-dark); line-height: 1;" id="totalKeys">0</div>
       <div style="font-size: 0.75rem; color: rgba(10,14,26,0.6); margin-top: 0.5rem;">System Total: <span id="systemTotalKeys">0</span> keys</div>
     </div>
 
-    <!-- Tabs -->
+    
     <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem; background: var(--bg-darker); padding: 0.5rem; border-radius: 12px;">
       <button class="tab-btn active" data-tab="main"    style="flex:1;padding:0.875rem;background:var(--surface);border:none;color:var(--primary);font-family:'Oswald',sans-serif;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;border-radius:8px;transition:all 0.3s ease;">Main</button>
       <button class="tab-btn"        data-tab="account" style="flex:1;padding:0.875rem;background:transparent;border:none;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;border-radius:8px;transition:all 0.3s ease;">Account</button>
@@ -190,10 +190,10 @@
 
     <div id="message" class="message"></div>
 
-    <!-- ══ MAIN TAB ════════════════════════════════════════ -->
+    
     <div id="mainTab" class="tab-content">
 
-      <!-- Website Domain -->
+      
       <div class="section">
         <h2 class="section-title">Website Configuration</h2>
         <div class="form-group">
@@ -207,7 +207,7 @@
         <button type="button" class="btn-primary" id="saveWebsiteBtn" style="margin-top:1rem;">Save Website Settings</button>
       </div>
 
-      <!-- Key Settings -->
+      
       <div class="section">
         <h2 class="section-title">Key Settings</h2>
         <div class="form-group">
@@ -232,7 +232,7 @@
         <button type="button" class="btn-primary" id="saveKeyBtn" style="margin-top:1rem;">Save Key Settings</button>
       </div>
 
-      <!-- Linkvertise -->
+      
       <div class="section">
         <h2 class="section-title">Linkvertise Configuration</h2>
         <div class="form-group">
@@ -245,7 +245,7 @@
         <button type="button" class="btn-primary" id="saveLinkvertiseBtn" style="margin-top:1rem;">Save Linkvertise Settings</button>
       </div>
 
-      <!-- Discord Webhook -->
+      
       <div class="section">
         <h2 class="section-title">Discord Notifications</h2>
         <div class="form-group">
@@ -258,7 +258,7 @@
         <button type="button" class="btn-primary" id="saveDiscordBtn" style="margin-top:1rem;">Save Discord Settings</button>
       </div>
 
-      <!-- Ad Steps — chỉ cho user đặt link step1 và step2 -->
+      
       <div class="section">
         <h2 class="section-title">Advertisement Steps</h2>
 
@@ -286,7 +286,7 @@
         </div>
 
         <div id="linkInputs" class="link-inputs">
-          <!-- Step 1 -->
+          
           <div class="link-item">
             <div class="link-label">Step 1 — Linkvertise Shortened URL</div>
             <input type="text" id="step1Link" placeholder="https://linkvertise.com/...">
@@ -294,7 +294,7 @@
             <div class="link-preview" id="step1Dest">https://ntt-system.pages.dev/key.html?step1_done</div>
           </div>
 
-          <!-- Step 2 -->
+          
           <div class="link-item" id="step2Container" style="display:none;">
             <div class="link-label">Step 2 — Linkvertise Shortened URL</div>
             <input type="text" id="step2Link" placeholder="https://linkvertise.com/...">
@@ -306,7 +306,7 @@
         <button type="button" class="btn-primary" id="saveAdStepsBtn" style="margin-top:1rem;">Save Ad Steps Settings</button>
       </div>
 
-      <!-- Decode Code -->
+      
       <div class="section" style="margin-top:2rem;">
         <h2 class="section-title">Code: Decode Key</h2>
 
@@ -334,7 +334,7 @@
         </div>
       </div>
 
-      <!-- How to Use -->
+      
       <div class="section" style="margin-top:1.5rem;">
         <h2 class="section-title">How to Use</h2>
         <div style="background:var(--bg-darker);border:1px solid var(--border);border-radius:8px;padding:1rem;position:relative;">
@@ -343,12 +343,12 @@
         </div>
       </div>
 
-    </div><!-- end mainTab -->
+    </div>
 
-    <!-- ══ ACCOUNT TAB ════════════════════════════════════ -->
+    
     <div id="accountTab" class="tab-content" style="display:none;">
 
-      <!-- Change Username -->
+      
       <div class="section">
         <h2 class="section-title">Change Username</h2>
         <div class="form-group">
@@ -365,7 +365,7 @@
         <button type="button" class="btn-primary" id="changeUsernameBtn" style="margin-bottom:2rem;">Update Username</button>
       </div>
 
-      <!-- Change Password -->
+      
       <div class="section">
         <h2 class="section-title">Change Password</h2>
         <div class="form-group">
@@ -383,7 +383,7 @@
         <button type="button" class="btn-primary" id="changePasswordBtn">Update Password</button>
       </div>
 
-    </div><!-- end accountTab -->
+    </div>
   </div>
 
   <script type="module">
@@ -391,7 +391,6 @@
 
     let currentUser = null;
 
-    // ── Auth check ────────────────────────────────────────
     async function checkAuth() {
       const token = localStorage.getItem('token');
       if (!token) { window.location.href = '/auth.html'; return; }
@@ -413,7 +412,6 @@
       }
     }
 
-    // ── Load settings ─────────────────────────────────────
     async function loadSettings() {
       try {
         const res  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
@@ -455,7 +453,6 @@
       }
     }
 
-    // ── Char counters ─────────────────────────────────────
     document.getElementById('websiteDomain').addEventListener('input', (e) => {
       const counter = document.getElementById('websiteCounter');
       const len = e.target.value.length;
@@ -464,7 +461,6 @@
       updatePreviews();
     });
 
-    // Preview domain sau sanitize (space → dash)
     document.getElementById('websiteDomain').addEventListener('blur', (e) => {
       const sanitized = e.target.value
         .trim().toLowerCase()
@@ -496,7 +492,7 @@
 
     function updatePreviews() {
       const wd      = document.getElementById('websiteDomain').value || currentUser?.username || 'USERNAME';
-      // Destination URL cố định — domain được lưu localStorage, không cần trong URL
+
       document.getElementById('step1Dest').textContent = 'https://ntt-system.pages.dev/key.html?step1_done';
       document.getElementById('step2Dest').textContent = 'https://ntt-system.pages.dev/key.html?step2_done';
     }
@@ -519,7 +515,6 @@
 
     document.querySelectorAll('input[name="adSteps"]').forEach(r => r.addEventListener('change', updateLinkInputs));
 
-    // ── Messages ──────────────────────────────────────────
     function showMessage(txt, type = 'error') {
       const el = document.getElementById('message');
       el.textContent = txt;
@@ -527,7 +522,6 @@
       setTimeout(() => el.classList.remove('show'), 5000);
     }
 
-    // ── Decode code ───────────────────────────────────────
     function updateDecodeCode() {
       const encodeKey     = document.getElementById('encodeKey').value.trim()     || 'ntt-hub';
       const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser?.username || 'username';
@@ -616,7 +610,6 @@ end`;
     document.getElementById('encodeKey').addEventListener('input',    updateDecodeCode);
     document.getElementById('websiteDomain').addEventListener('input', updateDecodeCode);
 
-    // ── Copy buttons ──────────────────────────────────────
     document.getElementById('copyCodeBtn').addEventListener('click', () => {
       navigator.clipboard.writeText(document.getElementById('decodeCode').textContent).then(() => {
         const btn = document.getElementById('copyCodeBtn');
@@ -633,7 +626,6 @@ end`;
       });
     });
 
-    // ── Partial save helper ───────────────────────────────
     async function savePartial(patch, btnId, successMsg) {
       const btn  = document.getElementById(btnId);
       const orig = btn.textContent;
@@ -643,7 +635,6 @@ end`;
         const getRes  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
         const getData = await getRes.json();
 
-        // Base defaults — start_link não existe mais
         const full = getData.success && getData.settings ? {
           user_id:           currentUser.id,
           website_domain:    getData.settings.website_domain    || currentUser.username,
@@ -666,7 +657,7 @@ end`;
 
         if (saveData.success) {
           showMessage(successMsg, 'success');
-          // Nếu API trả về website_domain đã sanitize, cập nhật lại input
+
           if (saveData.website_domain) {
             document.getElementById('websiteDomain').value = saveData.website_domain;
           }
@@ -678,7 +669,6 @@ end`;
       finally  { btn.disabled = false; btn.textContent = orig; }
     }
 
-    // ── Section save buttons ──────────────────────────────
     document.getElementById('saveWebsiteBtn').addEventListener('click', async () => {
       const wd = document.getElementById('websiteDomain').value.trim() || currentUser.username;
       await savePartial({ website_domain: wd }, 'saveWebsiteBtn', 'Website settings saved!');
@@ -709,14 +699,12 @@ end`;
       await savePartial({ ad_steps: steps, step1_link: s1, step2_link: s2 }, 'saveAdStepsBtn', 'Ad steps settings saved!');
     });
 
-    // ── Logout ────────────────────────────────────────────
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/auth.html';
     });
 
-    // ── Tabs ──────────────────────────────────────────────
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
@@ -734,7 +722,6 @@ end`;
       });
     });
 
-    // ── Account: change username ──────────────────────────
     document.getElementById('changeUsernameBtn').addEventListener('click', async () => {
       const nu = document.getElementById('newUsername').value.trim();
       if (!nu) { showMessage('Please enter a new username'); return; }
@@ -766,7 +753,6 @@ end`;
       finally  { btn.disabled = false; btn.textContent = 'Update Username'; }
     });
 
-    // ── Account: change password ──────────────────────────
     document.getElementById('changePasswordBtn').addEventListener('click', async () => {
       const cp = document.getElementById('currentPassword').value;
       const np = document.getElementById('newPassword').value;
@@ -799,7 +785,6 @@ end`;
       finally  { btn.disabled = false; btn.textContent = 'Update Password'; }
     });
 
-    // ── Init ──────────────────────────────────────────────
     checkAuth();
     updateLinkInputs();
     updateDecodeCode();
