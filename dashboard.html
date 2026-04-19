@@ -320,8 +320,8 @@
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;">
           <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Usage with HWID:</strong></div>
-          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;">
-            <span id="usernameInUrl" style="color:var(--primary);">username</span>&hwid=<span style="color:var(--warning);">{your_hwid}</span>
+          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;" id="hwIdUrlDisplay">
+            <span id="urlBase" style="color:var(--text);">...</span>/key?id=<span id="usernameInUrl" style="color:var(--primary);">username</span>&hwid=<span style="color:var(--warning);">{your_hwid}</span>
           </div>
         </div>
       </div>
@@ -537,6 +537,7 @@
       const base = window.location.origin;
       document.getElementById('keyUrlDisplay').textContent  = `${base}/key?id=${websiteDomain}`;
       document.getElementById('usernameInUrl').textContent  = websiteDomain;
+      document.getElementById('urlBase').textContent        = base;
 
       const code = `local function key_split(str, sep)
     local result = {}
