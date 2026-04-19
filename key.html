@@ -128,9 +128,9 @@
     let domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
 
     // Callback types — Linkvertise destination phải dùng các param này:
-    // Start:  /key-generator.html?start_done&hash={hash}
-    // Step1:  /key-generator.html?step1_done&hash={hash}
-    // Step2:  /key-generator.html?step2_done&hash={hash}
+    // Start:  /key.html?start_done&hash={hash}
+    // Step1:  /key.html?step1_done&hash={hash}
+    // Step2:  /key.html?step2_done&hash={hash}
     const isStartDone = urlParams.has('start_done');
     const isStep1Done = urlParams.has('step1_done');
     const isStep2Done = urlParams.has('step2_done');
@@ -167,7 +167,7 @@
         settings = data.settings;
         document.getElementById('domainDisplay').textContent = settings.website_domain;
 
-        // Start link của hệ thống, destination phải là: /key-generator.html?start_done&hash={hash}
+        // Start link của hệ thống, destination phải là: /key.html?start_done&hash={hash}
         document.getElementById('startBtn').href = settings.start_link;
 
         if (settings.ad_steps === 2) document.getElementById('step2Card').style.display = 'flex';
@@ -314,7 +314,7 @@
         if (!hasValidHash) {
           // Truy cập trực tiếp URL callback không có hash → bypass attempt
           showError('Invalid access detected.');
-          setTimeout(() => window.location.replace(`/key-generator.html?domain=${encodeURIComponent(domain)}`), 1500);
+          setTimeout(() => window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`), 1500);
           return;
         }
 
@@ -323,12 +323,12 @@
 
         if (ok) {
           // Redirect về trang chính với domain, URL sạch
-          window.location.replace(`/key-generator.html?domain=${encodeURIComponent(domain)}`);
+          window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
         } else {
           showError('Verification failed. Redirecting...');
           localStorage.removeItem('ntt_domain');
           localStorage.removeItem('ntt_hwid');
-          setTimeout(() => window.location.replace(`/key-generator.html?domain=${encodeURIComponent(domain)}`), 2000);
+          setTimeout(() => window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`), 2000);
         }
         return;
       }
