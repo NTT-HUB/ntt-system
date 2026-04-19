@@ -436,7 +436,7 @@
           updatePreviews();
           updateDecodeCode();
         }
-      } catch { console.error('Failed to load settings'); }
+      } catch (e) { console.error('Failed to load settings:', e); }
     }
 
     async function loadTotalKeys() {
@@ -536,9 +536,12 @@
 
       const base    = window.location.origin;
       const apiBase = API_BASE;
-      document.getElementById('keyUrlDisplay').textContent  = `${base}/key.html?domain=${websiteDomain}`;
-      document.getElementById('usernameInUrl').textContent  = websiteDomain;
-      document.getElementById('urlBase').textContent        = apiBase;
+      const elKeyUrl = document.getElementById('keyUrlDisplay');
+      const elUsername = document.getElementById('usernameInUrl');
+      const elUrlBase = document.getElementById('urlBase');
+      if (elKeyUrl)   elKeyUrl.textContent  = `${base}/key.html?domain=${websiteDomain}`;
+      if (elUsername) elUsername.textContent = websiteDomain;
+      if (elUrlBase)  elUrlBase.textContent  = apiBase;
 
       const code = `local function key_split(str, sep)
     local result = {}
@@ -649,7 +652,8 @@ end`;
         const getRes  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
-        const getData = await getRes.json();
+        let getData = { success: false, settings: null };
+        try { getData = await getRes.json(); } catch {}
 
         const full = getData.success && getData.settings ? {
           user_id:           currentUser.id,
