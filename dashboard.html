@@ -395,7 +395,7 @@
   </div>
 
   <script type="module">
-    import API_BASE from '/api-base.js';
+    const API_BASE = 'https://api.ntt-system.xyz';
 
     let currentUser = null;
 
@@ -429,7 +429,7 @@
           const s = data.settings;
           document.getElementById('websiteDomain').value    = s.website_domain || '';
           document.getElementById('keyDomain').value        = s.key_domain     || 'KEY';
-          // Update counters sau khi set value
+
           const wdLen = (s.website_domain || '').length;
           const kdLen = (s.key_domain || 'KEY').length;
           const wc = document.getElementById('websiteCounter');
@@ -458,7 +458,6 @@
         const res  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
         const data = await res.json();
         if (data.success) document.getElementById('totalKeys').textContent = data.settings?.total_keys || 0;
-
 
       } catch {
         document.getElementById('totalKeys').textContent       = '0';
@@ -641,7 +640,6 @@ end`;
 
     document.getElementById('encodeKey').addEventListener('input',    updateDecodeCode);
     document.getElementById('websiteDomain').addEventListener('input', updateDecodeCode);
-
 
     document.getElementById('copyCodeBtn').addEventListener('click', () => {
       navigator.clipboard.writeText(document.getElementById('decodeCode').textContent).then(() => {
