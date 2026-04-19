@@ -191,7 +191,14 @@
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
       if (savedKey && savedDomain === domain && savedHwid === hwid) {
-        showKey(savedKey); return;
+        await showKey(savedKey); return;
+      }
+      // Khác hwid → xóa key cũ
+      if (savedKey && savedHwid !== hwid) {
+        localStorage.removeItem('ntt_generated_key');
+        localStorage.removeItem('ntt_key_domain');
+        localStorage.removeItem('ntt_key_hwid');
+        localStorage.removeItem('ntt_key_expiry');
       }
 
       try {
@@ -244,19 +251,23 @@
       countdownInterval = setInterval(tick, 1000);
     }
 
-    function showKey(key) {
+    async function showKey(key, secondsLeft) {
       resetBlocks();
       document.getElementById('keyValue').textContent = key;
       document.getElementById('keyResult').classList.add('show');
 
-      // Tính thời gian còn lại
-      const savedExpiry = localStorage.getItem('ntt_key_expiry');
-      const now = Math.floor(Date.now() / 1000);
-      let left = 86400;
-      if (savedExpiry) {
-        left = Math.max(0, parseInt(savedExpiry) - now);
+      if (secondsLeft !== undefined) {
+        startCountdown(secondsLeft);
+      } else {
+        // Fetch time còn lại từ KV
+        try {
+          const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}`);
+          const d = await r.json();
+          startCountdown(d.left || 0);
+        } catch {
+          startCountdown(0);
+        }
       }
-      startCountdown(left);
     }
 
     document.getElementById('btnStart').addEventListener('click', () => {
@@ -349,18 +360,24 @@
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
-      const curHwid     = generateHWID();
 
-      if (savedKey && savedDomain === domain && savedHwid === curHwid) {
-        document.getElementById('domainLabel').textContent = domain;
-        showKey(savedKey);
-        return;
-      }
+      // Dùng hwid từ URL nếu có, không thì browser fingerprint
+      const curHwid = hwid || generateHWID();
+      hwid = curHwid;
 
-      if (savedKey) {
+      // Nếu domain hoặc hwid khác → xóa key cũ ngay
+      if (savedKey && (savedDomain !== domain || savedHwid !== curHwid)) {
         localStorage.removeItem('ntt_generated_key');
         localStorage.removeItem('ntt_key_domain');
         localStorage.removeItem('ntt_key_hwid');
+        localStorage.removeItem('ntt_key_expiry');
+      }
+
+      // Đúng domain + đúng hwid → hiện key cũ
+      if (savedKey && savedDomain === domain && savedHwid === curHwid) {
+        document.getElementById('domainLabel').textContent = domain;
+        await showKey(savedKey);
+        return;
       }
 
       await loadSettings();
