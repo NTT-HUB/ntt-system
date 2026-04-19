@@ -123,22 +123,11 @@
 
     let settings = null;
 
-    // Nếu URL có ?hwid= (Roblox truyền vào) thì dùng luôn, không generate
-    const hwidFromUrl = urlParams.get('hwid');
-    let hwid = (hwidFromUrl && hwidFromUrl.length <= 50 && hwidFromUrl !== '{your_hwid}')
-      ? hwidFromUrl
+    // Chỉ dùng hwid từ URL — phải do Roblox script truyền vào
+    const hwidFromUrl = urlParams.get('hwid') || '';
+    let hwid = (hwidFromUrl && hwidFromUrl.length <= 50 && hwidFromUrl !== '{your_hwid}' && hwidFromUrl.trim() !== '')
+      ? hwidFromUrl.trim()
       : null;
-
-    function generateHWID() {
-      const c = document.createElement('canvas');
-      const x = c.getContext('2d');
-      x.textBaseline = 'top'; x.font = '14px Arial';
-      x.fillText('NTT', 2, 2);
-      const data = navigator.userAgent + c.toDataURL() + screen.width + screen.height;
-      let h = 0;
-      for (let i = 0; i < data.length; i++) { h = ((h << 5) - h) + data.charCodeAt(i); h = h & h; }
-      return ('HWID_' + Math.abs(h).toString(36).toUpperCase()).slice(0, 50);
-    }
 
     function showError(msg) {
       const el = document.getElementById('errorMsg');
@@ -170,10 +159,14 @@
 
         settings = data.settings;
         document.getElementById('domainLabel').textContent = settings.website_domain;
-        document.getElementById('hwidDisplay').textContent = hwid ? `HWID: ${hwid}` : '';
+        document.getElementById('hwidDisplay').textContent = hwid ? `HWID: ${hwid}` : 'No HWID provided';
         document.getElementById('btnStart').href = settings.start_link;
 
-        hwid = hwid || localStorage.getItem('ntt_hwid') || generateHWID();
+        hwid = hwid || localStorage.getItem('ntt_hwid');
+        if (!hwid) {
+          showError('Missing HWID. Use: /key.html?domain=xxx&hwid=YOUR_HWID');
+          return;
+        }
         localStorage.setItem('ntt_hwid', hwid);
 
         resetBlocks();
@@ -272,7 +265,7 @@
 
     document.getElementById('btnStart').addEventListener('click', () => {
       localStorage.setItem('ntt_domain', domain);
-      localStorage.setItem('ntt_hwid', hwid || generateHWID());
+      if (hwid) localStorage.setItem('ntt_hwid', hwid);
     });
 
     document.getElementById('btnStep1').addEventListener('click', () => {
@@ -302,10 +295,10 @@
           localStorage.setItem('ntt_generated_key', data.key);
           localStorage.setItem('ntt_key_domain', domain);
           localStorage.setItem('ntt_key_hwid', hwid);
-          localStorage.setItem('ntt_key_expiry', Math.floor(Date.now() / 1000) + 86400);
+          localStorage.removeItem('ntt_key_expiry');
           localStorage.removeItem('ntt_domain');
           localStorage.removeItem('ntt_hwid');
-          showKey(data.key);
+          await showKey(data.key, data.expires_in || 86400);
         } else {
           showError(data.error || 'Failed.');
           btn.disabled = false; btn.textContent = 'Generate Key';
@@ -338,7 +331,7 @@
       if (isCallback) {
         // Callback từ Linkvertise — có hash hợp lệ
         domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
-        hwid   = localStorage.getItem('ntt_hwid') || generateHWID();
+        hwid   = localStorage.getItem('ntt_hwid');
 
         if (!domain) { showError('Session lost. Please start over.'); return; }
 
@@ -361,8 +354,7 @@
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
 
-      // Dùng hwid từ URL nếu có, không thì browser fingerprint
-      const curHwid = hwid || generateHWID();
+      const curHwid = hwid || localStorage.getItem('ntt_hwid') || null;
       hwid = curHwid;
 
       // Nếu domain hoặc hwid khác → xóa key cũ ngay
