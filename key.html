@@ -185,18 +185,19 @@
     }
 
     function show(id) {
-      document.getElementById(id).classList.add('show');
+      const el = document.getElementById(id);
+      el.style.display = '';   // xóa inline style nếu có
+      el.classList.add('show');
     }
     function hide(id) {
-      document.getElementById(id).classList.remove('show');
-      document.getElementById(id).style.display = 'none';
+      const el = document.getElementById(id);
+      el.classList.remove('show');
+      el.style.display = '';   // để CSS class kiểm soát
     }
 
-    // Ẩn tất cả các block trước
     function resetBlocks() {
       ['blockStart','blockStep1','blockStep2','blockGenerate'].forEach(id => {
-        const el = document.getElementById(id);
-        el.classList.remove('show'); el.style.display = 'none';
+        hide(id);
       });
     }
 
