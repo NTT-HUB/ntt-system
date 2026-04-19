@@ -77,7 +77,6 @@
     <h1 class="title">Get Your Key</h1>
     <p class="subtitle" id="domainLabel">Loading...</p>
 
-
     <div class="step-block" id="blockStart">
       <a href="#" class="btn btn-start" id="btnStart" target="_blank">▶ Start</a>
     </div>
@@ -112,10 +111,8 @@
     const hash         = urlParams.get('hash') || '';
     const hasValidHash = hash.length > 10;
 
-    // Domain từ URL hoặc localStorage
     let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
 
-    // Chỉ là callback khi CÓ hash hợp lệ VÀ có param step
     const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
     const hasStep1Param = urlParams.has('step1_done') || urlParams.has('step1');
     const hasStep2Param = urlParams.has('step2_done') || urlParams.has('step2');
@@ -123,7 +120,6 @@
 
     let settings = null;
 
-    // Chỉ dùng hwid từ URL — phải do Roblox script truyền vào
     const hwidRaw = urlParams.get('hwid') || '';
     let hwid = (hwidRaw.trim().length > 0 && hwidRaw.trim().length <= 50) ? hwidRaw.trim() : null;
 
@@ -183,7 +179,7 @@
       if (savedKey && savedDomain === domain && savedHwid === hwid) {
         await showKey(savedKey); return;
       }
-      // Khác hwid → xóa key cũ
+
       if (savedKey && savedHwid !== hwid) {
         localStorage.removeItem('ntt_generated_key');
         localStorage.removeItem('ntt_key_domain');
@@ -249,7 +245,7 @@
       if (secondsLeft !== undefined) {
         startCountdown(secondsLeft);
       } else {
-        // Fetch time còn lại từ KV
+
         try {
           const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}`);
           const d = await r.json();
@@ -326,7 +322,7 @@
 
     async function init() {
       if (isCallback) {
-        // Callback từ Linkvertise — có hash hợp lệ
+
         domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
         hwid   = localStorage.getItem('ntt_hwid');
 
@@ -341,25 +337,21 @@
         return;
       }
 
-      // Normal load
       if (urlParams.get('domain')) localStorage.setItem('ntt_domain', domain);
 
       if (!domain) { showError('No domain specified.'); return; }
 
-      // Hiện key cũ nếu còn hợp lệ
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
 
-      // Nếu có key cũ đúng domain → dùng hwid từ localStorage để hiện lại
       if (savedKey && savedDomain === domain) {
-        hwid = savedHwid; // dùng hwid đã lưu khi tạo key
+        hwid = savedHwid;
         document.getElementById('domainLabel').textContent = domain;
         await showKey(savedKey);
         return;
       }
 
-      // Khác domain → xóa key cũ
       if (savedKey && savedDomain !== domain) {
         localStorage.removeItem('ntt_generated_key');
         localStorage.removeItem('ntt_key_domain');
