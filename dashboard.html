@@ -435,7 +435,7 @@
           const wc = document.getElementById('websiteCounter');
           const kc = document.getElementById('keyCounter');
           if (wc) { wc.textContent = `${wdLen}/15 characters`; wc.className = 'char-counter' + (wdLen >= 15 ? ' error' : wdLen > 12 ? ' warning' : ''); }
-          if (kc) { kc.textContent = `${kdLen}/6 characters`;  kc.className = 'char-counter' + (kdLen >= 6  ? ' error' : kdLen  > 4  ? ' warning' : ''); }
+          if (kc) { kc.textContent = `${kdLen}/10 characters`; kc.className = 'char-counter' + (kdLen >= 10 ? ' error' : kdLen  > 7  ? ' warning' : ''); }
           document.getElementById('encodeKey').value        = s.encode_key     || 'ntt-hub';
           document.getElementById('linkvertiseToken').value = s.linkvertise_token || '';
           document.getElementById('discordWebhook').value   = s.discord_webhook   || '';
@@ -609,6 +609,7 @@ end`;
       document.getElementById('howToUseCode').textContent = '';
 
       const howTo = `local you_hwid = gethwid()
+      
 local function domain_control(x)
     return game:HttpGet("https://s"..math.random(1,4)..".ntt-system.xyz/?type=data&domain=${websiteDomain}&hwid="..x)
 end
@@ -705,7 +706,7 @@ end`;
 
     document.getElementById('saveKeyBtn').addEventListener('click', async () => {
       const kd = document.getElementById('keyDomain').value.trim() || 'KEY';
-      if (kd.length > 6) { showMessage('Key domain must be 6 characters or less'); return; }
+      if (kd.length > 10) { showMessage('Key domain must be 10 characters or less'); return; }
       const ek = document.getElementById('encodeKey').value.trim() || 'ntt-hub';
       await savePartial({ key_domain: kd, encode_key: ek }, 'saveKeyBtn', 'Key settings saved!');
     });
