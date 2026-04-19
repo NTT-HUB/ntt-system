@@ -464,6 +464,23 @@
       updatePreviews();
     });
 
+    // Preview domain sau sanitize (space → dash)
+    document.getElementById('websiteDomain').addEventListener('blur', (e) => {
+      const sanitized = e.target.value
+        .trim().toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9\-]/g, '')
+        .slice(0, 15);
+      if (sanitized !== e.target.value) {
+        e.target.value = sanitized;
+        const counter = document.getElementById('websiteCounter');
+        counter.textContent = sanitized.length + '/15 characters';
+        counter.className = 'char-counter';
+        updatePreviews();
+        updateDecodeCode();
+      }
+    });
+
     document.getElementById('keyDomain').addEventListener('input', (e) => {
       const counter = document.getElementById('keyCounter');
       const len = e.target.value.length;
@@ -647,7 +664,15 @@ end`;
         });
         const saveData = await saveRes.json();
 
-        if (saveData.success) { showMessage(successMsg, 'success'); updateDecodeCode(); }
+        if (saveData.success) {
+          showMessage(successMsg, 'success');
+          // Nếu API trả về website_domain đã sanitize, cập nhật lại input
+          if (saveData.website_domain) {
+            document.getElementById('websiteDomain').value = saveData.website_domain;
+          }
+          updateDecodeCode();
+          updatePreviews();
+        }
         else showMessage(saveData.error || 'Failed to save');
       } catch { showMessage('Connection error'); }
       finally  { btn.disabled = false; btn.textContent = orig; }
