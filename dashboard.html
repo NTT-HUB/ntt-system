@@ -161,6 +161,9 @@
       .container   { padding: 1rem; }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/lua.min.js"></script>
 </head>
 <body>
   <div class="header">
@@ -234,19 +237,6 @@
 
       
       <div class="section">
-        <h2 class="section-title">Linkvertise Configuration</h2>
-        <div class="form-group">
-          <label>
-            Linkvertise API Token
-            <span class="label-desc">Your anti-bypass API token from Linkvertise</span>
-          </label>
-          <input type="text" id="linkvertiseToken" placeholder="Enter your Linkvertise API token" maxlength="200">
-        </div>
-        <button type="button" class="btn-primary" id="saveLinkvertiseBtn" style="margin-top:1rem;">Save Linkvertise Settings</button>
-      </div>
-
-      
-      <div class="section">
         <h2 class="section-title">Discord Notifications</h2>
         <div class="form-group">
           <label>
@@ -258,7 +248,18 @@
         <button type="button" class="btn-primary" id="saveDiscordBtn" style="margin-top:1rem;">Save Discord Settings</button>
       </div>
 
-      
+      <div class="section">
+        <h2 class="section-title">Linkvertise Configuration</h2>
+        <div class="form-group">
+          <label>
+            Linkvertise API Token
+            <span class="label-desc">Your anti-bypass API token from Linkvertise</span>
+          </label>
+          <input type="text" id="linkvertiseToken" placeholder="Enter your Linkvertise API token" maxlength="200">
+        </div>
+        <button type="button" class="btn-primary" id="saveLinkvertiseBtn" style="margin-top:1rem;">Save Linkvertise Settings</button>
+      </div>
+
       <div class="section">
         <h2 class="section-title">Advertisement Steps</h2>
 
@@ -308,7 +309,7 @@
 
       
       <div class="section" style="margin-top:2rem;">
-        <h2 class="section-title">Code: Decode Key</h2>
+        <h2 class="section-title">Link Get Key</h2>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
           <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>API Data URL:</strong></div>
@@ -317,29 +318,29 @@
           </div>
         </div>
 
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;">
           <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Usage with HWID:</strong></div>
           <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;">
             https://ntt-system.pages.dev/key?id=<span id="usernameInUrl" style="color:var(--primary);">username</span>&hwid=<span style="color:var(--warning);">{your_hwid}</span>
           </div>
         </div>
+      </div>
 
-        <div class="warning-box" style="margin-bottom:1rem;">
-          <strong>📋 Copy this Lua code into your Roblox script</strong>
-        </div>
+      <div class="section" style="margin-top:1.5rem;">
+        <h2 class="section-title">Code Decode</h2>
 
-        <div style="background:var(--bg-darker);border:1px solid var(--border);border-radius:8px;padding:1rem;position:relative;">
-          <button id="copyCodeBtn" style="position:absolute;top:1rem;right:1rem;padding:0.5rem 1rem;background:var(--primary);color:var(--bg-dark);border:none;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;">Copy Code</button>
-          <pre id="decodeCode" style="margin:0;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;overflow-x:auto;white-space:pre-wrap;padding-right:5rem;">Loading...</pre>
+        <div style="position:relative;border-radius:8px;overflow:hidden;">
+          <button id="copyCodeBtn" style="position:absolute;top:0.75rem;right:0.75rem;z-index:10;padding:0.4rem 0.9rem;background:var(--primary);color:var(--bg-dark);border:none;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;">Get Data Key</button>
+          <pre style="margin:0;border-radius:8px;"><code class="language-lua" id="decodeCode" style="font-size:0.85rem;padding-right:5rem;display:block;">Loading...</code></pre>
         </div>
       </div>
 
       
       <div class="section" style="margin-top:1.5rem;">
         <h2 class="section-title">How to Use</h2>
-        <div style="background:var(--bg-darker);border:1px solid var(--border);border-radius:8px;padding:1rem;position:relative;">
-          <button id="copyHowToUseBtn" style="position:absolute;top:1rem;right:1rem;padding:0.5rem 1rem;background:var(--primary);color:var(--bg-dark);border:none;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;">Copy Code</button>
-          <pre id="howToUseCode" style="margin:0;color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;overflow-x:auto;white-space:pre-wrap;line-height:1.6;padding-right:5rem;">Loading...</pre>
+        <div style="position:relative;border-radius:8px;overflow:hidden;">
+          <button id="copyHowToUseBtn" style="position:absolute;top:0.75rem;right:0.75rem;z-index:10;padding:0.4rem 0.9rem;background:var(--primary);color:var(--bg-dark);border:none;border-radius:6px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;">Copy Code</button>
+          <pre style="margin:0;border-radius:8px;"><code class="language-lua" id="howToUseCode" style="font-size:0.85rem;padding-right:5rem;display:block;">Loading...</code></pre>
         </div>
       </div>
 
@@ -583,6 +584,7 @@ local function key_decode(data, baseKey)
 end`;
 
       document.getElementById('decodeCode').textContent = code;
+      document.getElementById('howToUseCode').textContent = '';
 
       const howTo = `local done, fail = pcall(function()
     key = game:HttpGet(_G.getlink)
@@ -605,6 +607,7 @@ else
 end`;
 
       document.getElementById('howToUseCode').textContent = howTo;
+      if (typeof hljs !== 'undefined') rehighlight();
     }
 
     document.getElementById('encodeKey').addEventListener('input',    updateDecodeCode);
@@ -788,6 +791,9 @@ end`;
     checkAuth();
     updateLinkInputs();
     updateDecodeCode();
+    if (typeof hljs !== 'undefined') {
+      document.addEventListener('DOMContentLoaded', () => rehighlight());
+    }
 
     setTimeout(() => {
       if (currentUser) document.getElementById('currentUsername').value = currentUser.username;
