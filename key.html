@@ -76,7 +76,7 @@
   <div class="card">
     <h1 class="title">Get Your Key</h1>
     <p class="subtitle" id="domainLabel">Loading...</p>
-    <p style="text-align:center;font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;word-break:break-all;" id="hwidDisplay"></p>
+
 
     <div class="step-block" id="blockStart">
       <a href="#" class="btn btn-start" id="btnStart" target="_blank">▶ Start</a>
@@ -157,7 +157,6 @@
 
         settings = data.settings;
         document.getElementById('domainLabel').textContent = settings.website_domain;
-        document.getElementById('hwidDisplay').textContent = hwid ? `HWID: ${hwid}` : 'No HWID provided';
         document.getElementById('btnStart').href = settings.start_link;
 
         hwid = hwid || localStorage.getItem('ntt_hwid');
