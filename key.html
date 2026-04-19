@@ -158,6 +158,37 @@
       b.textContent = msg; b.style.display = 'block';
     }
 
+    function checkSavedKey() {
+      const savedKey    = localStorage.getItem('ntt_generated_key');
+      const savedDomain = localStorage.getItem('ntt_key_domain');
+      const savedHwid   = localStorage.getItem('ntt_key_hwid');
+      const curHwid     = generateHWID();
+
+      // Khác domain hoặc khác hwid → xóa key cũ, không hiện
+      if (savedKey && (savedDomain !== domain || savedHwid !== curHwid)) {
+        localStorage.removeItem('ntt_generated_key');
+        localStorage.removeItem('ntt_key_domain');
+        localStorage.removeItem('ntt_key_hwid');
+        return false;
+      }
+
+      // Đúng domain + đúng hwid → hiện lại key
+      if (savedKey && savedDomain === domain && savedHwid === curHwid) {
+        document.getElementById('domainDisplay').textContent = domain;
+        markStepComplete('start');
+        document.getElementById('step1Card').style.display = 'flex';
+        markStepComplete(1);
+        const section = document.getElementById('createSection');
+        section.style.display = 'block';
+        section.classList.add('active');
+        document.getElementById('createKeyBtn').style.display = 'none';
+        document.getElementById('keyValue').textContent = savedKey;
+        document.getElementById('keyResult').classList.add('active');
+        return true;
+      }
+      return false;
+    }
+
     async function loadSettings() {
       if (!domain) { showError('No domain specified'); return; }
       try {
@@ -281,6 +312,10 @@
           document.getElementById('keyCount').textContent = data.total_keys || 1;
           document.getElementById('keyResult').classList.add('active');
           btn.style.display = 'none';
+          // Lưu key để không mất khi reload — gắn với hwid + domain
+          localStorage.setItem('ntt_generated_key',    data.key);
+          localStorage.setItem('ntt_key_domain',       domain);
+          localStorage.setItem('ntt_key_hwid',         hwid);
           localStorage.removeItem('ntt_domain');
           localStorage.removeItem('ntt_hwid');
         } else {
@@ -348,6 +383,9 @@
         showError('No domain specified. Please use the correct link.');
         return;
       }
+
+      // Nếu đã có key đúng domain + hwid → hiện luôn, không cần load lại
+      if (checkSavedKey()) return;
 
       await loadSettings();
     }
