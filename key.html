@@ -96,6 +96,9 @@
         <div class="key-value" id="keyValue"></div>
       </div>
       <button class="btn-copy" id="btnCopy">Copy Key</button>
+      <div id="keyExpiry" style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-dim);text-align:center;font-family:'IBM Plex Mono',monospace;">
+        ⏱ Expires in <span id="expiryTime">--:--:--</span>
+      </div>
     </div>
 
     <div class="error-msg" id="errorMsg"></div>
@@ -209,10 +212,44 @@
       } catch {}
     }
 
+    let countdownInterval = null;
+
+    function startCountdown(secondsLeft) {
+      if (countdownInterval) clearInterval(countdownInterval);
+      const el = document.getElementById('expiryTime');
+      function tick() {
+        if (secondsLeft <= 0) {
+          el.textContent = 'Expired';
+          clearInterval(countdownInterval);
+          localStorage.removeItem('ntt_generated_key');
+          localStorage.removeItem('ntt_key_domain');
+          localStorage.removeItem('ntt_key_hwid');
+          localStorage.removeItem('ntt_key_expiry');
+          return;
+        }
+        const h = Math.floor(secondsLeft / 3600);
+        const m = Math.floor((secondsLeft % 3600) / 60);
+        const s = secondsLeft % 60;
+        el.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        secondsLeft--;
+      }
+      tick();
+      countdownInterval = setInterval(tick, 1000);
+    }
+
     function showKey(key) {
       resetBlocks();
       document.getElementById('keyValue').textContent = key;
       document.getElementById('keyResult').classList.add('show');
+
+      // Tính thời gian còn lại
+      const savedExpiry = localStorage.getItem('ntt_key_expiry');
+      const now = Math.floor(Date.now() / 1000);
+      let left = 86400;
+      if (savedExpiry) {
+        left = Math.max(0, parseInt(savedExpiry) - now);
+      }
+      startCountdown(left);
     }
 
     document.getElementById('btnStart').addEventListener('click', () => {
@@ -247,6 +284,7 @@
           localStorage.setItem('ntt_generated_key', data.key);
           localStorage.setItem('ntt_key_domain', domain);
           localStorage.setItem('ntt_key_hwid', hwid);
+          localStorage.setItem('ntt_key_expiry', Math.floor(Date.now() / 1000) + 86400);
           localStorage.removeItem('ntt_domain');
           localStorage.removeItem('ntt_hwid');
           showKey(data.key);
