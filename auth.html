@@ -438,13 +438,13 @@
             <input 
               type="text" 
               id="registerUsername" 
-              placeholder="Choose username (letters, numbers, _ only)" 
+              placeholder="Choose username" 
               required
               autocomplete="username"
               minlength="3"
               maxlength="15"
-              pattern="[a-zA-Z0-9_]+"
-              title="Username can only contain letters, numbers, and underscores"
+              pattern="[a-zA-Z0-9_ ]+"
+              title="Username can only contain letters, numbers, spaces, and underscores"
             >
           </div>
 
@@ -575,9 +575,9 @@
         return;
       }
 
-      // Validate username: only alphanumeric and underscore
-      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-        showMessage('Username can only contain letters, numbers, and underscores (no spaces or special characters)');
+      // Validate username: letters, numbers, underscore, and spaces only
+      if (!/^[a-zA-Z0-9_ ]+$/.test(username)) {
+        showMessage('Username can only contain letters, numbers, spaces, and underscores');
         return;
       }
 
