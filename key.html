@@ -124,10 +124,8 @@
     let settings = null;
 
     // Chỉ dùng hwid từ URL — phải do Roblox script truyền vào
-    const hwidFromUrl = urlParams.get('hwid') || '';
-    let hwid = (hwidFromUrl && hwidFromUrl.length <= 50 && hwidFromUrl !== '{your_hwid}' && hwidFromUrl.trim() !== '')
-      ? hwidFromUrl.trim()
-      : null;
+    const hwidRaw = urlParams.get('hwid') || '';
+    let hwid = (hwidRaw.trim().length > 0 && hwidRaw.trim().length <= 50) ? hwidRaw.trim() : null;
 
     function showError(msg) {
       const el = document.getElementById('errorMsg');
