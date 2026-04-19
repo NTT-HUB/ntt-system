@@ -291,7 +291,7 @@
             <div class="link-label">Step 1 — Linkvertise Shortened URL</div>
             <input type="text" id="step1Link" placeholder="https://linkvertise.com/...">
             <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
-            <div class="link-preview" id="step1Dest">https://ntt-system.pages.dev/key?domain=USERNAME&step1</div>
+            <div class="link-preview" id="step1Dest">https://ntt-system.pages.dev/key.html?step1_done</div>
           </div>
 
           <!-- Step 2 -->
@@ -299,7 +299,7 @@
             <div class="link-label">Step 2 — Linkvertise Shortened URL</div>
             <input type="text" id="step2Link" placeholder="https://linkvertise.com/...">
             <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
-            <div class="link-preview" id="step2Dest">https://ntt-system.pages.dev/key?domain=USERNAME&step2</div>
+            <div class="link-preview" id="step2Dest">https://ntt-system.pages.dev/key.html?step2_done</div>
           </div>
         </div>
 
@@ -496,9 +496,9 @@
 
     function updatePreviews() {
       const wd      = document.getElementById('websiteDomain').value || currentUser?.username || 'USERNAME';
-      const baseUrl = 'https://ntt-system.pages.dev/key';
-      document.getElementById('step1Dest').textContent = `${baseUrl}?domain=${wd}&step1`;
-      document.getElementById('step2Dest').textContent = `${baseUrl}?domain=${wd}&step2`;
+      // Destination URL cố định — domain được lưu localStorage, không cần trong URL
+      document.getElementById('step1Dest').textContent = 'https://ntt-system.pages.dev/key.html?step1_done';
+      document.getElementById('step2Dest').textContent = 'https://ntt-system.pages.dev/key.html?step2_done';
     }
 
     function updateLinkInputs() {
