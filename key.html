@@ -448,41 +448,42 @@
     } else {
       loadSettings();
 
-      if (startCallback !== null) {
-        const hash = urlParams.get('hash');
-        if (hash && domain) {
-          fetch(`${API_BASE}/?type=complete_step`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ hwid: generateHWID(), step: 'start', hash }),
-          }).then(() => {
-            window.history.replaceState({}, '', `/key-generator.html?domain=${domain}`);
-            window.location.reload();
-          });
-        }
-      } else if (step1Callback !== null) {
-        const hash = urlParams.get('hash');
+      // Linkvertise callback phải có hash hợp lệ (dài > 10 ký tự)
+      const hash = urlParams.get('hash');
+      const hasValidHash = hash && hash.length > 10;
+
+      if (urlParams.has('start') && hasValidHash) {
         hwid = generateHWID();
         fetch(`${API_BASE}/?type=complete_step`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ hwid, step: 1, hash }),
+          body:    JSON.stringify({ hwid, step: 'start', hash, domain }),
         }).then(() => {
           window.history.replaceState({}, '', `/key-generator.html?domain=${domain}`);
           window.location.reload();
         });
-      } else if (step2Callback !== null) {
-        const hash = urlParams.get('hash');
+      } else if (urlParams.has('step1') && hasValidHash) {
         hwid = generateHWID();
         fetch(`${API_BASE}/?type=complete_step`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ hwid, step: 2, hash }),
+          body:    JSON.stringify({ hwid, step: 1, hash, domain }),
+        }).then(() => {
+          window.history.replaceState({}, '', `/key-generator.html?domain=${domain}`);
+          window.location.reload();
+        });
+      } else if (urlParams.has('step2') && hasValidHash) {
+        hwid = generateHWID();
+        fetch(`${API_BASE}/?type=complete_step`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ hwid, step: 2, hash, domain }),
         }).then(() => {
           window.history.replaceState({}, '', `/key-generator.html?domain=${domain}`);
           window.location.reload();
         });
       } else {
+        // Không có hash hợp lệ → polling bình thường, không redirect
         setInterval(checkProgress, 3000);
       }
     }
