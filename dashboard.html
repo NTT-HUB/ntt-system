@@ -182,7 +182,7 @@
     <div style="background: linear-gradient(135deg, var(--primary), #6366f1); border-radius: 16px; padding: 2.5rem; margin-bottom: 2rem; text-align: center; box-shadow: 0 8px 24px rgba(0,255,157,0.2);">
       <div style="font-size: 0.875rem; color: rgba(10,14,26,0.8); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 600;">Total Keys Created</div>
       <div style="font-family: 'Oswald', sans-serif; font-size: 4rem; font-weight: 800; color: var(--bg-dark); line-height: 1;" id="totalKeys">0</div>
-      <div style="font-size: 0.75rem; color: rgba(10,14,26,0.6); margin-top: 0.5rem;">System Total: <span id="systemTotalKeys">0</span> keys</div>
+
     </div>
 
     
@@ -312,16 +312,16 @@
         <h2 class="section-title">Link Get Key</h2>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
-          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>User Get Key URL:</strong></div>
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Your Link</strong></div>
           <div style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:0.875rem;" id="keyUrlDisplay">
             Loading...
           </div>
         </div>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;">
-          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Roblox Script URL:</strong></div>
-          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;">
-            <span id="urlBase" style="color:var(--text);">...</span>/?type=data&hwid=<span style="color:var(--warning);">{your_hwid}</span>
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Link Get Key</strong></div>
+          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;" id="keyUrlHwid">
+            Loading...
           </div>
         </div>
       </div>
@@ -363,6 +363,13 @@
           </label>
           <input type="text" id="newUsername" placeholder="Enter new username" minlength="3" maxlength="15" pattern="[a-zA-Z0-9_ ]+">
         </div>
+        <div class="form-group">
+          <label>
+            Confirm Password
+            <span class="label-desc">Enter your password to confirm</span>
+          </label>
+          <input type="password" id="usernameConfirmPassword" placeholder="Enter your password" autocomplete="current-password">
+        </div>
         <button type="button" class="btn-primary" id="changeUsernameBtn" style="margin-bottom:2rem;">Update Username</button>
       </div>
 
@@ -388,7 +395,7 @@
   </div>
 
   <script type="module">
-    const API_BASE = 'https://api.ntt-system.xyz';
+    import API_BASE from '/api-base.js';
 
     let currentUser = null;
 
@@ -452,9 +459,7 @@
         const data = await res.json();
         if (data.success) document.getElementById('totalKeys').textContent = data.settings?.total_keys || 0;
 
-        const sysRes  = await fetch(`${API_BASE}/?type=get_system_total`);
-        const sysData = await sysRes.json();
-        if (sysData.success) document.getElementById('systemTotalKeys').textContent = sysData.total || 0;
+
       } catch {
         document.getElementById('totalKeys').textContent       = '0';
         document.getElementById('systemTotalKeys').textContent = '0';
@@ -543,12 +548,10 @@
 
       const base    = window.location.origin;
       const apiBase = API_BASE;
-      const elKeyUrl = document.getElementById('keyUrlDisplay');
-      const elUsername = document.getElementById('usernameInUrl');
-      const elUrlBase = document.getElementById('urlBase');
-      if (elKeyUrl)   elKeyUrl.textContent  = `${base}/key.html?domain=${websiteDomain}`;
-      if (elUsername) elUsername.textContent = websiteDomain;
-      if (elUrlBase)  elUrlBase.textContent  = apiBase;
+      const elKeyUrl  = document.getElementById('keyUrlDisplay');
+      const elKeyHwid = document.getElementById('keyUrlHwid');
+      if (elKeyUrl)  elKeyUrl.textContent  = `${base}/key.html?domain=${websiteDomain}`;
+      if (elKeyHwid) elKeyHwid.textContent = `${base}/key.html?domain=${websiteDomain}&hwid=you_hwid`;
 
       const code = `local function key_split(str, sep)
     local result = {}
@@ -607,7 +610,6 @@ end`;
       document.getElementById('howToUseCode').textContent = '';
 
       const howTo = `local you_hwid = gethwid() -- or your custom hwid
-      
 local function domain_control(x)
     return game:HttpGet("https://s"..math.random(1,4)..".ntt-system.xyz/?type=data&hwid="..x)
 end
@@ -622,7 +624,7 @@ if done then
         key = key_decode(key, "${encodeKey}")
         key = string.split(key, "|")
         _G.table_key_system = {key[1], tonumber(key[2])}
-        print(_G.table_key_system[1], _G.table_key_system[2]) -- 1: Key, 2: Time
+        print(_G.table_key_system[1], _G.table_key_system[2]) -- 1: key, 2: Time
 
         -- Add your script execution here
 
@@ -757,8 +759,10 @@ end`;
     });
 
     document.getElementById('changeUsernameBtn').addEventListener('click', async () => {
-      const nu = document.getElementById('newUsername').value.trim();
-      if (!nu) { showMessage('Please enter a new username'); return; }
+      const nu  = document.getElementById('newUsername').value.trim();
+      const cpw = document.getElementById('usernameConfirmPassword').value;
+      if (!nu)  { showMessage('Please enter a new username'); return; }
+      if (!cpw) { showMessage('Please enter your password to confirm'); return; }
       if (!/^[a-zA-Z0-9_ ]+$/.test(nu)) { showMessage('Invalid characters in username'); return; }
       if (nu.length < 3 || nu.length > 15) { showMessage('Username must be 3-15 characters'); return; }
       if (nu === currentUser.username)     { showMessage('New username is the same as current'); return; }
@@ -770,7 +774,7 @@ end`;
         const res  = await fetch(`${API_BASE}/?type=change_username`, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-          body:    JSON.stringify({ user_id: currentUser.id, new_username: nu }),
+          body:    JSON.stringify({ user_id: currentUser.id, new_username: nu, password: cpw }),
         });
         const data = await res.json();
 
@@ -779,7 +783,8 @@ end`;
           currentUser.username = nu;
           document.getElementById('currentUsername').value   = nu;
           document.getElementById('userDisplay').textContent = nu;
-          document.getElementById('newUsername').value       = '';
+          document.getElementById('newUsername').value              = '';
+          document.getElementById('usernameConfirmPassword').value = '';
         } else {
           showMessage(data.error || 'Failed to update username');
         }
