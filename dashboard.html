@@ -292,7 +292,7 @@
             <div class="link-label">Step 1 — Linkvertise Shortened URL</div>
             <input type="text" id="step1Link" placeholder="https://linkvertise.com/...">
             <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
-            <div class="link-preview" id="step1Dest">https://ntt-system.pages.dev/key.html?step1_done</div>
+            <div class="link-preview" id="step1Dest">Loading...</div>
           </div>
 
           
@@ -300,7 +300,7 @@
             <div class="link-label">Step 2 — Linkvertise Shortened URL</div>
             <input type="text" id="step2Link" placeholder="https://linkvertise.com/...">
             <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
-            <div class="link-preview" id="step2Dest">https://ntt-system.pages.dev/key.html?step2_done</div>
+            <div class="link-preview" id="step2Dest">Loading...</div>
           </div>
         </div>
 
@@ -314,14 +314,14 @@
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
           <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>API Data URL:</strong></div>
           <div style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:0.875rem;" id="keyUrlDisplay">
-            https://ntt-system.pages.dev/key?id=username
+            Loading...
           </div>
         </div>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;">
           <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Usage with HWID:</strong></div>
           <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;">
-            https://ntt-system.pages.dev/key?id=<span id="usernameInUrl" style="color:var(--primary);">username</span>&hwid=<span style="color:var(--warning);">{your_hwid}</span>
+            <span id="usernameInUrl" style="color:var(--primary);">username</span>&hwid=<span style="color:var(--warning);">{your_hwid}</span>
           </div>
         </div>
       </div>
@@ -492,10 +492,9 @@
     }
 
     function updatePreviews() {
-      const wd      = document.getElementById('websiteDomain').value || currentUser?.username || 'USERNAME';
-
-      document.getElementById('step1Dest').textContent = 'https://ntt-system.pages.dev/key.html?step1_done';
-      document.getElementById('step2Dest').textContent = 'https://ntt-system.pages.dev/key.html?step2_done';
+      const base = window.location.origin;
+      document.getElementById('step1Dest').textContent = `${base}/key.html?step1_done`;
+      document.getElementById('step2Dest').textContent = `${base}/key.html?step2_done`;
     }
 
     function updateLinkInputs() {
@@ -527,7 +526,8 @@
       const encodeKey     = document.getElementById('encodeKey').value.trim()     || 'ntt-hub';
       const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser?.username || 'username';
 
-      document.getElementById('keyUrlDisplay').textContent  = `https://ntt-system.pages.dev/key?id=${websiteDomain}`;
+      const base = window.location.origin;
+      document.getElementById('keyUrlDisplay').textContent  = `${base}/key?id=${websiteDomain}`;
       document.getElementById('usernameInUrl').textContent  = websiteDomain;
 
       const code = `local function key_split(str, sep)
