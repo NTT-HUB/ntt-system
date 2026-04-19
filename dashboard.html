@@ -522,6 +522,14 @@
       setTimeout(() => el.classList.remove('show'), 5000);
     }
 
+    function rehighlight() {
+      if (typeof hljs === 'undefined') return;
+      document.querySelectorAll('code.language-lua').forEach(el => {
+        el.removeAttribute('data-highlighted');
+        hljs.highlightElement(el);
+      });
+    }
+
     function updateDecodeCode() {
       const encodeKey     = document.getElementById('encodeKey').value.trim()     || 'ntt-hub';
       const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser?.username || 'username';
@@ -613,6 +621,7 @@ end`;
     document.getElementById('encodeKey').addEventListener('input',    updateDecodeCode);
     document.getElementById('websiteDomain').addEventListener('input', updateDecodeCode);
 
+
     document.getElementById('copyCodeBtn').addEventListener('click', () => {
       navigator.clipboard.writeText(document.getElementById('decodeCode').textContent).then(() => {
         const btn = document.getElementById('copyCodeBtn');
@@ -635,7 +644,9 @@ end`;
       btn.disabled = true; btn.textContent = 'Saving...';
 
       try {
-        const getRes  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
+        const getRes  = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
         const getData = await getRes.json();
 
         const full = getData.success && getData.settings ? {
