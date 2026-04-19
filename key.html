@@ -341,7 +341,7 @@
 
       <div class="steps">
         <!-- Start Step -->
-        <div class="step" id="startCard">
+        <div class="step" id="startCard" style="display: flex;">
           <div class="step-number">S</div>
           <div class="step-content">
             <div class="step-title">Start</div>
@@ -353,7 +353,7 @@
         </div>
 
         <!-- Step 1 -->
-        <div class="step" id="step1Card">
+        <div class="step" id="step1Card" style="display: none;">
           <div class="step-number">1</div>
           <div class="step-content">
             <div class="step-title">Complete Step 1</div>
@@ -378,7 +378,7 @@
       </div>
 
       <!-- Create Key Section -->
-      <div class="create-key-section" id="createSection">
+      <div class="create-key-section" id="createSection" style="display: none;">
         <button class="btn btn-create" id="createKeyBtn">
           Generate Key
         </button>
@@ -504,6 +504,7 @@
 
     // Enable step 1 after start is done
     function enableStep1() {
+      document.getElementById('step1Card').style.display = 'flex';
       const step1Btn = document.getElementById('step1Btn');
       step1Btn.disabled = false;
       step1Btn.onclick = () => {
@@ -513,6 +514,7 @@
 
     // Enable step 2
     function enableStep2() {
+      document.getElementById('step2Card').style.display = 'flex';
       const step2Btn = document.getElementById('step2Btn');
       step2Btn.disabled = false;
       step2Btn.onclick = () => {
@@ -534,6 +536,7 @@
 
     // Show create key button
     function showCreateButton() {
+      document.getElementById('createSection').style.display = 'block';
       document.getElementById('createSection').classList.add('active');
     }
 
