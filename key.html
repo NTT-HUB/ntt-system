@@ -106,7 +106,7 @@
   </div>
 
   <script type="module">
-    const API_BASE = 'https://api.ntt-system.xyz';
+    import API_BASE from '/api-base.js';
 
     const urlParams    = new URLSearchParams(window.location.search);
     const hash         = urlParams.get('hash') || '';
