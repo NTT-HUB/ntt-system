@@ -109,7 +109,7 @@
     const hasValidHash = hash.length > 10;
 
     // Domain từ URL hoặc localStorage
-    let domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
+    let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
 
     // Chỉ là callback khi CÓ hash hợp lệ VÀ có param step
     const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
