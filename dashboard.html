@@ -397,6 +397,10 @@
           >
           <div class="char-counter" id="websiteCounter">0/15 characters</div>
         </div>
+
+        <button type="button" class="btn-primary" id="saveWebsiteBtn" style="margin-top: 1rem;">
+          Save Website Settings
+        </button>
       </div>
 
       <!-- Key Domain -->
@@ -438,6 +442,10 @@
             required
           >
         </div>
+
+        <button type="button" class="btn-primary" id="saveKeyBtn" style="margin-top: 1rem;">
+          Save Key Settings
+        </button>
       </div>
 
       <!-- Linkvertise API -->
@@ -457,6 +465,10 @@
             required
           >
         </div>
+
+        <button type="button" class="btn-primary" id="saveLinkvertiseBtn" style="margin-top: 1rem;">
+          Save Linkvertise Settings
+        </button>
       </div>
 
       <!-- Discord Webhook -->
@@ -475,6 +487,10 @@
             maxlength="200"
           >
         </div>
+
+        <button type="button" class="btn-primary" id="saveDiscordBtn" style="margin-top: 1rem;">
+          Save Discord Settings
+        </button>
       </div>
 
       <!-- Ad Steps -->
@@ -527,9 +543,13 @@
             <div class="link-preview" id="step2Dest">https://ntt-system.pages.dev/key?domain=USERNAME&step2</div>
           </div>
         </div>
+
+        <button type="button" class="btn-primary" id="saveAdStepsBtn" style="margin-top: 1rem;">
+          Save Ad Steps Settings
+        </button>
       </div>
 
-      <button type="submit" class="btn-primary" id="saveBtn">
+      <button type="submit" class="btn-primary" id="saveBtn" style="display: none;">
         Save Settings
       </button>
     </form>
@@ -537,9 +557,29 @@
     <!-- Decode Code Section -->
     <div class="section" style="margin-top: 2rem;">
       <h2 class="section-title">Code: Decode Key</h2>
+      
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+        <div style="font-size: 0.875rem; color: var(--text-dim); margin-bottom: 0.5rem;">
+          <strong>Your Key URL:</strong>
+        </div>
+        <div style="font-family: 'IBM Plex Mono', monospace; color: var(--primary); font-size: 0.875rem;" id="keyUrlDisplay">
+          https://ntt-system.pages.dev/key?id=username
+        </div>
+      </div>
+
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+        <div style="font-size: 0.875rem; color: var(--text-dim); margin-bottom: 0.5rem;">
+          <strong>Usage Instructions:</strong>
+        </div>
+        <div style="font-family: 'IBM Plex Mono', monospace; color: var(--text); font-size: 0.875rem;">
+          https://ntt-system.pages.dev/key?id=<span id="usernameInUrl" style="color: var(--primary);">username</span>&hwid=<span style="color: var(--warning);">{your_hwid}</span>
+        </div>
+      </div>
+
       <div class="warning-box" style="margin-bottom: 1rem;">
         <strong>📋 Copy this code to use in your Roblox script</strong>
       </div>
+      
       <div style="background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; position: relative;">
         <button id="copyCodeBtn" style="position: absolute; top: 1rem; right: 1rem; padding: 0.5rem 1rem; background: var(--primary); color: var(--bg-dark); border: none; border-radius: 6px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 600;">
           Copy Code
@@ -551,8 +591,11 @@
     <!-- How to Use Section -->
     <div class="section" style="margin-top: 1.5rem;">
       <h2 class="section-title">How to Use</h2>
-      <div style="background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; padding: 1rem;">
-        <pre style="margin: 0; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; font-size: 0.875rem; overflow-x: auto; white-space: pre-wrap; line-height: 1.6;">local done, fail = pcall(function()
+      <div style="background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; position: relative;">
+        <button id="copyHowToUseBtn" style="position: absolute; top: 1rem; right: 1rem; padding: 0.5rem 1rem; background: var(--primary); color: var(--bg-dark); border: none; border-radius: 6px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 600;">
+          Copy Code
+        </button>
+        <pre id="howToUseCode" style="margin: 0; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; font-size: 0.875rem; overflow-x: auto; white-space: pre-wrap; line-height: 1.6; padding-right: 5rem;">local done, fail = pcall(function()
     key = game:HttpGet(_G.getlink)
 end)
 
@@ -574,7 +617,7 @@ end</pre>
       </div>
     </div>
 
-      <button type="submit" class="btn-primary" id="saveBtn">
+      <button type="submit" class="btn-primary" id="saveBtn" style="display: none;">
         Save Settings
       </button>
     </form>
@@ -884,7 +927,12 @@ end</pre>
 
     function updateDecodeCode() {
       const encodeKey = document.getElementById('encodeKey').value.trim() || 'ntt-hub';
+      const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser?.username || 'username';
+      
+      // Update URL displays
       document.getElementById('encodeKeyPlaceholder').textContent = encodeKey;
+      document.getElementById('keyUrlDisplay').textContent = `https://ntt-system.pages.dev/key?id=${websiteDomain}`;
+      document.getElementById('usernameInUrl').textContent = websiteDomain;
       
       const code = `local function key_split(str, sep)
     local result = {}
@@ -951,11 +999,26 @@ end`;
     }
 
     document.getElementById('encodeKey').addEventListener('input', updateDecodeCode);
+    document.getElementById('websiteDomain').addEventListener('input', updateDecodeCode);
 
     document.getElementById('copyCodeBtn').addEventListener('click', () => {
       const code = document.getElementById('decodeCode').textContent;
       navigator.clipboard.writeText(code).then(() => {
         const btn = document.getElementById('copyCodeBtn');
+        btn.textContent = '✓ Copied!';
+        btn.style.background = 'var(--success)';
+        setTimeout(() => {
+          btn.textContent = 'Copy Code';
+          btn.style.background = 'var(--primary)';
+        }, 2000);
+      });
+    });
+
+    // Copy How to Use code
+    document.getElementById('copyHowToUseBtn').addEventListener('click', () => {
+      const code = document.getElementById('howToUseCode').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('copyHowToUseBtn');
         btn.textContent = '✓ Copied!';
         btn.style.background = 'var(--success)';
         setTimeout(() => {
@@ -971,6 +1034,135 @@ end`;
       localStorage.removeItem('user');
       window.location.href = '/auth.html';
     });
+
+    // Helper function for saving partial settings
+    async function saveSettingsPartial(partialSettings, btnId, successMessage) {
+      const btn = document.getElementById(btnId);
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const response = await fetch(`${API_BASE}/?type=get_settings&user_id=${currentUser.id}`);
+        const currentData = await response.json();
+        
+        const fullSettings = currentData.success && currentData.settings ? {
+          user_id: currentUser.id,
+          website_domain: currentData.settings.website_domain || currentUser.username,
+          key_domain: currentData.settings.key_domain || 'KEY',
+          encode_key: currentData.settings.encode_key || 'ntt-hub',
+          linkvertise_token: currentData.settings.linkvertise_token || '',
+          discord_webhook: currentData.settings.discord_webhook || '',
+          ad_steps: currentData.settings.ad_steps || 1,
+          step1_link: currentData.settings.step1_link || '',
+          step2_link: currentData.settings.step2_link || '',
+          ...partialSettings
+        } : {
+          user_id: currentUser.id,
+          ...partialSettings
+        };
+
+        const saveResponse = await fetch(`${API_BASE}/?type=save_settings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(fullSettings)
+        });
+
+        const data = await saveResponse.json();
+
+        if (data.success) {
+          showMessage(successMessage, 'success');
+          updateDecodeCode();
+        } else {
+          showMessage(data.error || 'Failed to save');
+        }
+      } catch (error) {
+        showMessage('Connection error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
+
+    // Save Website Settings
+    if (document.getElementById('saveWebsiteBtn')) {
+      document.getElementById('saveWebsiteBtn').addEventListener('click', async () => {
+        const websiteDomain = document.getElementById('websiteDomain').value.trim() || currentUser.username;
+        await saveSettingsPartial(
+          { website_domain: websiteDomain },
+          'saveWebsiteBtn',
+          'Website settings saved!'
+        );
+      });
+    }
+
+    // Save Key Settings
+    if (document.getElementById('saveKeyBtn')) {
+      document.getElementById('saveKeyBtn').addEventListener('click', async () => {
+        const keyDomain = document.getElementById('keyDomain').value.trim() || 'KEY';
+        if (keyDomain.length > 6) {
+          showMessage('Key domain must be 6 characters or less');
+          return;
+        }
+        
+        const encodeKey = document.getElementById('encodeKey').value.trim() || 'ntt-hub';
+        
+        await saveSettingsPartial(
+          { key_domain: keyDomain, encode_key: encodeKey },
+          'saveKeyBtn',
+          'Key settings saved!'
+        );
+      });
+    }
+
+    // Save Linkvertise Settings
+    if (document.getElementById('saveLinkvertiseBtn')) {
+      document.getElementById('saveLinkvertiseBtn').addEventListener('click', async () => {
+        const linkvertiseToken = document.getElementById('linkvertiseToken').value.trim();
+        
+        if (!linkvertiseToken) {
+          showMessage('Linkvertise token is required');
+          return;
+        }
+        
+        await saveSettingsPartial(
+          { linkvertise_token: linkvertiseToken },
+          'saveLinkvertiseBtn',
+          'Linkvertise settings saved!'
+        );
+      });
+    }
+
+    // Save Discord Settings
+    if (document.getElementById('saveDiscordBtn')) {
+      document.getElementById('saveDiscordBtn').addEventListener('click', async () => {
+        const discordWebhook = document.getElementById('discordWebhook').value.trim();
+        
+        await saveSettingsPartial(
+          { discord_webhook: discordWebhook },
+          'saveDiscordBtn',
+          'Discord settings saved!'
+        );
+      });
+    }
+
+    // Save Ad Steps Settings
+    if (document.getElementById('saveAdStepsBtn')) {
+      document.getElementById('saveAdStepsBtn').addEventListener('click', async () => {
+        const adSteps = parseInt(document.querySelector('input[name="adSteps"]:checked').value);
+        const step1Link = document.getElementById('step1Link').value.trim();
+        const step2Link = document.getElementById('step2Link').value.trim();
+        
+        await saveSettingsPartial(
+          { ad_steps: adSteps, step1_link: step1Link, step2_link: step2Link },
+          'saveAdStepsBtn',
+          'Ad steps settings saved!'
+        );
+      });
+    }
 
     // Initialize
     checkAuth();
