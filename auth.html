@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NTT System — Auth</title>
-  <link rel="preconnect" href="https:
-  <link rel="preconnect" href="https:
-  <link href="https:
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -15,7 +15,6 @@
       --green2:  #00cc7a;
       --blue:    #6366f1;
       --dark:    #050810;
-      --dark2:   #0a0e1a;
       --surface: #111520;
       --border:  #1a2035;
       --text:    #dde3f0;
@@ -38,10 +37,7 @@
         linear-gradient(90deg, rgba(0,255,157,0.03) 1px, transparent 1px);
       background-size: 60px 60px; pointer-events: none;
     }
-    .orb {
-      position: fixed; border-radius: 50%;
-      filter: blur(120px); pointer-events: none; z-index: 0;
-    }
+    .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
     .orb-1 { width: 500px; height: 500px; background: rgba(0,255,157,0.05); top: -150px; left: -150px; }
     .orb-2 { width: 400px; height: 400px; background: rgba(99,102,241,0.06); bottom: -100px; right: -100px; }
 
@@ -52,10 +48,7 @@
     }
     @keyframes up { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
 
-    /* Logo */
-    .logo {
-      text-align: center; margin-bottom: 2.5rem;
-    }
+    .logo { text-align: center; margin-bottom: 2.5rem; }
     .logo-name {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 3.5rem; letter-spacing: 0.08em;
@@ -69,43 +62,32 @@
       color: var(--dim); text-transform: uppercase; margin-top: 0.4rem;
     }
 
-    /* Card */
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: var(--surface); border: 1px solid var(--border);
       border-radius: 18px; padding: 2.5rem;
       box-shadow: 0 30px 60px rgba(0,0,0,0.5);
       position: relative; overflow: hidden;
     }
     .card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
       background: linear-gradient(90deg, transparent, var(--green), var(--blue), transparent);
       opacity: 0.6;
     }
 
-    /* Tabs */
     .tabs {
       display: flex; gap: 0.4rem; margin-bottom: 2rem;
       background: var(--dark); padding: 0.4rem; border-radius: 10px;
     }
     .tab {
-      flex: 1; padding: 0.75rem;
-      background: transparent; border: none;
+      flex: 1; padding: 0.75rem; background: transparent; border: none;
       font-family: 'Share Tech Mono', monospace;
       font-size: 0.8rem; letter-spacing: 0.1em;
       text-transform: uppercase; color: var(--dim);
-      cursor: pointer; border-radius: 7px;
-      transition: all 0.25s;
+      cursor: pointer; border-radius: 7px; transition: all 0.25s;
     }
-    .tab.active {
-      background: var(--surface);
-      color: var(--green);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
+    .tab.active { background: var(--surface); color: var(--green); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
     .tab:hover:not(.active) { color: var(--text); }
 
-    /* Form */
     .form { display: none; }
     .form.active { display: block; animation: fadein 0.3s ease; }
     @keyframes fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
@@ -124,13 +106,9 @@
       font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
       outline: none; transition: all 0.2s;
     }
-    .field input:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(0,255,157,0.08);
-    }
+    .field input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,255,157,0.08); }
     .field input::placeholder { color: var(--dim); }
 
-    /* Button */
     .btn {
       width: 100%; padding: 1rem;
       background: linear-gradient(135deg, var(--green), var(--green2));
@@ -138,24 +116,20 @@
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.1rem; letter-spacing: 0.1em;
       cursor: pointer; transition: all 0.25s;
-      box-shadow: 0 4px 20px rgba(0,255,157,0.2);
-      margin-top: 0.5rem;
+      box-shadow: 0 4px 20px rgba(0,255,157,0.2); margin-top: 0.5rem;
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,255,157,0.35); }
     .btn:active { transform: translateY(0); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* Message */
     .msg {
       display: none; padding: 0.85rem 1rem;
-      border-radius: 8px; font-size: 0.875rem;
-      margin-bottom: 1.25rem;
+      border-radius: 8px; font-size: 0.875rem; margin-bottom: 1.25rem;
     }
     .msg.show { display: block; animation: fadein 0.3s ease; }
     .msg.error   { background: rgba(255,77,109,0.1); border: 1px solid var(--error); color: var(--error); }
     .msg.success { background: rgba(0,255,157,0.08); border: 1px solid var(--green); color: var(--green); }
 
-    /* Spinner */
     .spinner {
       display: inline-block; width: 14px; height: 14px;
       border: 2px solid rgba(5,8,16,0.3); border-top-color: var(--dark);
@@ -189,7 +163,6 @@
 
       <div class="msg" id="msg"></div>
 
-      
       <form class="form active" id="loginForm">
         <div class="field">
           <label>Username / Email</label>
@@ -202,7 +175,6 @@
         <button type="submit" class="btn" id="loginBtn">Login</button>
       </form>
 
-      
       <form class="form" id="registerForm">
         <div class="field">
           <label>Username</label>
