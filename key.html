@@ -214,13 +214,23 @@
         hwid = localStorage.getItem('ntt_hwid') || generateHWID();
         localStorage.setItem('ntt_hwid', hwid);
 
+        // Hiện Start ngay lập tức, sau đó fetch progress để update đúng bước
+        resetBlocks();
+        show('blockStart');
+
         await renderProgress();
         setInterval(renderProgress, 4000);
       } catch { showError('Failed to load.'); }
     }
 
     async function renderProgress() {
-      if (!hwid || !settings) return;
+      if (!hwid) return;
+      // Settings chưa load xong → cứ hiện Start trước
+      if (!settings) {
+        resetBlocks();
+        show('blockStart');
+        return;
+      }
 
       // Kiểm tra key đã lưu
       const savedKey    = localStorage.getItem('ntt_generated_key');
