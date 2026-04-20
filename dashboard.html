@@ -324,15 +324,15 @@
         <h2 class="section-title">Link Get Key</h2>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem;">
-          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Your Link</strong></div>
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Your Link Get Key</strong></div>
           <div style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:0.875rem;" id="keyUrlDisplay">
             Loading...
           </div>
         </div>
 
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;">
-          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Link Get Key</strong></div>
-          <div style="font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:0.875rem;" id="keyUrlHwid">
+          <div style="font-size:0.875rem;color:var(--text-dim);margin-bottom:0.5rem;"><strong>Code Get Key</strong></div>
+          <div style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:0.875rem;" id="keyUrlHwid">
             Loading...
           </div>
         </div>
@@ -562,8 +562,8 @@
       const apiBase = API_BASE;
       const elKeyUrl  = document.getElementById('keyUrlDisplay');
       const elKeyHwid = document.getElementById('keyUrlHwid');
-      if (elKeyUrl)  elKeyUrl.textContent  = `${base}/key.html?domain=${websiteDomain}`;
-      if (elKeyHwid) elKeyHwid.textContent = `${base}/key.html?domain=${websiteDomain}&hwid=you_hwid`;
+      if (elKeyUrl)  elKeyUrl.textContent  = `${base}/key.html?domain=${websiteDomain}&hwid=you_hwid`;
+      if (elKeyHwid) elKeyHwid.textContent = `setclipboard("${base}/key.html?domain=${websiteDomain}&hwid="..gethwid())`;
 
       const code = `local function key_split(str, sep)
     local result = {}
