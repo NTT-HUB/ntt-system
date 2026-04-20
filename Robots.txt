@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /key.html
+Disallow: /key
+Disallow: /auth.html
+Disallow: /dashboard.html
+
+Sitemap: https://ntt-system.xyz/sitemap.xml
