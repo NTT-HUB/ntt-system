@@ -202,6 +202,16 @@
           <label>Password</label>
           <input type="password" id="regPass" placeholder="6–20 characters" minlength="6" maxlength="20" autocomplete="new-password" required>
         </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:0.5rem;">
+          <input type="checkbox" id="agreeTerms" style="margin-top:3px;width:16px;height:16px;accent-color:var(--green);cursor:pointer;flex-shrink:0;">
+          <label for="agreeTerms" style="font-size:0.78rem;color:var(--dim);line-height:1.5;cursor:pointer;">
+            I agree to the
+            <a href="https://ntt-system.xyz/terms.html" target="_blank" style="color:var(--green);text-decoration:none;">Terms of Service</a>
+            and
+            <a href="https://ntt-system.xyz/privacy.html" target="_blank" style="color:var(--green);text-decoration:none;">Privacy Policy</a>
+            of NTT System.
+          </label>
+        </div>
         <button type="submit" class="btn" id="registerBtn">Create Account</button>
       </form>
     </div>
@@ -270,6 +280,7 @@
       const btn      = document.getElementById('registerBtn');
 
       if (!username || !email || !password) { showMsg('Please fill in all fields.'); return; }
+      if (!document.getElementById('agreeTerms').checked) { showMsg('Please agree to the Terms of Service.'); return; }
       if (!/^[a-zA-Z0-9_ ]+$/.test(username)) { showMsg('Username: letters, numbers, spaces, underscore only.'); return; }
       if (username.length < 3)  { showMsg('Username must be at least 3 characters.'); return; }
       if (password.length < 6)  { showMsg('Password must be at least 6 characters.'); return; }
