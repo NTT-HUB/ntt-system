@@ -132,6 +132,7 @@
 
     let settings = null;
 
+    // FIX: Ưu tiên hwid từ URL trước, sau đó mới lấy từ localStorage
     const hwidRaw = urlParams.get('hwid') || '';
     let hwid = (hwidRaw.trim().length > 0 && hwidRaw.trim().length <= 50) ? hwidRaw.trim() : null;
 
@@ -167,6 +168,7 @@
         document.getElementById('domainLabel').textContent = settings.website_domain;
         document.getElementById('btnStart').href = settings.start_link;
 
+        // FIX: Ưu tiên hwid từ URL (đã parse ở trên), rồi mới localStorage
         hwid = hwid || localStorage.getItem('ntt_hwid') || null;
         if (hwid) localStorage.setItem('ntt_hwid', hwid);
 
@@ -258,7 +260,6 @@
       if (secondsLeft !== undefined) {
         startCountdown(secondsLeft);
       } else {
-
         try {
           const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}&domain=${encodeURIComponent(domain)}`);
           const d = await r.json();
@@ -335,18 +336,23 @@
 
     async function init() {
       if (isCallback) {
-
         domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
-        hwid   = localStorage.getItem('ntt_hwid');
+        // FIX: Ưu tiên hwid từ URL khi callback, sau đó mới localStorage
+        hwid = urlParams.get('hwid') || localStorage.getItem('ntt_hwid');
 
         if (!domain) { showError('Session lost. Please start over.'); return; }
 
         localStorage.setItem('ntt_domain', domain);
-        localStorage.setItem('ntt_hwid',   hwid);
+        if (hwid) localStorage.setItem('ntt_hwid', hwid);
 
         const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
         await completeStep(step);
-        window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
+
+        // FIX: Giữ hwid trong URL khi redirect để không bị mất session
+        const redirectUrl = hwid
+          ? `/key.html?domain=${encodeURIComponent(domain)}&hwid=${encodeURIComponent(hwid)}`
+          : `/key.html?domain=${encodeURIComponent(domain)}`;
+        window.location.replace(redirectUrl);
         return;
       }
 
@@ -358,6 +364,7 @@
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
 
+      // FIX: hwid đã được parse từ URL ở đầu file, dùng lại luôn
       const curHwid = hwid || null;
 
       if (savedKey) {
