@@ -155,23 +155,23 @@
         document.getElementById('domainLabel').textContent = settings.website_domain;
         document.getElementById('btnStart').href = settings.start_link;
 
-        hwid = hwid || localStorage.getItem('ntt_hwid');
-        if (!hwid) {
-          showError('Missing HWID. Use: /key.html?domain=xxx&hwid=YOUR_HWID');
-          return;
-        }
-        localStorage.setItem('ntt_hwid', hwid);
+        hwid = hwid || localStorage.getItem('ntt_hwid') || null;
+        if (hwid) localStorage.setItem('ntt_hwid', hwid);
 
         resetBlocks();
         show('blockStart');
 
-        await renderProgress();
-        setInterval(renderProgress, 4000);
+        if (hwid) {
+          await renderProgress();
+          setInterval(renderProgress, 4000);
+        }
       } catch { showError('Failed to load.'); }
     }
 
     async function renderProgress() {
       if (!hwid || !settings) return;
+
+      if (document.getElementById('keyResult').classList.contains('show')) return;
 
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
@@ -239,15 +239,16 @@
 
     async function showKey(key, secondsLeft) {
       resetBlocks();
-      document.getElementById('keyValue').textContent = key;
+      document.getElementById('keyResult').style.display = '';
       document.getElementById('keyResult').classList.add('show');
+      document.getElementById('keyValue').textContent = key;
 
       if (secondsLeft !== undefined) {
         startCountdown(secondsLeft);
       } else {
 
         try {
-          const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}`);
+          const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}&domain=${encodeURIComponent(domain)}`);
           const d = await r.json();
           startCountdown(d.left || 0);
         } catch {
@@ -345,21 +346,25 @@
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
 
-      if (savedKey && savedDomain === domain) {
-        hwid = savedHwid;
-        document.getElementById('domainLabel').textContent = domain;
-        await showKey(savedKey);
-        return;
-      }
+      const curHwid = hwid || null;
 
-      if (savedKey && savedDomain !== domain) {
+      if (savedKey) {
+        const domainMatch = savedDomain === domain;
+        const hwidMatch   = !curHwid || savedHwid === curHwid;
+
+        if (domainMatch && hwidMatch) {
+          hwid = savedHwid;
+          document.getElementById('domainLabel').textContent = domain;
+          await showKey(savedKey);
+          return;
+        }
+
         localStorage.removeItem('ntt_generated_key');
         localStorage.removeItem('ntt_key_domain');
         localStorage.removeItem('ntt_key_hwid');
         localStorage.removeItem('ntt_key_expiry');
       }
 
-      const curHwid = hwid || localStorage.getItem('ntt_hwid') || null;
       hwid = curHwid;
 
       await loadSettings();
