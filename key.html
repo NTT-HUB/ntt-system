@@ -123,6 +123,7 @@
     const hash         = urlParams.get('hash') || '';
     const hasValidHash = hash.length > 10;
 
+    // FIX 1: Lấy domain từ URL trước, fallback localStorage
     let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
 
     const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
@@ -132,8 +133,11 @@
 
     let settings = null;
 
+    // FIX 2: Lấy hwid từ URL, localStorage theo thứ tự ưu tiên
     const hwidRaw = urlParams.get('hwid') || '';
-    let hwid = (hwidRaw.trim().length > 0 && hwidRaw.trim().length <= 50) ? hwidRaw.trim() : null;
+    let hwid = (hwidRaw.trim().length > 0 && hwidRaw.trim().length <= 50)
+      ? hwidRaw.trim()
+      : localStorage.getItem('ntt_hwid') || null;
 
     function showError(msg) {
       const el = document.getElementById('errorMsg');
@@ -167,17 +171,18 @@
         document.getElementById('domainLabel').textContent = settings.website_domain;
         document.getElementById('btnStart').href = settings.start_link;
 
-        hwid = hwid || localStorage.getItem('ntt_hwid') || null;
+        // FIX 3: Lưu hwid vào localStorage ngay khi load settings (nếu có)
         if (hwid) localStorage.setItem('ntt_hwid', hwid);
 
         resetBlocks();
         show('blockStart');
 
+        // FIX 4: Luôn poll progress nếu có hwid, không cần check truthy riêng
         if (hwid) {
           await renderProgress();
           setInterval(renderProgress, 4000);
         }
-      } catch { showError('Failed to load.'); }
+      } catch (e) { showError('Failed to load.'); }
     }
 
     async function renderProgress() {
@@ -188,6 +193,7 @@
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
+
       if (savedKey && savedDomain === domain && savedHwid === hwid) {
         await showKey(savedKey); return;
       }
@@ -258,7 +264,6 @@
       if (secondsLeft !== undefined) {
         startCountdown(secondsLeft);
       } else {
-
         try {
           const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}&domain=${encodeURIComponent(domain)}`);
           const d = await r.json();
@@ -277,19 +282,26 @@
     document.getElementById('btnStep1').addEventListener('click', () => {
       if (!settings?.step1_link) return;
       localStorage.setItem('ntt_domain', domain);
-      localStorage.setItem('ntt_hwid', hwid);
+      if (hwid) localStorage.setItem('ntt_hwid', hwid);
       window.open(settings.step1_link, '_blank');
     });
 
     document.getElementById('btnStep2').addEventListener('click', () => {
       if (!settings?.step2_link) return;
       localStorage.setItem('ntt_domain', domain);
-      localStorage.setItem('ntt_hwid', hwid);
+      if (hwid) localStorage.setItem('ntt_hwid', hwid);
       window.open(settings.step2_link, '_blank');
     });
 
     document.getElementById('btnGenerate').addEventListener('click', async () => {
       const btn = document.getElementById('btnGenerate');
+
+      // FIX 5: Kiểm tra hwid trước khi gọi API
+      if (!hwid) {
+        showError('Session lost. Please start over.');
+        return;
+      }
+
       btn.disabled = true; btn.textContent = 'Generating...';
       try {
         const res  = await fetch(`${API_BASE}/?type=create_key`, {
@@ -335,18 +347,22 @@
 
     async function init() {
       if (isCallback) {
-
+        // FIX 6: Lấy domain + hwid từ cả URL lẫn localStorage khi callback
         domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
-        hwid   = localStorage.getItem('ntt_hwid');
+        hwid   = urlParams.get('hwid') || localStorage.getItem('ntt_hwid') || null;
 
         if (!domain) { showError('Session lost. Please start over.'); return; }
+        if (!hwid)   { showError('Session lost (hwid missing). Please start over.'); return; }
 
+        // Lưu lại để trang tiếp theo dùng
         localStorage.setItem('ntt_domain', domain);
         localStorage.setItem('ntt_hwid',   hwid);
 
         const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
         await completeStep(step);
-        window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
+
+        // FIX 7: Truyền hwid vào URL redirect để không bị mất
+        window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}&hwid=${encodeURIComponent(hwid)}`);
         return;
       }
 
