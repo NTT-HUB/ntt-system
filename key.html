@@ -397,6 +397,12 @@
         const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
         const ok   = await completeStep(step);
 
+        if (!ok) {
+          // completeStep thất bại — thường do hash invalid hoặc token mismatch
+          // Vẫn redirect để user không bị kẹt, nhưng log lỗi ra console
+          console.error('[NTT] completeStep failed', { step, hash: hash.slice(0,10)+'...', domain, hwid });
+        }
+
         // Redirect sạch về trang, mang hwid + domain trên URL để chắc chắn
         window.location.replace(
           `/key.html?domain=${encodeURIComponent(domain)}&hwid=${encodeURIComponent(hwid)}`
