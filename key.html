@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Get Key - NTT System</title>
-  <meta property="og:type"         content="website">
-  <meta property="og:url"          content="https://ntt-system.xyz/">
-  <meta property="og:site_name"    content="NTT System">
-  <meta property="og:title"        content="NTT System — Key Generator Platform">
-  <meta property="og:description"  content="Anti-bypass key authentication platform powered by Linkvertise. Easy setup, high security — ready to use in your scripts.">
-  <meta property="og:image"        content="https://raw.githubusercontent.com/NTT-HUB/image/refs/heads/main/logo/Screenshot%202026-04-19%20212606.png">
-  <meta name="twitter:card"        content="summary_large_image">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ntt-system.xyz/">
+  <meta property="og:site_name" content="NTT System">
+  <meta property="og:title" content="NTT System — Key Generator Platform">
+  <meta property="og:description" content="Anti-bypass key authentication platform powered by Linkvertise.">
+  <meta property="og:image" content="https://raw.githubusercontent.com/NTT-HUB/image/refs/heads/main/logo/Screenshot%202026-04-19%20212606.png">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
@@ -76,7 +76,10 @@
     .btn-copy:hover { border-color: var(--primary); color: var(--primary); }
     .error-msg { display: none; margin-top: 0.75rem; padding: 0.75rem 1rem; background: rgba(255,77,109,0.1); border: 1px solid var(--error); border-radius: 8px; font-size: 0.8rem; color: var(--error); text-align: center; }
     .error-msg.show { display: block; }
-    .hint { margin-top: 0.6rem; font-size: 0.75rem; color: var(--text-dim); text-align: center; line-height: 1.5; }
+    .hint { margin-top: 0.6rem; font-size: 0.75rem; color: var(--text-dim); text-align: center; line-height: 1.5; min-height: 1.2em; }
+    .progress-bar-wrap { margin-top: 0.75rem; background: var(--bg-darker); border-radius: 99px; height: 4px; overflow: hidden; display: none; }
+    .progress-bar-wrap.show { display: block; }
+    .progress-bar { height: 100%; width: 0%; background: var(--primary); border-radius: 99px; transition: width 0.3s linear; }
   </style>
 </head>
 <body>
@@ -87,17 +90,20 @@
 
     <div class="step-block" id="blockStart">
       <a href="#" class="btn btn-start" id="btnStart" target="_blank">▶ Start</a>
-      <p class="hint">Click Start, complete the page, then come back here.</p>
+      <p class="hint" id="hintStart">Click Start, complete the page, then come back here.</p>
+      <div class="progress-bar-wrap" id="pbWrapStart"><div class="progress-bar" id="pbStart"></div></div>
     </div>
 
     <div class="step-block" id="blockStep1">
       <button class="btn btn-step" id="btnStep1">Step 1</button>
       <p class="hint" id="hintStep1">Click Step 1, complete the page, then come back here.</p>
+      <div class="progress-bar-wrap" id="pbWrapStep1"><div class="progress-bar" id="pbStep1"></div></div>
     </div>
 
     <div class="step-block" id="blockStep2">
       <button class="btn btn-step" id="btnStep2">Step 2</button>
       <p class="hint" id="hintStep2">Click Step 2, complete the page, then come back here.</p>
+      <div class="progress-bar-wrap" id="pbWrapStep2"><div class="progress-bar" id="pbStep2"></div></div>
     </div>
 
     <div class="step-block" id="blockGenerate">
@@ -121,44 +127,75 @@
   <script type="module">
     const API_BASE = 'https://api.ntt-system.xyz';
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const hash      = urlParams.get('hash') || '';
+    const urlParams   = new URLSearchParams(window.location.search);
+    const hash        = urlParams.get('hash') || '';
 
-    // Lấy domain + hwid: ưu tiên URL trước, fallback localStorage
     let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
-    const hwidFromUrl = urlParams.get('hwid') || '';
-    let hwid = (hwidFromUrl.trim().length > 0 && hwidFromUrl.trim().length <= 50)
-      ? hwidFromUrl.trim()
+    const hwidRaw = urlParams.get('hwid') || '';
+    let hwid = (hwidRaw.trim().length > 0 && hwidRaw.trim().length <= 50)
+      ? hwidRaw.trim()
       : (localStorage.getItem('ntt_hwid') || null);
 
-    // Detect callback từ Linkvertise (tab mới redirect về đây)
+    // Callback detection
     const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
     const hasStep1Param = urlParams.has('step1_done') || urlParams.has('step1');
     const hasStep2Param = urlParams.has('step2_done') || urlParams.has('step2');
     const isCallback    = hasStartParam || hasStep1Param || hasStep2Param;
 
-    let settings = null;
+    let settings     = null;
     let pollInterval = null;
 
+    // ── Helpers ──────────────────────────────────────────────
     function showError(msg) {
       const el = document.getElementById('errorMsg');
       el.textContent = msg; el.classList.add('show');
     }
-
     function show(id) {
-      document.getElementById(id).style.display = '';
-      document.getElementById(id).classList.add('show');
+      const el = document.getElementById(id);
+      el.style.display = ''; el.classList.add('show');
     }
-
     function hide(id) {
-      document.getElementById(id).classList.remove('show');
-      document.getElementById(id).style.display = '';
+      const el = document.getElementById(id);
+      el.classList.remove('show'); el.style.display = '';
     }
-
     function resetBlocks() {
       ['blockStart','blockStep1','blockStep2','blockGenerate'].forEach(id => hide(id));
     }
 
+    // Progress bar animation (chạy từ 0→90% trong delay giây, rồi dừng chờ poll)
+    function animateBar(barId, wrapId, delayMs) {
+      const wrap = document.getElementById(wrapId);
+      const bar  = document.getElementById(barId);
+      wrap.classList.add('show');
+      bar.style.width = '0%';
+      // animate to 90% over delayMs
+      let start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        const pct = Math.min(90, ((ts - start) / delayMs) * 90);
+        bar.style.width = pct + '%';
+        if (pct < 90) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    function completeBar(barId) {
+      document.getElementById(barId).style.transition = 'width 0.4s ease';
+      document.getElementById(barId).style.width = '100%';
+    }
+
+    // ── Gọi complete_step trên server ────────────────────────
+    async function completeStep(step) {
+      try {
+        const res = await fetch(`${API_BASE}/?type=complete_step`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hwid, step, hash, domain }),
+        });
+        return (await res.json()).success;
+      } catch { return false; }
+    }
+
+    // ── Load settings từ API ─────────────────────────────────
     async function loadSettings() {
       if (!domain) { showError('No domain specified.'); return; }
       try {
@@ -183,11 +220,11 @@
       } catch { showError('Failed to load.'); }
     }
 
+    // ── Poll progress ────────────────────────────────────────
     async function renderProgress() {
       if (!hwid || !settings) return;
       if (document.getElementById('keyResult').classList.contains('show')) return;
 
-      // Nếu đã có key lưu trước
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
@@ -204,10 +241,8 @@
 
         resetBlocks();
 
-        // Không có progress hoặc chưa bắt đầu
         if (!data.status || !data.start) {
-          show('blockStart');
-          return;
+          show('blockStart'); return;
         }
 
         if (data.step1) {
@@ -222,6 +257,7 @@
       } catch {}
     }
 
+    // ── Countdown ────────────────────────────────────────────
     let countdownInterval = null;
     function startCountdown(secondsLeft) {
       if (countdownInterval) clearInterval(countdownInterval);
@@ -246,8 +282,7 @@
     async function showKey(key, secondsLeft) {
       if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
       resetBlocks();
-      document.getElementById('keyResult').style.display = '';
-      document.getElementById('keyResult').classList.add('show');
+      show('keyResult');
       document.getElementById('keyValue').textContent = key;
       if (secondsLeft !== undefined) {
         startCountdown(secondsLeft);
@@ -260,48 +295,74 @@
       }
     }
 
-    // Gọi complete_step KHÔNG cần hash cho step 1/2
-    async function completeStep(step) {
-      try {
-        const res = await fetch(`${API_BASE}/?type=complete_step`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hwid, step, hash, domain }),
-        });
-        return (await res.json()).success;
-      } catch { return false; }
-    }
+    // ── Button handlers ──────────────────────────────────────
 
-    // ── START BUTTON ──
+    // START: mở tab mới, sau khi user quay lại tab gốc thì poll tự detect
     document.getElementById('btnStart').addEventListener('click', () => {
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
-      // Tab mới mở Linkvertise, tab gốc chỉ poll để detect khi done
+      document.getElementById('hintStart').textContent = '⏳ Come back here after completing the page.';
     });
 
-    // ── STEP 1 BUTTON ──
-    // Tab gốc mở link step1 trong tab mới.
-    // Tab mới sau khi xong sẽ redirect về /key.html?step1_done&hash=...&domain=...&hwid=...
-    // Tab callback sẽ gọi completeStep(1) rồi đóng tab.
-    // Tab gốc poll 3s sẽ tự detect và chuyển sang step tiếp theo.
-    document.getElementById('btnStep1').addEventListener('click', () => {
+    // STEP 1: mở tab mới, đồng thời TAB GỐC tự gọi completeStep(1) sau 5 giây
+    // Vì worker không cần hash cho step 1, chỉ cần hwid + domain
+    document.getElementById('btnStep1').addEventListener('click', async () => {
       if (!settings?.step1_link) return;
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
+
       window.open(settings.step1_link, '_blank');
-      // Hiện hint chờ, KHÔNG disable button để user có thể click lại nếu cần
-      document.getElementById('hintStep1').textContent = '⏳ Waiting... Come back after completing the page.';
+
+      const btn  = document.getElementById('btnStep1');
+      const hint = document.getElementById('hintStep1');
+      btn.textContent = 'Step 1 (Waiting...)';
+      hint.textContent = '⏳ Completing step 1...';
+      animateBar('pbStep1', 'pbWrapStep1', 5000);
+
+      // Gọi completeStep sau 5 giây (đủ thời gian user xem quảng cáo tối thiểu)
+      await new Promise(r => setTimeout(r, 5000));
+      const ok = await completeStep(1);
+
+      if (ok) {
+        completeBar('pbStep1');
+        hint.textContent = '✓ Step 1 done!';
+        btn.textContent  = 'Step 1';
+        await renderProgress(); // cập nhật UI ngay
+      } else {
+        hint.textContent = 'Please complete the Linkvertise page first, then try again.';
+        btn.textContent  = 'Step 1';
+      }
     });
 
-    // ── STEP 2 BUTTON ──
-    document.getElementById('btnStep2').addEventListener('click', () => {
+    // STEP 2: tương tự step 1
+    document.getElementById('btnStep2').addEventListener('click', async () => {
       if (!settings?.step2_link) return;
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
+
       window.open(settings.step2_link, '_blank');
-      document.getElementById('hintStep2').textContent = '⏳ Waiting... Come back after completing the page.';
+
+      const btn  = document.getElementById('btnStep2');
+      const hint = document.getElementById('hintStep2');
+      btn.textContent = 'Step 2 (Waiting...)';
+      hint.textContent = '⏳ Completing step 2...';
+      animateBar('pbStep2', 'pbWrapStep2', 5000);
+
+      await new Promise(r => setTimeout(r, 5000));
+      const ok = await completeStep(2);
+
+      if (ok) {
+        completeBar('pbStep2');
+        hint.textContent = '✓ Step 2 done!';
+        btn.textContent  = 'Step 2';
+        await renderProgress();
+      } else {
+        hint.textContent = 'Please complete the Linkvertise page first, then try again.';
+        btn.textContent  = 'Step 2';
+      }
     });
 
-    // ── GENERATE KEY BUTTON ──
+    // GENERATE KEY
     document.getElementById('btnGenerate').addEventListener('click', async () => {
       const btn = document.getElementById('btnGenerate');
       btn.disabled = true; btn.textContent = 'Generating...';
@@ -335,21 +396,18 @@
       });
     });
 
-    // ══════════════════════════════════════════════════════
-    // INIT
-    // ══════════════════════════════════════════════════════
+    // ── INIT ─────────────────────────────────────────────────
     async function init() {
 
-      // ── XỬ LÝ CALLBACK (tab mới sau khi Linkvertise xong) ──
+      // Callback từ Linkvertise (tab này là tab mới sau redirect)
       if (isCallback) {
         domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
         hwid   = urlParams.get('hwid')   || localStorage.getItem('ntt_hwid')   || null;
 
         if (!domain || !hwid) {
-          // Không có domain/hwid → không làm gì, load bình thường
-          // (tránh show lỗi vô nghĩa trên tab mới)
-          document.getElementById('domainLabel').textContent = 'Done! You can close this tab.';
-          document.querySelector('.title').textContent = '✓';
+          // Không đủ thông tin → chỉ hiện thông báo đóng tab
+          document.getElementById('domainLabel').textContent = 'You can close this tab.';
+          resetBlocks();
           return;
         }
 
@@ -359,18 +417,17 @@
         const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
         await completeStep(step);
 
-        // Redirect tab này về trang key sạch (giữ domain + hwid)
+        // Redirect về trang key sạch với domain + hwid
         window.location.replace(
           `/key.html?domain=${encodeURIComponent(domain)}&hwid=${encodeURIComponent(hwid)}`
         );
         return;
       }
 
-      // ── LOAD BÌNH THƯỜNG ──
+      // Load bình thường
       if (domain) localStorage.setItem('ntt_domain', domain);
       if (!domain) { showError('No domain specified.'); return; }
 
-      // Kiểm tra key đã lưu
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
