@@ -69,6 +69,7 @@
     .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,255,157,0.35); }
     .btn-step { background: rgba(0,255,157,0.08); border: 1px solid rgba(0,255,157,0.25); color: var(--primary); }
     .btn-step:hover { background: rgba(0,255,157,0.15); transform: translateY(-2px); }
+    .btn-step:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .btn-generate { background: linear-gradient(135deg, var(--primary), #6366f1); color: var(--bg-dark); }
     .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,255,157,0.3); }
     .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -81,6 +82,10 @@
     .btn-copy:hover { border-color: var(--primary); color: var(--primary); }
     .error-msg { display: none; margin-top: 0.75rem; padding: 0.75rem 1rem; background: rgba(255,77,109,0.1); border: 1px solid var(--error); border-radius: 8px; font-size: 0.8rem; color: var(--error); text-align: center; }
     .error-msg.show { display: block; }
+    .waiting-msg { display: none; margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-dim); text-align: center; }
+    .waiting-msg.show { display: block; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .waiting-msg span { animation: blink 1.2s infinite; }
   </style>
 </head>
 <body>
@@ -94,9 +99,11 @@
     </div>
     <div class="step-block" id="blockStep1">
       <button class="btn btn-step" id="btnStep1">Step 1</button>
+      <div class="waiting-msg" id="waitStep1"><span>⏳ Đang chờ xác nhận Step 1...</span></div>
     </div>
     <div class="step-block" id="blockStep2">
       <button class="btn btn-step" id="btnStep2">Step 2</button>
+      <div class="waiting-msg" id="waitStep2"><span>⏳ Đang chờ xác nhận Step 2...</span></div>
     </div>
     <div class="step-block" id="blockGenerate">
       <button class="btn btn-generate" id="btnGenerate">Generate Key</button>
@@ -122,22 +129,21 @@
     const urlParams = new URLSearchParams(window.location.search);
     const hash      = urlParams.get('hash') || '';
 
-    // Ưu tiên lấy domain từ URL trước, sau đó localStorage
     let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
 
-    // Ưu tiên lấy hwid từ URL trước, sau đó localStorage
     const hwidFromUrl = urlParams.get('hwid') || '';
     let hwid = (hwidFromUrl.trim().length > 0 && hwidFromUrl.trim().length <= 50)
       ? hwidFromUrl.trim()
       : (localStorage.getItem('ntt_hwid') || null);
 
-    // Detect callback — KHÔNG cần hash hợp lệ vì Start dùng link hệ thống (không có hash)
     const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
     const hasStep1Param = urlParams.has('step1_done') || urlParams.has('step1');
     const hasStep2Param = urlParams.has('step2_done') || urlParams.has('step2');
     const isCallback    = hasStartParam || hasStep1Param || hasStep2Param;
 
     let settings = null;
+    let pollInterval  = null; // interval poll chậm (4s)
+    let fastPollTimer = null; // interval poll nhanh sau khi user click step
 
     function showError(msg) {
       const el = document.getElementById('errorMsg');
@@ -160,6 +166,18 @@
       ['blockStart','blockStep1','blockStep2','blockGenerate'].forEach(id => hide(id));
     }
 
+    // Bật fast poll (1s) sau khi user click step, tự dừng khi UI thay đổi
+    function startFastPoll() {
+      if (fastPollTimer) clearInterval(fastPollTimer);
+      fastPollTimer = setInterval(async () => {
+        await renderProgress();
+      }, 1000);
+    }
+
+    function stopFastPoll() {
+      if (fastPollTimer) { clearInterval(fastPollTimer); fastPollTimer = null; }
+    }
+
     async function loadSettings() {
       if (!domain) { showError('No domain specified.'); return; }
       try {
@@ -179,21 +197,29 @@
 
         if (hwid) {
           await renderProgress();
-          setInterval(renderProgress, 4000);
+          // Poll chậm 4s để tự động cập nhật
+          pollInterval = setInterval(renderProgress, 4000);
         }
       } catch { showError('Failed to load.'); }
     }
 
+    let lastRenderedState = ''; // tránh re-render không cần thiết
+
     async function renderProgress() {
       if (!hwid || !settings) return;
-      if (document.getElementById('keyResult').classList.contains('show')) return;
+      if (document.getElementById('keyResult').classList.contains('show')) {
+        stopFastPoll();
+        return;
+      }
 
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
 
       if (savedKey && savedDomain === domain && savedHwid === hwid) {
-        await showKey(savedKey); return;
+        stopFastPoll();
+        await showKey(savedKey);
+        return;
       }
 
       if (savedKey && savedHwid !== hwid) {
@@ -206,6 +232,15 @@
       try {
         const res  = await fetch(`${API_BASE}/?type=progress&hwid=${encodeURIComponent(hwid)}`);
         const data = await res.json();
+
+        // Tạo state key để so sánh
+        const stateKey = JSON.stringify({ status: data.status, start: data.start, step1: data.step1, step2: data.step2 });
+
+        // Nếu state thay đổi → dừng fast poll vì UI đã cập nhật
+        if (stateKey !== lastRenderedState) {
+          stopFastPoll();
+          lastRenderedState = stateKey;
+        }
 
         resetBlocks();
 
@@ -254,6 +289,7 @@
     }
 
     async function showKey(key, secondsLeft) {
+      stopFastPoll();
       resetBlocks();
       document.getElementById('keyResult').style.display = '';
       document.getElementById('keyResult').classList.add('show');
@@ -275,20 +311,34 @@
     document.getElementById('btnStart').addEventListener('click', () => {
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
+      // Sau khi click Start, bắt đầu fast poll để tab gốc tự cập nhật
+      startFastPoll();
     });
 
     document.getElementById('btnStep1').addEventListener('click', () => {
       if (!settings?.step1_link) return;
+      const btn = document.getElementById('btnStep1');
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
       window.open(settings.step1_link, '_blank');
+
+      // Disable button + hiện waiting msg + bắt fast poll
+      btn.disabled = true;
+      document.getElementById('waitStep1').classList.add('show');
+      startFastPoll();
     });
 
     document.getElementById('btnStep2').addEventListener('click', () => {
       if (!settings?.step2_link) return;
+      const btn = document.getElementById('btnStep2');
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
       window.open(settings.step2_link, '_blank');
+
+      // Disable button + hiện waiting msg + bắt fast poll
+      btn.disabled = true;
+      document.getElementById('waitStep2').classList.add('show');
+      startFastPoll();
     });
 
     document.getElementById('btnGenerate').addEventListener('click', async () => {
@@ -339,7 +389,6 @@
     async function init() {
       // ── CALLBACK TỪ LINKVERTISE ──
       if (isCallback) {
-        // Lấy domain + hwid từ URL callback, fallback sang localStorage
         domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
         hwid   = urlParams.get('hwid')   || localStorage.getItem('ntt_hwid')   || null;
 
@@ -352,11 +401,9 @@
         localStorage.setItem('ntt_hwid',   hwid);
 
         const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
-
-        // Gọi complete_step (server tự validate hash)
         await completeStep(step);
 
-        // Redirect sạch, GIỮ hwid trong URL để không mất session
+        // Redirect sạch, giữ hwid trong URL
         window.location.replace(
           `/key.html?domain=${encodeURIComponent(domain)}&hwid=${encodeURIComponent(hwid)}`
         );
@@ -367,7 +414,6 @@
       if (domain) localStorage.setItem('ntt_domain', domain);
       if (!domain) { showError('No domain specified.'); return; }
 
-      // Nếu đã có key được lưu từ trước → hiển thị luôn
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
