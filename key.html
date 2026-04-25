@@ -8,15 +8,22 @@
   <meta property="og:url"          content="https://ntt-system.xyz/">
   <meta property="og:site_name"    content="NTT System">
   <meta property="og:title"        content="NTT System — Key Generator Platform">
-  <meta property="og:description"  content="Anti-bypass key authentication platform powered by Linkvertise.">
+  <meta property="og:description"  content="Anti-bypass key authentication platform powered by Linkvertise. Easy setup, high security — ready to use in your scripts.">
   <meta property="og:image"        content="https://raw.githubusercontent.com/NTT-HUB/image/refs/heads/main/logo/Screenshot%202026-04-19%20212606.png">
+  <meta property="og:image:width"  content="905">
+  <meta property="og:image:height" content="512">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="NTT System — Key Generator Platform">
+  <meta name="twitter:description" content="Anti-bypass key authentication platform powered by Linkvertise.">
+  <meta name="twitter:image"       content="https://raw.githubusercontent.com/NTT-HUB/image/refs/heads/main/logo/Screenshot%202026-04-19%20212606.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --primary: #00ff9d; --bg-dark: #0a0e1a; --bg-darker: #050810;
+      --primary: #00ff9d; --primary-dark: #00cc7d;
+      --bg-dark: #0a0e1a; --bg-darker: #050810;
       --surface: #141824; --text: #e8ecf5; --text-dim: #8892ab;
       --border: #1f2937; --success: #00ff9d; --error: #ff4d6d;
     }
@@ -83,7 +90,7 @@
     <p class="subtitle" id="domainLabel">Loading...</p>
 
     <div class="step-block" id="blockStart">
-      <button class="btn btn-start" id="btnStart">▶ Start</button>
+      <a href="#" class="btn btn-start" id="btnStart" target="_blank">▶ Start</a>
     </div>
     <div class="step-block" id="blockStep1">
       <button class="btn btn-step" id="btnStep1">Step 1</button>
@@ -101,7 +108,7 @@
         <div class="key-value" id="keyValue"></div>
       </div>
       <button class="btn-copy" id="btnCopy">Copy Key</button>
-      <div style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-dim);text-align:center;">
+      <div id="keyExpiry" style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-dim);text-align:center;font-family:'IBM Plex Mono',monospace;">
         ⏱ Expires in <span id="expiryTime">--:--:--</span>
       </div>
     </div>
@@ -111,33 +118,23 @@
 
   <script type="module">
     const API_BASE = 'https://api.ntt-system.xyz';
-    const urlParams = new URLSearchParams(window.location.search);
 
-    // --- Đọc params từ URL ---
+    const urlParams    = new URLSearchParams(window.location.search);
     const hash         = urlParams.get('hash') || '';
     const hasValidHash = hash.length > 10;
+
+    let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
 
     const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
     const hasStep1Param = urlParams.has('step1_done') || urlParams.has('step1');
     const hasStep2Param = urlParams.has('step2_done') || urlParams.has('step2');
-
-    // Đây là callback từ Linkvertise nếu có hash hợp lệ + có param bước nào đó
-    const isCallback = hasValidHash && (hasStartParam || hasStep1Param || hasStep2Param);
-
-    // domain: URL param > localStorage (không bao giờ hardcode)
-    let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
-
-    // hwid: URL param > localStorage
-    // Linkvertise KHÔNG trả lại hwid → phải lấy từ localStorage là chính
-    const hwidFromUrl = urlParams.get('hwid') || '';
-    let hwid = (hwidFromUrl.trim().length > 0 && hwidFromUrl.trim().length <= 50)
-      ? hwidFromUrl.trim()
-      : localStorage.getItem('ntt_hwid') || null;
+    const isCallback    = hasValidHash && (hasStartParam || hasStep1Param || hasStep2Param);
 
     let settings = null;
-    let pollTimer = null;
 
-    // --- Helpers ---
+    const hwidRaw = urlParams.get('hwid') || '';
+    let hwid = (hwidRaw.trim().length > 0 && hwidRaw.trim().length <= 50) ? hwidRaw.trim() : null;
+
     function showError(msg) {
       const el = document.getElementById('errorMsg');
       el.textContent = msg; el.classList.add('show');
@@ -145,72 +142,61 @@
 
     function show(id) {
       const el = document.getElementById(id);
-      el.style.display = ''; el.classList.add('show');
+      el.style.display = '';
+      el.classList.add('show');
     }
 
     function hide(id) {
       const el = document.getElementById(id);
-      el.classList.remove('show'); el.style.display = '';
+      el.classList.remove('show');
+      el.style.display = '';
     }
 
     function resetBlocks() {
       ['blockStart','blockStep1','blockStep2','blockGenerate'].forEach(id => hide(id));
     }
 
-    // Lưu session vào localStorage
-    function saveSession() {
-      if (domain) localStorage.setItem('ntt_domain', domain);
-      if (hwid)   localStorage.setItem('ntt_hwid',   hwid);
-    }
-
-    // --- Load settings từ API ---
     async function loadSettings() {
       if (!domain) { showError('No domain specified.'); return; }
       try {
         const res  = await fetch(`${API_BASE}/?type=get_settings_by_domain&domain=${encodeURIComponent(domain)}`);
         const data = await res.json();
-        if (!data.success) { showError('Domain not found: ' + domain); return; }
+        if (!data.success) { showError('Domain not found.'); return; }
 
         settings = data.settings;
         document.getElementById('domainLabel').textContent = settings.website_domain;
+        document.getElementById('btnStart').href = settings.start_link;
 
-        saveSession();
+        hwid = hwid || localStorage.getItem('ntt_hwid') || null;
+        if (hwid) localStorage.setItem('ntt_hwid', hwid);
+
         resetBlocks();
+        show('blockStart');
 
         if (hwid) {
           await renderProgress();
-          // Poll mỗi 4 giây để tự động cập nhật sau khi user hoàn thành step
-          pollTimer = setInterval(renderProgress, 4000);
-        } else {
-          show('blockStart');
+          setInterval(renderProgress, 4000);
         }
-      } catch (e) {
-        showError('Failed to load settings.');
-      }
+      } catch { showError('Failed to load.'); }
     }
 
-    // --- Render trạng thái progress ---
     async function renderProgress() {
       if (!hwid || !settings) return;
-      if (document.getElementById('keyResult').classList.contains('show')) {
-        clearInterval(pollTimer);
-        return;
-      }
 
-      // Kiểm tra key đã có trong localStorage chưa
+      if (document.getElementById('keyResult').classList.contains('show')) return;
+
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
-
       if (savedKey && savedDomain === domain && savedHwid === hwid) {
-        clearInterval(pollTimer);
-        await showKey(savedKey);
-        return;
+        await showKey(savedKey); return;
       }
 
-      // Xóa key cũ nếu hwid khác
       if (savedKey && savedHwid !== hwid) {
-        ['ntt_generated_key','ntt_key_domain','ntt_key_hwid','ntt_key_expiry'].forEach(k => localStorage.removeItem(k));
+        localStorage.removeItem('ntt_generated_key');
+        localStorage.removeItem('ntt_key_domain');
+        localStorage.removeItem('ntt_key_hwid');
+        localStorage.removeItem('ntt_key_expiry');
       }
 
       try {
@@ -220,19 +206,14 @@
         resetBlocks();
 
         if (!data.status) {
-          // Chưa init hoặc session hết hạn → show Start
           show('blockStart');
           return;
         }
 
-        // Ép kiểu ad_steps về number (D1 có thể trả string)
-        const adSteps = Number(settings.ad_steps) || 1;
-
         if (data.step1) {
-          if (adSteps >= 2 && !data.step2) {
+          if (settings.ad_steps === 2 && !data.step2) {
             show('blockStep2');
           } else {
-            // Đã xong tất cả bước → hiện Generate
             show('blockGenerate');
           }
         } else if (data.start) {
@@ -240,12 +221,9 @@
         } else {
           show('blockStart');
         }
-      } catch (e) {
-        // Lỗi mạng, giữ nguyên trạng thái
-      }
+      } catch {}
     }
 
-    // --- Countdown timer ---
     let countdownInterval = null;
 
     function startCountdown(secondsLeft) {
@@ -255,7 +233,10 @@
         if (secondsLeft <= 0) {
           el.textContent = 'Expired';
           clearInterval(countdownInterval);
-          ['ntt_generated_key','ntt_key_domain','ntt_key_hwid','ntt_key_expiry'].forEach(k => localStorage.removeItem(k));
+          localStorage.removeItem('ntt_generated_key');
+          localStorage.removeItem('ntt_key_domain');
+          localStorage.removeItem('ntt_key_hwid');
+          localStorage.removeItem('ntt_key_expiry');
           return;
         }
         const h = Math.floor(secondsLeft / 3600);
@@ -268,9 +249,7 @@
       countdownInterval = setInterval(tick, 1000);
     }
 
-    // --- Hiện key ---
     async function showKey(key, secondsLeft) {
-      clearInterval(pollTimer);
       resetBlocks();
       document.getElementById('keyResult').style.display = '';
       document.getElementById('keyResult').classList.add('show');
@@ -279,6 +258,7 @@
       if (secondsLeft !== undefined) {
         startCountdown(secondsLeft);
       } else {
+
         try {
           const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}&domain=${encodeURIComponent(domain)}`);
           const d = await r.json();
@@ -289,70 +269,44 @@
       }
     }
 
-    // --- complete_step API call ---
-    async function completeStep(step) {
-      try {
-        const res = await fetch(`${API_BASE}/?type=complete_step`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hwid, step, hash, domain }),
-        });
-        const data = await res.json();
-        return data.success === true;
-      } catch {
-        return false;
-      }
-    }
-
-    // --- Button: Start ---
-    // Đổi thành button thường, dùng onclick để lưu session TRƯỚC khi mở link
     document.getElementById('btnStart').addEventListener('click', () => {
-      if (!settings?.start_link) return;
-      saveSession(); // Lưu domain + hwid vào localStorage TRƯỚC
-      window.location.href = settings.start_link; // Redirect cùng tab (không mất localStorage)
+      localStorage.setItem('ntt_domain', domain);
+      if (hwid) localStorage.setItem('ntt_hwid', hwid);
     });
 
-    // --- Button: Step 1 ---
     document.getElementById('btnStep1').addEventListener('click', () => {
       if (!settings?.step1_link) return;
-      saveSession();
-      window.location.href = settings.step1_link;
+      localStorage.setItem('ntt_domain', domain);
+      localStorage.setItem('ntt_hwid', hwid);
+      window.open(settings.step1_link, '_blank');
     });
 
-    // --- Button: Step 2 ---
     document.getElementById('btnStep2').addEventListener('click', () => {
       if (!settings?.step2_link) return;
-      saveSession();
-      window.location.href = settings.step2_link;
+      localStorage.setItem('ntt_domain', domain);
+      localStorage.setItem('ntt_hwid', hwid);
+      window.open(settings.step2_link, '_blank');
     });
 
-    // --- Button: Generate Key ---
     document.getElementById('btnGenerate').addEventListener('click', async () => {
-      if (!hwid) { showError('Session lost. Please start over.'); return; }
-      if (!settings) { showError('Settings not loaded.'); return; }
-
       const btn = document.getElementById('btnGenerate');
       btn.disabled = true; btn.textContent = 'Generating...';
-
       try {
         const res  = await fetch(`${API_BASE}/?type=create_key`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ hwid, domain: settings.website_domain, key_prefix: settings.key_domain }),
         });
         const data = await res.json();
-
         if (data.success) {
           localStorage.setItem('ntt_generated_key', data.key);
           localStorage.setItem('ntt_key_domain', domain);
           localStorage.setItem('ntt_key_hwid', hwid);
           localStorage.removeItem('ntt_key_expiry');
-          // Xóa session tạm sau khi đã có key
           localStorage.removeItem('ntt_domain');
           localStorage.removeItem('ntt_hwid');
           await showKey(data.key, data.expires_in || 86400);
         } else {
-          showError(data.error || 'Failed to generate key.');
+          showError(data.error || 'Failed.');
           btn.disabled = false; btn.textContent = 'Generate Key';
         }
       } catch {
@@ -361,7 +315,6 @@
       }
     });
 
-    // --- Button: Copy ---
     document.getElementById('btnCopy').addEventListener('click', () => {
       navigator.clipboard.writeText(document.getElementById('keyValue').textContent).then(() => {
         const btn = document.getElementById('btnCopy');
@@ -370,68 +323,46 @@
       });
     });
 
-    // --- INIT ---
+    async function completeStep(step) {
+      try {
+        const res = await fetch(`${API_BASE}/?type=complete_step`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hwid, step, hash, domain }),
+        });
+        return (await res.json()).success;
+      } catch { return false; }
+    }
+
     async function init() {
-
-      // ═══════════════════════════════════════════════════
-      // CALLBACK: Linkvertise redirect về sau khi user xong
-      // URL dạng: /key.html?start_done&hash=xxx
-      //           /key.html?step1_done&hash=xxx
-      //           /key.html?step2_done&hash=xxx
-      // domain và hwid KHÔNG có trên URL → lấy từ localStorage
-      // ═══════════════════════════════════════════════════
       if (isCallback) {
-        // Lấy domain + hwid từ localStorage (đã lưu lúc user bấm Start/Step)
-        domain = localStorage.getItem('ntt_domain') || urlParams.get('domain') || '';
-        hwid   = localStorage.getItem('ntt_hwid')   || urlParams.get('hwid')   || null;
 
-        if (!domain) {
-          showError('Session expired. Please go back and start over.');
-          return;
-        }
-        if (!hwid) {
-          showError('Session expired (hwid missing). Please go back and start over.');
-          return;
-        }
+        domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
+        hwid   = localStorage.getItem('ntt_hwid');
+
+        if (!domain) { showError('Session lost. Please start over.'); return; }
+
+        localStorage.setItem('ntt_domain', domain);
+        localStorage.setItem('ntt_hwid',   hwid);
 
         const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
-        const ok   = await completeStep(step);
-
-        if (!ok) {
-          // completeStep thất bại — thường do hash invalid hoặc token mismatch
-          // Vẫn redirect để user không bị kẹt, nhưng log lỗi ra console
-          console.error('[NTT] completeStep failed', { step, hash: hash.slice(0,10)+'...', domain, hwid });
-        }
-
-        // Redirect sạch về trang, mang hwid + domain trên URL để chắc chắn
-        window.location.replace(
-          `/key.html?domain=${encodeURIComponent(domain)}&hwid=${encodeURIComponent(hwid)}`
-        );
+        await completeStep(step);
+        window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
         return;
       }
 
-      // ═══════════════════════════════════════════════════
-      // NORMAL: Trang được mở bình thường
-      // ═══════════════════════════════════════════════════
+      if (urlParams.get('domain')) localStorage.setItem('ntt_domain', domain);
 
-      // Lưu domain từ URL vào localStorage nếu có
-      if (urlParams.get('domain') || urlParams.get('id')) {
-        localStorage.setItem('ntt_domain', domain);
-      }
+      if (!domain) { showError('No domain specified.'); return; }
 
-      if (!domain) {
-        showError('No domain specified. Please use a valid link.');
-        return;
-      }
-
-      // Kiểm tra key cũ còn hạn trong localStorage
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
 
+      const curHwid = hwid || null;
+
       if (savedKey) {
         const domainMatch = savedDomain === domain;
-        const hwidMatch   = !hwid || savedHwid === hwid;
+        const hwidMatch   = !curHwid || savedHwid === curHwid;
 
         if (domainMatch && hwidMatch) {
           hwid = savedHwid;
@@ -440,9 +371,13 @@
           return;
         }
 
-        // Key cũ không match → xóa
-        ['ntt_generated_key','ntt_key_domain','ntt_key_hwid','ntt_key_expiry'].forEach(k => localStorage.removeItem(k));
+        localStorage.removeItem('ntt_generated_key');
+        localStorage.removeItem('ntt_key_domain');
+        localStorage.removeItem('ntt_key_hwid');
+        localStorage.removeItem('ntt_key_expiry');
       }
+
+      hwid = curHwid;
 
       await loadSettings();
     }
