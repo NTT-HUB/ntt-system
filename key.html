@@ -10,12 +10,7 @@
   <meta property="og:title"        content="NTT System — Key Generator Platform">
   <meta property="og:description"  content="Anti-bypass key authentication platform powered by Linkvertise. Easy setup, high security — ready to use in your scripts.">
   <meta property="og:image"        content="https://raw.githubusercontent.com/NTT-HUB/image/refs/heads/main/logo/Screenshot%202026-04-19%20212606.png">
-  <meta property="og:image:width"  content="905">
-  <meta property="og:image:height" content="512">
   <meta name="twitter:card"        content="summary_large_image">
-  <meta name="twitter:title"       content="NTT System — Key Generator Platform">
-  <meta name="twitter:description" content="Anti-bypass key authentication platform powered by Linkvertise.">
-  <meta name="twitter:image"       content="https://raw.githubusercontent.com/NTT-HUB/image/refs/heads/main/logo/Screenshot%202026-04-19%20212606.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
@@ -69,7 +64,6 @@
     .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,255,157,0.35); }
     .btn-step { background: rgba(0,255,157,0.08); border: 1px solid rgba(0,255,157,0.25); color: var(--primary); }
     .btn-step:hover { background: rgba(0,255,157,0.15); transform: translateY(-2px); }
-    .btn-step:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
     .btn-generate { background: linear-gradient(135deg, var(--primary), #6366f1); color: var(--bg-dark); }
     .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,255,157,0.3); }
     .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -82,10 +76,7 @@
     .btn-copy:hover { border-color: var(--primary); color: var(--primary); }
     .error-msg { display: none; margin-top: 0.75rem; padding: 0.75rem 1rem; background: rgba(255,77,109,0.1); border: 1px solid var(--error); border-radius: 8px; font-size: 0.8rem; color: var(--error); text-align: center; }
     .error-msg.show { display: block; }
-    .waiting-msg { display: none; margin-top: 0.5rem; font-size: 0.78rem; color: var(--text-dim); text-align: center; }
-    .waiting-msg.show { display: block; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    .waiting-msg span { animation: blink 1.2s infinite; }
+    .hint { margin-top: 0.6rem; font-size: 0.75rem; color: var(--text-dim); text-align: center; line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -96,15 +87,19 @@
 
     <div class="step-block" id="blockStart">
       <a href="#" class="btn btn-start" id="btnStart" target="_blank">▶ Start</a>
+      <p class="hint">Click Start, complete the page, then come back here.</p>
     </div>
+
     <div class="step-block" id="blockStep1">
       <button class="btn btn-step" id="btnStep1">Step 1</button>
-      <div class="waiting-msg" id="waitStep1"><span>⏳ Đang chờ xác nhận Step 1...</span></div>
+      <p class="hint" id="hintStep1">Click Step 1, complete the page, then come back here.</p>
     </div>
+
     <div class="step-block" id="blockStep2">
       <button class="btn btn-step" id="btnStep2">Step 2</button>
-      <div class="waiting-msg" id="waitStep2"><span>⏳ Đang chờ xác nhận Step 2...</span></div>
+      <p class="hint" id="hintStep2">Click Step 2, complete the page, then come back here.</p>
     </div>
+
     <div class="step-block" id="blockGenerate">
       <button class="btn btn-generate" id="btnGenerate">Generate Key</button>
     </div>
@@ -115,7 +110,7 @@
         <div class="key-value" id="keyValue"></div>
       </div>
       <button class="btn-copy" id="btnCopy">Copy Key</button>
-      <div id="keyExpiry" style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-dim);text-align:center;font-family:'IBM Plex Mono',monospace;">
+      <div style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-dim);text-align:center;">
         ⏱ Expires in <span id="expiryTime">--:--:--</span>
       </div>
     </div>
@@ -129,21 +124,21 @@
     const urlParams = new URLSearchParams(window.location.search);
     const hash      = urlParams.get('hash') || '';
 
+    // Lấy domain + hwid: ưu tiên URL trước, fallback localStorage
     let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
-
     const hwidFromUrl = urlParams.get('hwid') || '';
     let hwid = (hwidFromUrl.trim().length > 0 && hwidFromUrl.trim().length <= 50)
       ? hwidFromUrl.trim()
       : (localStorage.getItem('ntt_hwid') || null);
 
+    // Detect callback từ Linkvertise (tab mới redirect về đây)
     const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
     const hasStep1Param = urlParams.has('step1_done') || urlParams.has('step1');
     const hasStep2Param = urlParams.has('step2_done') || urlParams.has('step2');
     const isCallback    = hasStartParam || hasStep1Param || hasStep2Param;
 
     let settings = null;
-    let pollInterval  = null; // interval poll chậm (4s)
-    let fastPollTimer = null; // interval poll nhanh sau khi user click step
+    let pollInterval = null;
 
     function showError(msg) {
       const el = document.getElementById('errorMsg');
@@ -151,31 +146,17 @@
     }
 
     function show(id) {
-      const el = document.getElementById(id);
-      el.style.display = '';
-      el.classList.add('show');
+      document.getElementById(id).style.display = '';
+      document.getElementById(id).classList.add('show');
     }
 
     function hide(id) {
-      const el = document.getElementById(id);
-      el.classList.remove('show');
-      el.style.display = '';
+      document.getElementById(id).classList.remove('show');
+      document.getElementById(id).style.display = '';
     }
 
     function resetBlocks() {
       ['blockStart','blockStep1','blockStep2','blockGenerate'].forEach(id => hide(id));
-    }
-
-    // Bật fast poll (1s) sau khi user click step, tự dừng khi UI thay đổi
-    function startFastPoll() {
-      if (fastPollTimer) clearInterval(fastPollTimer);
-      fastPollTimer = setInterval(async () => {
-        await renderProgress();
-      }, 1000);
-    }
-
-    function stopFastPoll() {
-      if (fastPollTimer) { clearInterval(fastPollTimer); fastPollTimer = null; }
     }
 
     async function loadSettings() {
@@ -197,54 +178,34 @@
 
         if (hwid) {
           await renderProgress();
-          // Poll chậm 4s để tự động cập nhật
-          pollInterval = setInterval(renderProgress, 4000);
+          pollInterval = setInterval(renderProgress, 3000);
         }
       } catch { showError('Failed to load.'); }
     }
 
-    let lastRenderedState = ''; // tránh re-render không cần thiết
-
     async function renderProgress() {
       if (!hwid || !settings) return;
-      if (document.getElementById('keyResult').classList.contains('show')) {
-        stopFastPoll();
-        return;
-      }
+      if (document.getElementById('keyResult').classList.contains('show')) return;
 
+      // Nếu đã có key lưu trước
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
-
       if (savedKey && savedDomain === domain && savedHwid === hwid) {
-        stopFastPoll();
-        await showKey(savedKey);
-        return;
+        await showKey(savedKey); return;
       }
-
       if (savedKey && savedHwid !== hwid) {
-        localStorage.removeItem('ntt_generated_key');
-        localStorage.removeItem('ntt_key_domain');
-        localStorage.removeItem('ntt_key_hwid');
-        localStorage.removeItem('ntt_key_expiry');
+        ['ntt_generated_key','ntt_key_domain','ntt_key_hwid','ntt_key_expiry'].forEach(k => localStorage.removeItem(k));
       }
 
       try {
         const res  = await fetch(`${API_BASE}/?type=progress&hwid=${encodeURIComponent(hwid)}`);
         const data = await res.json();
 
-        // Tạo state key để so sánh
-        const stateKey = JSON.stringify({ status: data.status, start: data.start, step1: data.step1, step2: data.step2 });
-
-        // Nếu state thay đổi → dừng fast poll vì UI đã cập nhật
-        if (stateKey !== lastRenderedState) {
-          stopFastPoll();
-          lastRenderedState = stateKey;
-        }
-
         resetBlocks();
 
-        if (!data.status) {
+        // Không có progress hoặc chưa bắt đầu
+        if (!data.status || !data.start) {
           show('blockStart');
           return;
         }
@@ -255,16 +216,13 @@
           } else {
             show('blockGenerate');
           }
-        } else if (data.start) {
-          show('blockStep1');
         } else {
-          show('blockStart');
+          show('blockStep1');
         }
       } catch {}
     }
 
     let countdownInterval = null;
-
     function startCountdown(secondsLeft) {
       if (countdownInterval) clearInterval(countdownInterval);
       const el = document.getElementById('expiryTime');
@@ -272,10 +230,7 @@
         if (secondsLeft <= 0) {
           el.textContent = 'Expired';
           clearInterval(countdownInterval);
-          localStorage.removeItem('ntt_generated_key');
-          localStorage.removeItem('ntt_key_domain');
-          localStorage.removeItem('ntt_key_hwid');
-          localStorage.removeItem('ntt_key_expiry');
+          ['ntt_generated_key','ntt_key_domain','ntt_key_hwid','ntt_key_expiry'].forEach(k => localStorage.removeItem(k));
           return;
         }
         const h = Math.floor(secondsLeft / 3600);
@@ -289,12 +244,11 @@
     }
 
     async function showKey(key, secondsLeft) {
-      stopFastPoll();
+      if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
       resetBlocks();
       document.getElementById('keyResult').style.display = '';
       document.getElementById('keyResult').classList.add('show');
       document.getElementById('keyValue').textContent = key;
-
       if (secondsLeft !== undefined) {
         startCountdown(secondsLeft);
       } else {
@@ -302,45 +256,52 @@
           const r = await fetch(`${API_BASE}/?type=read&hwid=${encodeURIComponent(hwid)}&domain=${encodeURIComponent(domain)}`);
           const d = await r.json();
           startCountdown(d.left || 0);
-        } catch {
-          startCountdown(0);
-        }
+        } catch { startCountdown(0); }
       }
     }
 
+    // Gọi complete_step KHÔNG cần hash cho step 1/2
+    async function completeStep(step) {
+      try {
+        const res = await fetch(`${API_BASE}/?type=complete_step`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hwid, step, hash, domain }),
+        });
+        return (await res.json()).success;
+      } catch { return false; }
+    }
+
+    // ── START BUTTON ──
     document.getElementById('btnStart').addEventListener('click', () => {
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
-      // Sau khi click Start, bắt đầu fast poll để tab gốc tự cập nhật
-      startFastPoll();
+      // Tab mới mở Linkvertise, tab gốc chỉ poll để detect khi done
     });
 
+    // ── STEP 1 BUTTON ──
+    // Tab gốc mở link step1 trong tab mới.
+    // Tab mới sau khi xong sẽ redirect về /key.html?step1_done&hash=...&domain=...&hwid=...
+    // Tab callback sẽ gọi completeStep(1) rồi đóng tab.
+    // Tab gốc poll 3s sẽ tự detect và chuyển sang step tiếp theo.
     document.getElementById('btnStep1').addEventListener('click', () => {
       if (!settings?.step1_link) return;
-      const btn = document.getElementById('btnStep1');
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
       window.open(settings.step1_link, '_blank');
-
-      // Disable button + hiện waiting msg + bắt fast poll
-      btn.disabled = true;
-      document.getElementById('waitStep1').classList.add('show');
-      startFastPoll();
+      // Hiện hint chờ, KHÔNG disable button để user có thể click lại nếu cần
+      document.getElementById('hintStep1').textContent = '⏳ Waiting... Come back after completing the page.';
     });
 
+    // ── STEP 2 BUTTON ──
     document.getElementById('btnStep2').addEventListener('click', () => {
       if (!settings?.step2_link) return;
-      const btn = document.getElementById('btnStep2');
       localStorage.setItem('ntt_domain', domain);
       if (hwid) localStorage.setItem('ntt_hwid', hwid);
       window.open(settings.step2_link, '_blank');
-
-      // Disable button + hiện waiting msg + bắt fast poll
-      btn.disabled = true;
-      document.getElementById('waitStep2').classList.add('show');
-      startFastPoll();
+      document.getElementById('hintStep2').textContent = '⏳ Waiting... Come back after completing the page.';
     });
 
+    // ── GENERATE KEY BUTTON ──
     document.getElementById('btnGenerate').addEventListener('click', async () => {
       const btn = document.getElementById('btnGenerate');
       btn.disabled = true; btn.textContent = 'Generating...';
@@ -354,9 +315,7 @@
           localStorage.setItem('ntt_generated_key', data.key);
           localStorage.setItem('ntt_key_domain', domain);
           localStorage.setItem('ntt_key_hwid', hwid);
-          localStorage.removeItem('ntt_key_expiry');
-          localStorage.removeItem('ntt_domain');
-          localStorage.removeItem('ntt_hwid');
+          ['ntt_key_expiry','ntt_domain','ntt_hwid'].forEach(k => localStorage.removeItem(k));
           await showKey(data.key, data.expires_in || 86400);
         } else {
           showError(data.error || 'Failed.');
@@ -376,24 +335,21 @@
       });
     });
 
-    async function completeStep(step) {
-      try {
-        const res = await fetch(`${API_BASE}/?type=complete_step`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hwid, step, hash, domain }),
-        });
-        return (await res.json()).success;
-      } catch { return false; }
-    }
-
+    // ══════════════════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════════════════
     async function init() {
-      // ── CALLBACK TỪ LINKVERTISE ──
+
+      // ── XỬ LÝ CALLBACK (tab mới sau khi Linkvertise xong) ──
       if (isCallback) {
         domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
         hwid   = urlParams.get('hwid')   || localStorage.getItem('ntt_hwid')   || null;
 
         if (!domain || !hwid) {
-          showError('Session lost. Please start over.');
+          // Không có domain/hwid → không làm gì, load bình thường
+          // (tránh show lỗi vô nghĩa trên tab mới)
+          document.getElementById('domainLabel').textContent = 'Done! You can close this tab.';
+          document.querySelector('.title').textContent = '✓';
           return;
         }
 
@@ -403,7 +359,7 @@
         const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
         await completeStep(step);
 
-        // Redirect sạch, giữ hwid trong URL
+        // Redirect tab này về trang key sạch (giữ domain + hwid)
         window.location.replace(
           `/key.html?domain=${encodeURIComponent(domain)}&hwid=${encodeURIComponent(hwid)}`
         );
@@ -414,25 +370,20 @@
       if (domain) localStorage.setItem('ntt_domain', domain);
       if (!domain) { showError('No domain specified.'); return; }
 
+      // Kiểm tra key đã lưu
       const savedKey    = localStorage.getItem('ntt_generated_key');
       const savedDomain = localStorage.getItem('ntt_key_domain');
       const savedHwid   = localStorage.getItem('ntt_key_hwid');
-
       if (savedKey) {
         const domainMatch = savedDomain === domain;
         const hwidMatch   = !hwid || savedHwid === hwid;
-
         if (domainMatch && hwidMatch) {
           hwid = savedHwid;
           document.getElementById('domainLabel').textContent = domain;
           await showKey(savedKey);
           return;
         }
-
-        localStorage.removeItem('ntt_generated_key');
-        localStorage.removeItem('ntt_key_domain');
-        localStorage.removeItem('ntt_key_hwid');
-        localStorage.removeItem('ntt_key_expiry');
+        ['ntt_generated_key','ntt_key_domain','ntt_key_hwid','ntt_key_expiry'].forEach(k => localStorage.removeItem(k));
       }
 
       await loadSettings();
