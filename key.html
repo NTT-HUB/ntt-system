@@ -306,7 +306,6 @@ async function renderProgress() {
     const flowParam = flowId ? `&flow=${encodeURIComponent(flowId)}` : '';
     const res  = await fetch(`${API_BASE}/?type=progress&hwid=${encodeURIComponent(hwid)}${flowParam}`);
     const data = await res.json();
-    console.log('[NTT] renderProgress:', data, 'flowId:', flowId, 'hwid:', hwid);
 
     resetBlocks();
 
@@ -563,7 +562,6 @@ async function completeStep(step) {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    console.log('[NTT] completeStep:', step, data);
     return data.success;
   } catch (e) {
     return false;
