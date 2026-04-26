@@ -367,7 +367,7 @@ async function init() {
     const ok = await completeStep(step);
     console.log('[NTT] completeStep ok:', ok);
 
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, 000));
 
     const currentPage = window.location.pathname; // giữ nguyên /key hoặc /key.html
 window.location.replace(`${currentPage}?domain=${encodeURIComponent(domain)}`);
