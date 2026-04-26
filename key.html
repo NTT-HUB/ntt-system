@@ -343,7 +343,7 @@ async function renderProgress() {
 }
 
 let captchaId    = null;
-let captchaToken = null;
+let captchaToken = localStorage.getItem('ntt_captcha_token') || null;
 
 function drawCaptcha(answer) {
   const canvas = document.getElementById('captchaCanvas');
@@ -421,6 +421,7 @@ async function verifyCaptcha() {
 
     if (data.success) {
       captchaToken = data.token;
+      localStorage.setItem('ntt_captcha_token', data.token);
       document.getElementById('captchaModal').classList.remove('show');
       proceedStart();
     } else {
@@ -627,6 +628,7 @@ async function init() {
 
     const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
     await completeStep(step);
+    if (step === 'start') localStorage.removeItem('ntt_captcha_token');
 
     const currentPage  = window.location.pathname;
     const flowParam    = flowId ? `&flow=${encodeURIComponent(flowId)}` : '';
