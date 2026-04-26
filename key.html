@@ -81,6 +81,21 @@
     .btn-copy:hover { border-color: var(--primary); color: var(--primary); }
     .error-msg { display: none; margin-top: 0.75rem; padding: 0.75rem 1rem; background: rgba(255,77,109,0.1); border: 1px solid var(--error); border-radius: 8px; font-size: 0.8rem; color: var(--error); text-align: center; }
     .error-msg.show { display: block; }
+
+    .yt-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; align-items: center; justify-content: center; padding: 1rem; }
+    .yt-modal.show { display: flex; }
+    .yt-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; width: 100%; max-width: 400px; }
+    .yt-title { font-family: 'Oswald', sans-serif; font-size: 1.1rem; text-align: center; margin-bottom: 1rem; color: var(--primary); }
+    .yt-item { background: var(--bg-darker); border: 1px solid var(--border); border-radius: 10px; padding: 0.875rem 1rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; }
+    .yt-item:hover { border-color: var(--primary); }
+    .yt-item.done { border-color: var(--success); color: var(--success); cursor: default; }
+    .yt-item.watching { border-color: #6366f1; color: #a5b4fc; cursor: default; }
+    .yt-item-label { font-size: 0.875rem; }
+    .yt-item-status { font-size: 0.875rem; min-width: 60px; text-align: right; }
+    .yt-timer { font-size: 0.75rem; color: var(--text-dim); text-align: center; margin-bottom: 0.75rem; }
+    .yt-next { width: 100%; padding: 0.875rem; border: none; border-radius: 10px; font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all 0.25s; background: rgba(0,255,157,0.08); border: 1px solid rgba(0,255,157,0.25); color: var(--primary); }
+    .yt-next:disabled { opacity: 0.4; cursor: not-allowed; }
+    .yt-next:not(:disabled):hover { background: rgba(0,255,157,0.15); transform: translateY(-2px); }
   </style>
 </head>
 <body>
@@ -114,6 +129,15 @@
     </div>
 
     <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <div class="yt-modal" id="ytModal">
+    <div class="yt-box">
+      <div class="yt-title" id="ytModalTitle">Watch Videos</div>
+      <div id="ytItems"></div>
+      <div class="yt-timer" id="ytTimerText"></div>
+      <button class="yt-next" id="ytNextBtn" disabled>Next Step</button>
+    </div>
   </div>
 
   <script type="module">
@@ -280,18 +304,110 @@ document.getElementById('btnStart').addEventListener('click', () => {
 });
 
 document.getElementById('btnStep1').addEventListener('click', () => {
-  if (!settings?.step1_link) return;
+  if (!settings) return;
+  if (settings.step1_type === 'youtube') {
+    openYoutubeModal(1, settings.step1_yt_links || '[]');
+    return;
+  }
+  if (!settings.step1_link) return;
   localStorage.setItem('ntt_domain', domain);
   localStorage.setItem('ntt_hwid', hwid);
   window.open(settings.step1_link, '_blank');
 });
 
 document.getElementById('btnStep2').addEventListener('click', () => {
-  if (!settings?.step2_link) return;
+  if (!settings) return;
+  if (settings.step2_type === 'youtube') {
+    openYoutubeModal(2, settings.step2_yt_links || '[]');
+    return;
+  }
+  if (!settings.step2_link) return;
   localStorage.setItem('ntt_domain', domain);
   localStorage.setItem('ntt_hwid', hwid);
   window.open(settings.step2_link, '_blank');
 });
+
+let ytWatchedAll = false;
+
+function openYoutubeModal(step, ytLinksJson) {
+  let links = [];
+  try { links = JSON.parse(ytLinksJson).filter(l => l && l.trim()); } catch {}
+  if (!links.length) { showError('No YouTube videos configured.'); return; }
+
+  const modal    = document.getElementById('ytModal');
+  const itemsDiv = document.getElementById('ytItems');
+  const nextBtn  = document.getElementById('ytNextBtn');
+  const timerEl  = document.getElementById('ytTimerText');
+  const titleEl  = document.getElementById('ytModalTitle');
+
+  titleEl.textContent = `Step ${step} — Watch Videos`;
+  itemsDiv.innerHTML  = '';
+  nextBtn.disabled    = true;
+  timerEl.textContent = '';
+  ytWatchedAll        = false;
+
+  const watched = new Array(links.length).fill(false);
+  let activeTimer = null;
+
+  links.forEach((url, i) => {
+    const item = document.createElement('div');
+    item.className  = 'yt-item';
+    item.id         = `ytItem${i}`;
+    item.innerHTML  = `<span class="yt-item-label">Video ${i + 1}</span><span class="yt-item-status" id="ytSt${i}">Click to watch</span>`;
+
+    item.addEventListener('click', () => {
+      if (watched[i]) return;
+      if (activeTimer) return;
+
+      item.classList.add('watching');
+      document.getElementById(`ytSt${i}`).textContent = '15s...';
+      window.open(url, '_blank');
+
+      let left = 15;
+      timerEl.textContent = `Video ${i + 1}: ${left}s remaining`;
+
+      activeTimer = setInterval(() => {
+        left--;
+        timerEl.textContent = `Video ${i + 1}: ${left}s remaining`;
+        document.getElementById(`ytSt${i}`).textContent = `${left}s`;
+        if (left <= 0) {
+          clearInterval(activeTimer);
+          activeTimer    = null;
+          watched[i]     = true;
+          item.classList.remove('watching');
+          item.classList.add('done');
+          document.getElementById(`ytSt${i}`).textContent = '✓';
+          timerEl.textContent = '';
+
+          if (watched.every(w => w)) {
+            ytWatchedAll     = true;
+            nextBtn.disabled = false;
+          }
+        }
+      }, 1000);
+    });
+
+    itemsDiv.appendChild(item);
+  });
+
+  modal.classList.add('show');
+
+  nextBtn.onclick = async () => {
+    if (!ytWatchedAll) return;
+    nextBtn.disabled    = true;
+    nextBtn.textContent = 'Processing...';
+
+    const ok = await completeStep(step);
+    if (ok) {
+      modal.classList.remove('show');
+      await renderProgress();
+    } else {
+      showError('Failed to complete step. Please try again.');
+      nextBtn.disabled    = false;
+      nextBtn.textContent = 'Next Step';
+    }
+  };
+}
 
 document.getElementById('btnGenerate').addEventListener('click', async () => {
   const btn = document.getElementById('btnGenerate');
