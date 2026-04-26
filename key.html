@@ -339,7 +339,7 @@ async function renderProgress() {
 }
 
 let captchaId    = null;
-let captchaToken = localStorage.getItem('ntt_captcha_token') || null;
+let captchaToken = null;
 
 function drawCaptcha(answer) {
   const canvas = document.getElementById('captchaCanvas');
@@ -417,7 +417,6 @@ async function verifyCaptcha() {
 
     if (data.success) {
       captchaToken = data.token;
-      localStorage.setItem('ntt_captcha_token', data.token);
       document.getElementById('captchaModal').classList.remove('show');
       if (settings?.start_type === 'youtube') {
         openYoutubeModal('start', settings.start_yt_links || '[]');
@@ -555,10 +554,7 @@ function openYoutubeModal(step, ytLinksJson) {
 
     const ok = await completeStep(step);
     if (ok) {
-      if (step === 'start') {
-        captchaToken = null;
-        localStorage.removeItem('ntt_captcha_token');
-      }
+      if (step === 'start') captchaToken = null;
       modal.classList.remove('show');
       await renderProgress();
     } else {
@@ -628,7 +624,6 @@ async function init() {
 
     const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
     await completeStep(step);
-    if (step === 'start') localStorage.removeItem('ntt_captcha_token');
 
     const currentPage  = window.location.pathname;
     const flowParam    = flowId ? `&flow=${encodeURIComponent(flowId)}` : '';
