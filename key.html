@@ -300,7 +300,12 @@ async function renderProgress() {
   }
 }
 
-document.getElementById('btnStart').addEventListener('click', () => {
+document.getElementById('btnStart').addEventListener('click', (e) => {
+  if (settings?.start_type === 'youtube') {
+    e.preventDefault();
+    openYoutubeModal('start', settings.start_yt_links || '[]');
+    return;
+  }
   localStorage.setItem('ntt_domain', domain);
   if (hwid) localStorage.setItem('ntt_hwid', hwid);
 });
