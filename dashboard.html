@@ -586,14 +586,16 @@
 }
 
     function updateStepUI(step) {
-      const type    = document.getElementById(`step${step}Type`).value;
+      const typeEl  = document.getElementById(`step${step}Type`);
+      if (!typeEl) return;
+      const type    = typeEl.value;
       const ytDiv   = document.getElementById(`step${step}YoutubeLinks`);
       const linkDiv = document.getElementById(`step${step}LinkGroup`);
       const destDiv = document.getElementById(`step${step}DestGroup`);
       const isYt    = type === 'youtube';
-      ytDiv.style.display   = isYt ? 'block' : 'none';
-      if (linkDiv) linkDiv.style.display = isYt ? 'none' : 'block';
-      if (destDiv) destDiv.style.display = isYt ? 'none' : 'block';
+      if (ytDiv)   ytDiv.style.display   = isYt ? 'block' : 'none';
+      if (linkDiv) linkDiv.style.display = isYt ? 'none'  : 'block';
+      if (destDiv) destDiv.style.display = isYt ? 'none'  : 'block';
     }
 
     function updateLinkInputs() {
@@ -923,6 +925,8 @@ end`;
 
     checkAuth();
     updateLinkInputs();
+    updateStepUI(1);
+    updateStepUI(2);
     updateDecodeCode();
     if (typeof hljs !== 'undefined') {
       document.addEventListener('DOMContentLoaded', () => rehighlight());
