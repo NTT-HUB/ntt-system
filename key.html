@@ -180,52 +180,67 @@
       } catch { showError('Failed to load.'); }
     }
 
-   async function renderProgress() {
-  if (!hwid || !settings) return;
+   async function init() {
+  console.log('[NTT] init | full URL:', window.location.href);
+  console.log('[NTT] init | params:', Object.fromEntries(urlParams));
+  console.log('[NTT] init | hash:', hash, '| hasValidHash:', hasValidHash);
+  console.log('[NTT] init | isCallback:', isCallback);
+  console.log('[NTT] init | hwid from localStorage:', localStorage.getItem('ntt_hwid'));
+  console.log('[NTT] init | domain from localStorage:', localStorage.getItem('ntt_domain'));
 
-  if (document.getElementById('keyResult').classList.contains('show')) return;
+  if (isCallback) {
+    domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
+    hwid   = localStorage.getItem('ntt_hwid');
+
+    console.log('[NTT] callback mode | domain:', domain, '| hwid:', hwid);
+
+    if (!domain) { showError('Session lost. Please start over.'); return; }
+
+    localStorage.setItem('ntt_domain', domain);
+    localStorage.setItem('ntt_hwid',   hwid);
+
+    const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
+    console.log('[NTT] step to complete:', step);
+
+    const ok = await completeStep(step);
+    console.log('[NTT] completeStep ok:', ok);
+
+    await new Promise(r => setTimeout(r, 3000));
+
+    window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
+    return;
+  }
+
+  if (urlParams.get('domain')) localStorage.setItem('ntt_domain', domain);
+
+  if (!domain) { showError('No domain specified.'); return; }
 
   const savedKey    = localStorage.getItem('ntt_generated_key');
   const savedDomain = localStorage.getItem('ntt_key_domain');
   const savedHwid   = localStorage.getItem('ntt_key_hwid');
-  if (savedKey && savedDomain === domain && savedHwid === hwid) {
-    await showKey(savedKey); return;
-  }
 
-  if (savedKey && savedHwid !== hwid) {
+  const curHwid = hwid || null;
+
+  if (savedKey) {
+    const domainMatch = savedDomain === domain;
+    const hwidMatch   = !curHwid || savedHwid === curHwid;
+
+    if (domainMatch && hwidMatch) {
+      hwid = savedHwid;
+      document.getElementById('domainLabel').textContent = domain;
+      await showKey(savedKey);
+      return;
+    }
+
     localStorage.removeItem('ntt_generated_key');
     localStorage.removeItem('ntt_key_domain');
     localStorage.removeItem('ntt_key_hwid');
     localStorage.removeItem('ntt_key_expiry');
   }
 
-  try {
-    const res  = await fetch(`${API_BASE}/?type=progress&hwid=${encodeURIComponent(hwid)}`);
-    const data = await res.json();
-    console.log('[NTT] renderProgress data:', data);
-    console.log('[NTT] settings.ad_steps:', settings?.ad_steps);
+  hwid = curHwid;
 
-    resetBlocks();
-
-    if (!data.status) {
-      show('blockStart');
-      return;
-    }
-
-    if (data.step1) {
-      if (settings.ad_steps === 2 && !data.step2) {
-        show('blockStep2');
-      } else {
-        show('blockGenerate');
-      }
-    } else if (data.start) {
-      show('blockStep1');
-    } else {
-      show('blockStart');
-    }
-  } catch (e) {
-    console.error('[NTT] renderProgress error:', e);
-  }
+  await loadSettings();
 }
 
     let countdownInterval = null;
