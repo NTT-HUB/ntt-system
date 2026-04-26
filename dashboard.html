@@ -303,8 +303,8 @@
                 <option value="linkvertise">Linkvertise</option>
                 <option value="lootlab">Lootlab</option>
                 <option value="workink">Work.ink</option>
-                <option value="ads_oder">Ads Oder</option>
                 <option value="youtube">YouTube</option>
+                <option value="ads_oder">Ads Oder</option>
               </select>
             </div>
             <div id="step1YoutubeLinks" style="display:none;">
@@ -321,12 +321,14 @@
                 <input type="text" id="step1Yt3" placeholder="https://youtube.com/watch?v=...">
               </div>
             </div>
-            <div class="form-group" style="margin-bottom:0.75rem;">
+            <div class="form-group" style="margin-bottom:0.75rem;" id="step1LinkGroup">
               <label style="font-size:0.75rem;">Shortened URL</label>
               <input type="text" id="step1Link" placeholder="https://...">
             </div>
+            <div id="step1DestGroup">
             <div class="link-label" style="margin-top:0.5rem;">Destination URL (copy to your platform):</div>
             <div class="link-preview" id="step1Dest">Loading...</div>
+            </div>
           </div>
 
           <div class="link-item" id="step2Container" style="display:none;">
@@ -337,8 +339,8 @@
                 <option value="linkvertise">Linkvertise</option>
                 <option value="lootlab">Lootlab</option>
                 <option value="workink">Work.ink</option>
-                <option value="ads_oder">Ads Oder</option>
                 <option value="youtube">YouTube</option>
+                <option value="ads_oder">Ads Oder</option>
               </select>
             </div>
             <div id="step2YoutubeLinks" style="display:none;">
@@ -355,12 +357,14 @@
                 <input type="text" id="step2Yt3" placeholder="https://youtube.com/watch?v=...">
               </div>
             </div>
-            <div class="form-group" style="margin-bottom:0.75rem;">
+            <div class="form-group" style="margin-bottom:0.75rem;" id="step2LinkGroup">
               <label style="font-size:0.75rem;">Shortened URL</label>
               <input type="text" id="step2Link" placeholder="https://...">
             </div>
+            <div id="step2DestGroup">
             <div class="link-label" style="margin-top:0.5rem;">Destination URL (copy to your platform):</div>
             <div class="link-preview" id="step2Dest">Loading...</div>
+            </div>
           </div>
         </div>
 
@@ -582,9 +586,14 @@
 }
 
     function updateStepUI(step) {
-      const type = document.getElementById(`step${step}Type`).value;
-      const ytDiv = document.getElementById(`step${step}YoutubeLinks`);
-      ytDiv.style.display = type === 'youtube' ? 'block' : 'none';
+      const type    = document.getElementById(`step${step}Type`).value;
+      const ytDiv   = document.getElementById(`step${step}YoutubeLinks`);
+      const linkDiv = document.getElementById(`step${step}LinkGroup`);
+      const destDiv = document.getElementById(`step${step}DestGroup`);
+      const isYt    = type === 'youtube';
+      ytDiv.style.display   = isYt ? 'block' : 'none';
+      if (linkDiv) linkDiv.style.display = isYt ? 'none' : 'block';
+      if (destDiv) destDiv.style.display = isYt ? 'none' : 'block';
     }
 
     function updateLinkInputs() {
