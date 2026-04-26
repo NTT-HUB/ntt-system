@@ -516,10 +516,11 @@
     }
 
     function updatePreviews() {
-      const base = window.location.origin;
-      document.getElementById('step1Dest').textContent = `${base}/key.html?step1_done`;
-      document.getElementById('step2Dest').textContent = `${base}/key.html?step2_done`;
-    }
+  const base = window.location.origin;
+  const wd = document.getElementById('websiteDomain').value.trim() || currentUser?.username || '';
+  document.getElementById('step1Dest').textContent = `${base}/key?domain=${wd}&step1`;
+  document.getElementById('step2Dest').textContent = `${base}/key?domain=${wd}&step2`;
+}
 
     function updateLinkInputs() {
       const steps = document.querySelector('input[name="adSteps"]:checked').value;
