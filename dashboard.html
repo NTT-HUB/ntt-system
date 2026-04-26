@@ -293,25 +293,43 @@
           </div>
         </div>
 
-        <div class="warning-box">
-          <strong>⚠️ Important:</strong>
-          Linkvertise requires unique URLs. Make sure each link has a different query parameter.
-        </div>
-
         <div id="linkInputs" class="link-inputs">
-          
+
           <div class="link-item">
-            <div class="link-label">Step 1 — Linkvertise Shortened URL</div>
-            <input type="text" id="step1Link" placeholder="https://linkvertise.com/...">
-            <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
+            <div class="link-label" style="font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:0.75rem;">Step 1</div>
+            <div class="form-group" style="margin-bottom:0.75rem;">
+              <label style="font-size:0.75rem;">Platform</label>
+              <select id="step1Type">
+                <option value="linkvertise">Linkvertise (10s)</option>
+                <option value="lootlab">Lootlab (30s)</option>
+                <option value="workink">Work.ink (30s)</option>
+                <option value="ads_oder">Ads Oder (10s)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0.75rem;">
+              <label style="font-size:0.75rem;">Shortened URL</label>
+              <input type="text" id="step1Link" placeholder="https://...">
+            </div>
+            <div class="link-label" style="margin-top:0.5rem;">Destination URL (copy to your platform):</div>
             <div class="link-preview" id="step1Dest">Loading...</div>
           </div>
 
-          
           <div class="link-item" id="step2Container" style="display:none;">
-            <div class="link-label">Step 2 — Linkvertise Shortened URL</div>
-            <input type="text" id="step2Link" placeholder="https://linkvertise.com/...">
-            <div class="link-label" style="margin-top:1rem;">Destination URL (copy this to Linkvertise):</div>
+            <div class="link-label" style="font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:0.75rem;">Step 2</div>
+            <div class="form-group" style="margin-bottom:0.75rem;">
+              <label style="font-size:0.75rem;">Platform</label>
+              <select id="step2Type">
+                <option value="linkvertise">Linkvertise (10s)</option>
+                <option value="lootlab">Lootlab (30s)</option>
+                <option value="workink">Work.ink (30s)</option>
+                <option value="ads_oder">Ads Oder (10s)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0.75rem;">
+              <label style="font-size:0.75rem;">Shortened URL</label>
+              <input type="text" id="step2Link" placeholder="https://...">
+            </div>
+            <div class="link-label" style="margin-top:0.5rem;">Destination URL (copy to your platform):</div>
             <div class="link-preview" id="step2Dest">Loading...</div>
           </div>
         </div>
@@ -458,6 +476,8 @@
 
           if (s.step1_link) document.getElementById('step1Link').value = s.step1_link;
           if (s.step2_link) document.getElementById('step2Link').value = s.step2_link;
+          if (s.step1_type) document.getElementById('step1Type').value = s.step1_type;
+          if (s.step2_type) document.getElementById('step2Type').value = s.step2_type;
 
           updateLinkInputs();
           updatePreviews();
@@ -688,6 +708,8 @@ end`;
           ad_steps:          getData.settings.ad_steps          || 1,
           step1_link:        getData.settings.step1_link        || '',
           step2_link:        getData.settings.step2_link        || '',
+          step1_type:        getData.settings.step1_type        || 'linkvertise',
+          step2_type:        getData.settings.step2_type        || 'linkvertise',
           ...patch,
         } : { user_id: currentUser.id, ...patch };
 
@@ -739,7 +761,9 @@ end`;
       const steps = parseInt(document.querySelector('input[name="adSteps"]:checked').value);
       const s1    = document.getElementById('step1Link').value.trim();
       const s2    = document.getElementById('step2Link').value.trim();
-      await savePartial({ ad_steps: steps, step1_link: s1, step2_link: s2 }, 'saveAdStepsBtn', 'Ad steps settings saved!');
+      const t1    = document.getElementById('step1Type').value;
+      const t2    = document.getElementById('step2Type').value;
+      await savePartial({ ad_steps: steps, step1_link: s1, step2_link: s2, step1_type: t1, step2_type: t2 }, 'saveAdStepsBtn', 'Ad steps settings saved!');
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
