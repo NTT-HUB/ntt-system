@@ -299,7 +299,7 @@
             <div class="link-label" style="font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:0.75rem;">Step 1</div>
             <div class="form-group" style="margin-bottom:0.75rem;">
               <label style="font-size:0.75rem;">Platform</label>
-              <select id="step1Type" onchange="updateStepUI(1)">
+              <select id="step1Type">
                 <option value="linkvertise">Linkvertise</option>
                 <option value="lootlab">Lootlab</option>
                 <option value="workink">Work.ink</option>
@@ -335,7 +335,7 @@
             <div class="link-label" style="font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:0.75rem;">Step 2</div>
             <div class="form-group" style="margin-bottom:0.75rem;">
               <label style="font-size:0.75rem;">Platform</label>
-              <select id="step2Type" onchange="updateStepUI(2)">
+              <select id="step2Type">
                 <option value="linkvertise">Linkvertise</option>
                 <option value="lootlab">Lootlab</option>
                 <option value="workink">Work.ink</option>
@@ -615,6 +615,8 @@
     }
 
     document.querySelectorAll('input[name="adSteps"]').forEach(r => r.addEventListener('change', updateLinkInputs));
+    document.getElementById('step1Type').addEventListener('change', () => updateStepUI(1));
+    document.getElementById('step2Type').addEventListener('change', () => updateStepUI(2));
 
     function showMessage(txt, type = 'error') {
       const el = document.getElementById('message');
