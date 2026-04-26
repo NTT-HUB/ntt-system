@@ -180,7 +180,7 @@
       } catch { showError('Failed to load.'); }
     }
 
-   async function init() {
+async function init() {
   console.log('[NTT] init | full URL:', window.location.href);
   console.log('[NTT] init | params:', Object.fromEntries(urlParams));
   console.log('[NTT] init | hash:', hash, '| hasValidHash:', hasValidHash);
@@ -242,8 +242,8 @@
 
   await loadSettings();
 }
-
-    let countdownInterval = null;
+    
+let countdownInterval = null;
 
     function startCountdown(secondsLeft) {
       if (countdownInterval) clearInterval(countdownInterval);
