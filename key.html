@@ -101,7 +101,7 @@
 
     .captcha-wrap { margin-bottom: 1rem; }
     .captcha-canvas-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-    #captchaCanvas { border-radius: 8px; border: 1px solid var(--border); flex-shrink: 0; }
+    #captchaImg { border-radius: 8px; border: 1px solid var(--border); flex-shrink: 0; width: 200px; height: 60px; background: #0d1120; }
     .captcha-refresh { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; color: var(--text-dim); cursor: pointer; font-size: 1rem; transition: all 0.2s; }
     .captcha-refresh:hover { border-color: var(--primary); color: var(--primary); }
     #captchaInput { width: 100%; padding: 0.75rem 1rem; background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 1rem; outline: none; letter-spacing: 0.2em; text-align: center; }
@@ -110,16 +110,6 @@
     #captchaSubmitBtn { width: 100%; padding: 0.875rem; background: linear-gradient(135deg, var(--primary), #00cc7d); color: var(--bg-dark); border: none; border-radius: 10px; font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; transition: all 0.25s; margin-top: 0.75rem; }
     #captchaSubmitBtn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,255,157,0.35); }
     #captchaSubmitBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-
-    .captcha-wrap { margin-bottom: 1rem; }
-    .captcha-canvas-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
-    #captchaCanvas { border-radius: 8px; border: 1px solid var(--border); flex-shrink: 0; }
-    .captcha-refresh { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; color: var(--text-dim); cursor: pointer; font-size: 1rem; transition: all 0.2s; }
-    .captcha-refresh:hover { border-color: var(--primary); color: var(--primary); }
-    #captchaInput { width: 100%; padding: 0.75rem 1rem; background: var(--bg-darker); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 1rem; outline: none; letter-spacing: 0.2em; text-align: center; }
-    #captchaInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,255,157,0.1); }
-    #captchaInput.error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(255,77,109,0.1); animation: shake 0.3s ease; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
   </style>
 </head>
@@ -169,7 +159,7 @@
       <div class="yt-title">Verify You're Human</div>
       <div class="captcha-wrap">
         <div class="captcha-canvas-row">
-          <canvas id="captchaCanvas" width="200" height="60"></canvas>
+          <img id="captchaImg" alt="captcha">
           <button class="captcha-refresh" id="captchaRefreshBtn" title="Refresh">↻</button>
         </div>
         <input type="text" id="captchaInput" placeholder="Enter code above" maxlength="5" autocomplete="off" spellcheck="false">
@@ -341,56 +331,23 @@ async function renderProgress() {
 let captchaId    = null;
 let captchaToken = null;
 
-function drawCaptcha(answer) {
-  const canvas = document.getElementById('captchaCanvas');
-  const ctx    = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-
-  ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = '#0d1120';
-  ctx.fillRect(0, 0, W, H);
-
-  for (let i = 0; i < 6; i++) {
-    ctx.beginPath();
-    ctx.strokeStyle = `rgba(${80+Math.random()*80},${80+Math.random()*80},${80+Math.random()*80},0.5)`;
-    ctx.lineWidth = 1;
-    ctx.moveTo(Math.random()*W, Math.random()*H);
-    ctx.lineTo(Math.random()*W, Math.random()*H);
-    ctx.stroke();
-  }
-
-  for (let i = 0; i < 80; i++) {
-    ctx.fillStyle = `rgba(${100+Math.random()*155},${100+Math.random()*155},${100+Math.random()*155},0.4)`;
-    ctx.fillRect(Math.random()*W, Math.random()*H, 2, 2);
-  }
-
-  const colors = ['#00ff9d','#6ee7b7','#a5f3fc','#c4b5fd','#fde68a'];
-  answer.split('').forEach((ch, i) => {
-    ctx.save();
-    ctx.font = `bold ${28 + Math.random()*8}px 'IBM Plex Mono', monospace`;
-    ctx.fillStyle = colors[i % colors.length];
-    ctx.translate(20 + i * 36, H/2 + 8);
-    ctx.rotate((Math.random() - 0.5) * 0.5);
-    ctx.fillText(ch, 0, 0);
-    ctx.restore();
-  });
-}
-
 async function loadCaptcha() {
   if (!hwid) return;
   captchaId    = null;
   captchaToken = null;
   document.getElementById('captchaInput').value = '';
   document.getElementById('captchaError').textContent = '';
+  document.getElementById('captchaImg').src = '';
   try {
     const res  = await fetch(`${API_BASE}/?type=captcha_new&hwid=${encodeURIComponent(hwid)}`);
     const data = await res.json();
     if (data.success) {
       captchaId = data.id;
-      setTimeout(() => drawCaptcha(data.answer), 50);
+      document.getElementById('captchaImg').src = data.image;
     }
   } catch {}
 }
+
 
 async function verifyCaptcha() {
   const btn    = document.getElementById('captchaSubmitBtn');
