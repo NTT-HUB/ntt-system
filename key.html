@@ -324,63 +324,83 @@
     });
 
     async function completeStep(step) {
-      try {
-        const res = await fetch(`${API_BASE}/?type=complete_step`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hwid, step, hash, domain }),
-        });
-        return (await res.json()).success;
-      } catch { return false; }
-    }
+  console.log('[NTT] completeStep called:', { step, hwid, hash, domain });
+  try {
+    const res = await fetch(`${API_BASE}/?type=complete_step`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hwid, step, hash, domain }),
+    });
+    const data = await res.json();
+    console.log('[NTT] completeStep response:', data);
+    return data.success;
+  } catch (e) {
+    console.error('[NTT] completeStep error:', e);
+    return false;
+  }
+}
+
 
     async function init() {
-      if (isCallback) {
+  console.log('[NTT] init | full URL:', window.location.href);
+  console.log('[NTT] init | params:', Object.fromEntries(urlParams));
+  console.log('[NTT] init | hash:', hash, '| hasValidHash:', hasValidHash);
+  console.log('[NTT] init | isCallback:', isCallback);
+  console.log('[NTT] init | hwid from localStorage:', localStorage.getItem('ntt_hwid'));
+  console.log('[NTT] init | domain from localStorage:', localStorage.getItem('ntt_domain'));
 
-        domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
-        hwid   = localStorage.getItem('ntt_hwid');
+  if (isCallback) {
+    domain = urlParams.get('domain') || localStorage.getItem('ntt_domain') || '';
+    hwid   = localStorage.getItem('ntt_hwid');
 
-        if (!domain) { showError('Session lost. Please start over.'); return; }
+    console.log('[NTT] callback mode | domain:', domain, '| hwid:', hwid);
 
-        localStorage.setItem('ntt_domain', domain);
-        localStorage.setItem('ntt_hwid',   hwid);
+    if (!domain) { showError('Session lost. Please start over.'); return; }
 
-        const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
-        await completeStep(step);
-        window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
-        return;
-      }
+    localStorage.setItem('ntt_domain', domain);
+    localStorage.setItem('ntt_hwid',   hwid);
 
-      if (urlParams.get('domain')) localStorage.setItem('ntt_domain', domain);
+    const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
+    console.log('[NTT] step to complete:', step);
 
-      if (!domain) { showError('No domain specified.'); return; }
+    const ok = await completeStep(step);
+    console.log('[NTT] completeStep ok:', ok);
 
-      const savedKey    = localStorage.getItem('ntt_generated_key');
-      const savedDomain = localStorage.getItem('ntt_key_domain');
-      const savedHwid   = localStorage.getItem('ntt_key_hwid');
+    window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
+    return;
+  }
 
-      const curHwid = hwid || null;
+  if (urlParams.get('domain')) localStorage.setItem('ntt_domain', domain);
 
-      if (savedKey) {
-        const domainMatch = savedDomain === domain;
-        const hwidMatch   = !curHwid || savedHwid === curHwid;
+  if (!domain) { showError('No domain specified.'); return; }
 
-        if (domainMatch && hwidMatch) {
-          hwid = savedHwid;
-          document.getElementById('domainLabel').textContent = domain;
-          await showKey(savedKey);
-          return;
-        }
+  const savedKey    = localStorage.getItem('ntt_generated_key');
+  const savedDomain = localStorage.getItem('ntt_key_domain');
+  const savedHwid   = localStorage.getItem('ntt_key_hwid');
 
-        localStorage.removeItem('ntt_generated_key');
-        localStorage.removeItem('ntt_key_domain');
-        localStorage.removeItem('ntt_key_hwid');
-        localStorage.removeItem('ntt_key_expiry');
-      }
+  const curHwid = hwid || null;
 
-      hwid = curHwid;
+  if (savedKey) {
+    const domainMatch = savedDomain === domain;
+    const hwidMatch   = !curHwid || savedHwid === curHwid;
 
-      await loadSettings();
+    if (domainMatch && hwidMatch) {
+      hwid = savedHwid;
+      document.getElementById('domainLabel').textContent = domain;
+      await showKey(savedKey);
+      return;
     }
+
+    localStorage.removeItem('ntt_generated_key');
+    localStorage.removeItem('ntt_key_domain');
+    localStorage.removeItem('ntt_key_hwid');
+    localStorage.removeItem('ntt_key_expiry');
+  }
+
+  hwid = curHwid;
+
+  await loadSettings();
+}
 
     init();
   </script>
