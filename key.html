@@ -160,7 +160,6 @@
     <div class="yt-box">
       <div class="yt-title" id="ytModalTitle">Watch Videos</div>
       <div id="ytItems"></div>
-      <div class="yt-timer" id="ytTimerText"></div>
       <button class="yt-next" id="ytNextBtn" disabled>Next Step</button>
     </div>
   </div>
@@ -524,8 +523,6 @@ function openYoutubeModal(step, ytLinksJson) {
       document.getElementById(`ytSt${i}`).innerHTML = '<div class="yt-spinner"></div>';
       window.open(url, '_blank');
 
-      timerEl.innerHTML = '<div class="yt-spinner"></div>';
-
       let left = 15;
       activeTimer = setInterval(() => {
         left--;
@@ -536,7 +533,6 @@ function openYoutubeModal(step, ytLinksJson) {
           item.classList.remove('watching');
           item.classList.add('done');
           document.getElementById(`ytSt${i}`).textContent = '✓';
-          timerEl.innerHTML = '';
 
           if (watched.every(w => w)) {
             ytWatchedAll     = true;
