@@ -149,7 +149,7 @@
       </div>
       <button class="btn-copy" id="btnCopy">Copy Key</button>
       <div id="keyExpiry" style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-dim);text-align:center;font-family:'IBM Plex Mono',monospace;">
-        ⏱ Expires in <span id="expiryTime">--:--:--</span>
+        Expires in <span id="expiryTime">--:--:--</span>
       </div>
     </div>
 
@@ -336,9 +336,7 @@ async function renderProgress() {
     } else {
       show('blockStart');
     }
-  } catch (e) {
-    console.error('[NTT] renderProgress error:', e);
-  }
+  } catch (e) {}
 }
 
 let captchaId    = null;
@@ -597,7 +595,6 @@ document.getElementById('btnCopy').addEventListener('click', () => {
 
 async function completeStep(step) {
   const payload = { hwid, step, hash, domain, flow_id: flowId || undefined, captcha_token: step === 'start' ? captchaToken : undefined };
-  console.log('[NTT] completeStep payload:', payload);
   try {
     const res = await fetch(`${API_BASE}/?type=complete_step`, {
       method: 'POST',
@@ -605,10 +602,8 @@ async function completeStep(step) {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    console.log('[NTT] completeStep response:', data);
     return data.success;
   } catch (e) {
-    console.error('[NTT] completeStep error:', e);
     return false;
   }
 }
