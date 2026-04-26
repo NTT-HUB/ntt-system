@@ -128,7 +128,8 @@ let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getI
 const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
 const hasStep1Param = urlParams.has('step1_done') || urlParams.has('step1');
 const hasStep2Param = urlParams.has('step2_done') || urlParams.has('step2');
-const isCallback    = hasValidHash && (hasStartParam || hasStep1Param || hasStep2Param);
+const hasStepParam  = hasStartParam || hasStep1Param || hasStep2Param;
+const isCallback    = hasStepParam && (hasValidHash || !hasValidHash);
 
 let settings = null;
 
