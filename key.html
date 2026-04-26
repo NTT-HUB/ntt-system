@@ -511,7 +511,7 @@ function openYoutubeModal(step, ytLinksJson) {
     const item = document.createElement('div');
     item.className  = 'yt-item';
     item.id         = `ytItem${i}`;
-    item.innerHTML  = `<span class="yt-item-label">Sub and Like Video</span><span class="yt-item-status" id="ytSt${i}">Click to watch</span>`;
+    item.innerHTML  = `<span class="yt-item-label">Like and Comment Video</span><span class="yt-item-status" id="ytSt${i}">Click to watch</span>`;
 
     item.addEventListener('click', () => {
       if (watched[i]) return;
