@@ -562,6 +562,7 @@ async function completeStep(step) {
       body: JSON.stringify(payload),
     });
     const data = await res.json();
+    console.log('[NTT] completeStep:', step, data);
     return data.success;
   } catch (e) {
     return false;
