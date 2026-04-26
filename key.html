@@ -440,15 +440,15 @@ async function verifyCaptcha() {
 function proceedStart() {
   localStorage.setItem('ntt_domain', domain);
   if (hwid) localStorage.setItem('ntt_hwid', hwid);
-  if (settings?.start_type === 'youtube') {
-    openYoutubeModal('start', settings.start_yt_links || '[]');
-    return;
-  }
   if (settings?.start_link) window.open(settings.start_link, '_blank');
 }
 
 document.getElementById('btnStart').addEventListener('click', (e) => {
   e.preventDefault();
+  if (settings?.start_type === 'youtube') {
+    openYoutubeModal('start', settings.start_yt_links || '[]');
+    return;
+  }
   if (!captchaToken) {
     document.getElementById('captchaModal').classList.add('show');
     loadCaptcha();
