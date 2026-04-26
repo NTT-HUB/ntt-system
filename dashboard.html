@@ -950,13 +950,15 @@ end`;
 
     let flowsData = [];
 
+    const STEP_STYLE = 'width:100%;padding:0.6rem 0.875rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:\'IBM Plex Mono\',monospace;font-size:0.875rem;outline:none;';
+
     function buildStepUI(flowId, stepNum, type, link, yt) {
       const ytLinks = JSON.parse(yt || '[]');
       const isYt = type === 'youtube';
       return `
         <div style="margin-bottom:0.75rem;">
           <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Step ${stepNum} Platform</label>
-          <select id="f${flowId}_step${stepNum}Type" onchange="onFlowStepTypeChange(${flowId},${stepNum})" style="width:100%;padding:0.6rem 0.875rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;outline:none;">
+          <select id="f${flowId}_step${stepNum}Type" data-flow="${flowId}" data-step="${stepNum}" class="flow-step-type" style="${STEP_STYLE}">
             <option value="linkvertise" ${type==='linkvertise'?'selected':''}>Linkvertise</option>
             <option value="lootlab" ${type==='lootlab'?'selected':''}>Lootlab</option>
             <option value="workink" ${type==='workink'?'selected':''}>Work.ink</option>
@@ -966,24 +968,45 @@ end`;
         </div>
         <div id="f${flowId}_step${stepNum}LinkGroup" style="display:${isYt?'none':'block'};margin-bottom:0.75rem;">
           <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Step ${stepNum} Shortened URL</label>
-          <input type="text" id="f${flowId}_step${stepNum}Link" value="${link||''}" placeholder="https://..." style="width:100%;padding:0.6rem 0.875rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;outline:none;">
+          <input type="text" id="f${flowId}_step${stepNum}Link" value="${link||''}" placeholder="https://..." style="${STEP_STYLE}">
         </div>
         <div id="f${flowId}_step${stepNum}YtGroup" style="display:${isYt?'block':'none'};margin-bottom:0.75rem;">
           <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Video 1</label>
-          <input type="text" id="f${flowId}_step${stepNum}Yt1" value="${ytLinks[0]||''}" placeholder="https://youtube.com/watch?v=..." style="width:100%;padding:0.6rem 0.875rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;outline:none;margin-bottom:0.5rem;">
-          <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Video 2</label>
-          <input type="text" id="f${flowId}_step${stepNum}Yt2" value="${ytLinks[1]||''}" placeholder="https://youtube.com/watch?v=..." style="width:100%;padding:0.6rem 0.875rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;outline:none;margin-bottom:0.5rem;">
-          <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Video 3</label>
-          <input type="text" id="f${flowId}_step${stepNum}Yt3" value="${ytLinks[2]||''}" placeholder="https://youtube.com/watch?v=..." style="width:100%;padding:0.6rem 0.875rem;background:var(--bg-dark);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:0.875rem;outline:none;">
+          <input type="text" id="f${flowId}_step${stepNum}Yt1" value="${ytLinks[0]||''}" placeholder="https://youtube.com/watch?v=..." style="${STEP_STYLE}margin-bottom:0.5rem;">
+          <label style="font-size:0.75rem;display:block;margin:0.5rem 0 0.4rem;font-weight:600;text-transform:uppercase;">Video 2</label>
+          <input type="text" id="f${flowId}_step${stepNum}Yt2" value="${ytLinks[1]||''}" placeholder="https://youtube.com/watch?v=..." style="${STEP_STYLE}margin-bottom:0.5rem;">
+          <label style="font-size:0.75rem;display:block;margin:0.5rem 0 0.4rem;font-weight:600;text-transform:uppercase;">Video 3</label>
+          <input type="text" id="f${flowId}_step${stepNum}Yt3" value="${ytLinks[2]||''}" placeholder="https://youtube.com/watch?v=..." style="${STEP_STYLE}">
         </div>
       `;
     }
 
-    function onFlowStepTypeChange(flowId, stepNum) {
-      const type = document.getElementById(`f${flowId}_step${stepNum}Type`).value;
-      const isYt = type === 'youtube';
-      document.getElementById(`f${flowId}_step${stepNum}LinkGroup`).style.display = isYt ? 'none' : 'block';
-      document.getElementById(`f${flowId}_step${stepNum}YtGroup`).style.display   = isYt ? 'block' : 'none';
+    function applyFlowStepTypeChange(flowId, stepNum) {
+      const el  = document.getElementById(`f${flowId}_step${stepNum}Type`);
+      if (!el) return;
+      const isYt = el.value === 'youtube';
+      const lg   = document.getElementById(`f${flowId}_step${stepNum}LinkGroup`);
+      const yg   = document.getElementById(`f${flowId}_step${stepNum}YtGroup`);
+      if (lg) lg.style.display = isYt ? 'none'  : 'block';
+      if (yg) yg.style.display = isYt ? 'block' : 'none';
+    }
+
+    function applyFlowStepsChange(flowId) {
+      const radio = document.querySelector(`input[name="f${flowId}_steps"]:checked`);
+      if (!radio) return;
+      const steps = radio.value;
+      const sec   = document.getElementById(`f${flowId}_step2Section`);
+      if (!sec) return;
+      if (steps === '2' && sec.innerHTML.trim() === '') {
+        sec.innerHTML = `<hr style="border:none;border-top:1px solid var(--border);margin:0.75rem 0;">${buildStepUI(flowId, 2, 'linkvertise', '', '[]')}`;
+        attachFlowStepTypeListener(flowId, 2);
+      }
+      sec.style.display = steps === '2' ? 'block' : 'none';
+    }
+
+    function attachFlowStepTypeListener(flowId, stepNum) {
+      const el = document.getElementById(`f${flowId}_step${stepNum}Type`);
+      if (el) el.addEventListener('change', () => applyFlowStepTypeChange(flowId, stepNum));
     }
 
     function renderFlows() {
@@ -998,12 +1021,11 @@ end`;
       }
 
       flowsData.forEach(f => {
-        const card = document.createElement('div');
+        const card  = document.createElement('div');
         card.className = 'flow-card';
-        card.id = `flowCard${f.flow_id}`;
-
-        const steps = f.ad_steps || 1;
-        const step2HTML = steps === 2 ? buildStepUI(f.flow_id, 2, f.step2_type, f.step2_link, f.step2_yt_links) : '';
+        card.id        = `flowCard${f.flow_id}`;
+        const steps    = f.ad_steps || 1;
+        const step2HTML = steps === 2 ? `<hr style="border:none;border-top:1px solid var(--border);margin:0.75rem 0;">${buildStepUI(f.flow_id, 2, f.step2_type, f.step2_link, f.step2_yt_links)}` : '';
 
         card.innerHTML = `
           <div class="flow-card-header">
@@ -1012,40 +1034,43 @@ end`;
               <span style="color:var(--text-dim);font-size:0.75rem;">ID: ${f.flow_id}</span>
             </div>
             <div class="flow-card-actions">
-              <button class="btn-save-flow" onclick="saveFlow(${f.flow_id})">Save</button>
-              <button class="btn-danger" onclick="deleteFlow(${f.flow_id})">Delete</button>
+              <button class="btn-save-flow" data-action="save" data-flow="${f.flow_id}">Save</button>
+              <button class="btn-danger"    data-action="delete" data-flow="${f.flow_id}">Delete</button>
             </div>
           </div>
           <div style="margin-bottom:0.75rem;">
             <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Number of Steps</label>
-            <div style="display:flex;gap:0.5rem;">
-              <label style="flex:1;cursor:pointer;">
-                <input type="radio" name="f${f.flow_id}_steps" value="1" ${steps===1?'checked':''} onchange="onFlowStepsChange(${f.flow_id})"> 1 Step
-              </label>
-              <label style="flex:1;cursor:pointer;">
-                <input type="radio" name="f${f.flow_id}_steps" value="2" ${steps===2?'checked':''} onchange="onFlowStepsChange(${f.flow_id})"> 2 Steps
-              </label>
+            <div style="display:flex;gap:1rem;">
+              <label style="cursor:pointer;"><input type="radio" name="f${f.flow_id}_steps" class="flow-steps-radio" data-flow="${f.flow_id}" value="1" ${steps===1?'checked':''}> 1 Step</label>
+              <label style="cursor:pointer;"><input type="radio" name="f${f.flow_id}_steps" class="flow-steps-radio" data-flow="${f.flow_id}" value="2" ${steps===2?'checked':''}> 2 Steps</label>
             </div>
           </div>
           ${buildStepUI(f.flow_id, 1, f.step1_type, f.step1_link, f.step1_yt_links)}
-          <div id="f${f.flow_id}_step2Section" style="display:${steps===2?'block':'none'};">
-            <hr style="border:none;border-top:1px solid var(--border);margin:0.75rem 0;">
-            ${step2HTML}
-          </div>
+          <div id="f${f.flow_id}_step2Section" style="display:${steps===2?'block':'none'};">${step2HTML}</div>
           <div class="flow-url-box">🔗 ${base}/key?domain=${wd}&flow=${f.flow_id}&hwid=YOUR_HWID</div>
         `;
         list.appendChild(card);
+
+        attachFlowStepTypeListener(f.flow_id, 1);
+        if (steps === 2) attachFlowStepTypeListener(f.flow_id, 2);
       });
     }
 
-    function onFlowStepsChange(flowId) {
-      const steps = document.querySelector(`input[name="f${flowId}_steps"]:checked`).value;
-      const sec   = document.getElementById(`f${flowId}_step2Section`);
-      if (steps === '2' && sec.innerHTML.trim() === '') {
-        sec.innerHTML = `<hr style="border:none;border-top:1px solid var(--border);margin:0.75rem 0;">${buildStepUI(flowId, 2, 'linkvertise', '', '[]')}`;
-      }
-      sec.style.display = steps === '2' ? 'block' : 'none';
-    }
+    document.getElementById('flowsList').addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const flowId = parseInt(btn.dataset.flow);
+      if (action === 'save')   await saveFlow(flowId);
+      if (action === 'delete') await deleteFlow(flowId);
+    });
+
+    document.getElementById('flowsList').addEventListener('change', (e) => {
+      const radio = e.target.closest('.flow-steps-radio');
+      if (radio) { applyFlowStepsChange(parseInt(radio.dataset.flow)); return; }
+      const sel = e.target.closest('.flow-step-type');
+      if (sel) applyFlowStepTypeChange(parseInt(sel.dataset.flow), parseInt(sel.dataset.step));
+    });
 
     async function loadFlows() {
       try {
@@ -1056,18 +1081,18 @@ end`;
     }
 
     async function saveFlow(flowId) {
-      const name    = document.getElementById(`f${flowId}_name`).value.trim() || `Flow ${flowId}`;
-      const steps   = parseInt(document.querySelector(`input[name="f${flowId}_steps"]:checked`).value);
-      const s1type  = document.getElementById(`f${flowId}_step1Type`).value;
-      const s1link  = document.getElementById(`f${flowId}_step1Link`)?.value.trim() || '';
-      const s1yt    = JSON.stringify([
+      const name   = document.getElementById(`f${flowId}_name`)?.value.trim() || `Flow ${flowId}`;
+      const steps  = parseInt(document.querySelector(`input[name="f${flowId}_steps"]:checked`)?.value || '1');
+      const s1type = document.getElementById(`f${flowId}_step1Type`)?.value || 'linkvertise';
+      const s1link = document.getElementById(`f${flowId}_step1Link`)?.value.trim() || '';
+      const s1yt   = JSON.stringify([
         document.getElementById(`f${flowId}_step1Yt1`)?.value.trim() || '',
         document.getElementById(`f${flowId}_step1Yt2`)?.value.trim() || '',
         document.getElementById(`f${flowId}_step1Yt3`)?.value.trim() || '',
       ]);
-      const s2type  = steps === 2 ? (document.getElementById(`f${flowId}_step2Type`)?.value || 'linkvertise') : 'linkvertise';
-      const s2link  = steps === 2 ? (document.getElementById(`f${flowId}_step2Link`)?.value.trim() || '') : '';
-      const s2yt    = steps === 2 ? JSON.stringify([
+      const s2type = steps === 2 ? (document.getElementById(`f${flowId}_step2Type`)?.value || 'linkvertise') : 'linkvertise';
+      const s2link = steps === 2 ? (document.getElementById(`f${flowId}_step2Link`)?.value.trim() || '') : '';
+      const s2yt   = steps === 2 ? JSON.stringify([
         document.getElementById(`f${flowId}_step2Yt1`)?.value.trim() || '',
         document.getElementById(`f${flowId}_step2Yt2`)?.value.trim() || '',
         document.getElementById(`f${flowId}_step2Yt3`)?.value.trim() || '',
@@ -1079,7 +1104,7 @@ end`;
           body: JSON.stringify({ user_id: currentUser.id, flow_id: flowId, name, ad_steps: steps, step1_type: s1type, step1_link: s1link, step1_yt_links: s1yt, step2_type: s2type, step2_link: s2link, step2_yt_links: s2yt }),
         });
         const data = await res.json();
-        if (data.success) { showMessage(`Flow ${flowId} saved!`, 'success'); await loadFlows(); }
+        if (data.success) showMessage(`Flow ${flowId} saved!`, 'success');
         else showMessage(data.error || 'Failed');
       } catch { showMessage('Connection error'); }
     }
@@ -1105,7 +1130,7 @@ end`;
           body: JSON.stringify({ user_id: currentUser.id, flow_id: nextId, name: `Flow ${nextId}`, ad_steps: 1, step1_type: 'linkvertise', step1_link: '', step1_yt_links: '[]', step2_type: 'linkvertise', step2_link: '', step2_yt_links: '[]' }),
         });
         const data = await res.json();
-        if (data.success) { await loadFlows(); }
+        if (data.success) await loadFlows();
         else showMessage(data.error || 'Failed');
       } catch { showMessage('Connection error'); }
     });
