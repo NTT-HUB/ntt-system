@@ -497,13 +497,11 @@ function openYoutubeModal(step, ytLinksJson) {
   const modal    = document.getElementById('ytModal');
   const itemsDiv = document.getElementById('ytItems');
   const nextBtn  = document.getElementById('ytNextBtn');
-  const timerEl  = document.getElementById('ytTimerText');
   const titleEl  = document.getElementById('ytModalTitle');
 
   titleEl.textContent = `Step ${step} — Watch Videos`;
   itemsDiv.innerHTML  = '';
   nextBtn.disabled    = true;
-  timerEl.textContent = '';
   ytWatchedAll        = false;
 
   const watched = new Array(links.length).fill(false);
