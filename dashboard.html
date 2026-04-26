@@ -299,12 +299,27 @@
             <div class="link-label" style="font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:0.75rem;">Step 1</div>
             <div class="form-group" style="margin-bottom:0.75rem;">
               <label style="font-size:0.75rem;">Platform</label>
-              <select id="step1Type">
+              <select id="step1Type" onchange="updateStepUI(1)">
                 <option value="linkvertise">Linkvertise</option>
                 <option value="lootlab">Lootlab</option>
                 <option value="workink">Work.ink</option>
                 <option value="ads_oder">Ads Oder</option>
+                <option value="youtube">YouTube</option>
               </select>
+            </div>
+            <div id="step1YoutubeLinks" style="display:none;">
+              <div class="form-group" style="margin-bottom:0.5rem;">
+                <label style="font-size:0.75rem;">Video 1 URL</label>
+                <input type="text" id="step1Yt1" placeholder="https://youtube.com/watch?v=...">
+              </div>
+              <div class="form-group" style="margin-bottom:0.5rem;">
+                <label style="font-size:0.75rem;">Video 2 URL</label>
+                <input type="text" id="step1Yt2" placeholder="https://youtube.com/watch?v=...">
+              </div>
+              <div class="form-group" style="margin-bottom:0.75rem;">
+                <label style="font-size:0.75rem;">Video 3 URL</label>
+                <input type="text" id="step1Yt3" placeholder="https://youtube.com/watch?v=...">
+              </div>
             </div>
             <div class="form-group" style="margin-bottom:0.75rem;">
               <label style="font-size:0.75rem;">Shortened URL</label>
@@ -318,12 +333,27 @@
             <div class="link-label" style="font-weight:600;font-size:0.9rem;color:var(--text);margin-bottom:0.75rem;">Step 2</div>
             <div class="form-group" style="margin-bottom:0.75rem;">
               <label style="font-size:0.75rem;">Platform</label>
-              <select id="step2Type">
+              <select id="step2Type" onchange="updateStepUI(2)">
                 <option value="linkvertise">Linkvertise</option>
                 <option value="lootlab">Lootlab</option>
                 <option value="workink">Work.ink</option>
                 <option value="ads_oder">Ads Oder</option>
+                <option value="youtube">YouTube</option>
               </select>
+            </div>
+            <div id="step2YoutubeLinks" style="display:none;">
+              <div class="form-group" style="margin-bottom:0.5rem;">
+                <label style="font-size:0.75rem;">Video 1 URL</label>
+                <input type="text" id="step2Yt1" placeholder="https://youtube.com/watch?v=...">
+              </div>
+              <div class="form-group" style="margin-bottom:0.5rem;">
+                <label style="font-size:0.75rem;">Video 2 URL</label>
+                <input type="text" id="step2Yt2" placeholder="https://youtube.com/watch?v=...">
+              </div>
+              <div class="form-group" style="margin-bottom:0.75rem;">
+                <label style="font-size:0.75rem;">Video 3 URL</label>
+                <input type="text" id="step2Yt3" placeholder="https://youtube.com/watch?v=...">
+              </div>
             </div>
             <div class="form-group" style="margin-bottom:0.75rem;">
               <label style="font-size:0.75rem;">Shortened URL</label>
@@ -476,8 +506,17 @@
 
           if (s.step1_link) document.getElementById('step1Link').value = s.step1_link;
           if (s.step2_link) document.getElementById('step2Link').value = s.step2_link;
-          if (s.step1_type) document.getElementById('step1Type').value = s.step1_type;
-          if (s.step2_type) document.getElementById('step2Type').value = s.step2_type;
+          if (s.step1_type) { document.getElementById('step1Type').value = s.step1_type; updateStepUI(1); }
+          if (s.step2_type) { document.getElementById('step2Type').value = s.step2_type; updateStepUI(2); }
+
+          const yt1 = JSON.parse(s.step1_yt_links || '[]');
+          const yt2 = JSON.parse(s.step2_yt_links || '[]');
+          if (yt1[0]) document.getElementById('step1Yt1').value = yt1[0];
+          if (yt1[1]) document.getElementById('step1Yt2').value = yt1[1];
+          if (yt1[2]) document.getElementById('step1Yt3').value = yt1[2];
+          if (yt2[0]) document.getElementById('step2Yt1').value = yt2[0];
+          if (yt2[1]) document.getElementById('step2Yt2').value = yt2[1];
+          if (yt2[2]) document.getElementById('step2Yt3').value = yt2[2];
 
           updateLinkInputs();
           updatePreviews();
@@ -541,6 +580,12 @@
   document.getElementById('step1Dest').textContent = `${base}/key?domain=${wd}&step1`;
   document.getElementById('step2Dest').textContent = `${base}/key?domain=${wd}&step2`;
 }
+
+    function updateStepUI(step) {
+      const type = document.getElementById(`step${step}Type`).value;
+      const ytDiv = document.getElementById(`step${step}YoutubeLinks`);
+      ytDiv.style.display = type === 'youtube' ? 'block' : 'none';
+    }
 
     function updateLinkInputs() {
       const steps = document.querySelector('input[name="adSteps"]:checked').value;
@@ -710,6 +755,8 @@ end`;
           step2_link:        getData.settings.step2_link        || '',
           step1_type:        getData.settings.step1_type        || 'linkvertise',
           step2_type:        getData.settings.step2_type        || 'linkvertise',
+          step1_yt_links:    getData.settings.step1_yt_links    || '[]',
+          step2_yt_links:    getData.settings.step2_yt_links    || '[]',
           ...patch,
         } : { user_id: currentUser.id, ...patch };
 
@@ -763,7 +810,17 @@ end`;
       const s2    = document.getElementById('step2Link').value.trim();
       const t1    = document.getElementById('step1Type').value;
       const t2    = document.getElementById('step2Type').value;
-      await savePartial({ ad_steps: steps, step1_link: s1, step2_link: s2, step1_type: t1, step2_type: t2 }, 'saveAdStepsBtn', 'Ad steps settings saved!');
+      const yt1   = JSON.stringify([
+        document.getElementById('step1Yt1').value.trim(),
+        document.getElementById('step1Yt2').value.trim(),
+        document.getElementById('step1Yt3').value.trim(),
+      ]);
+      const yt2   = JSON.stringify([
+        document.getElementById('step2Yt1').value.trim(),
+        document.getElementById('step2Yt2').value.trim(),
+        document.getElementById('step2Yt3').value.trim(),
+      ]);
+      await savePartial({ ad_steps: steps, step1_link: s1, step2_link: s2, step1_type: t1, step2_type: t2, step1_yt_links: yt1, step2_yt_links: yt2 }, 'saveAdStepsBtn', 'Ad steps settings saved!');
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
