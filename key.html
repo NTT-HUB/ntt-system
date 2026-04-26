@@ -130,7 +130,7 @@
     <p class="subtitle" id="domainLabel">Loading...</p>
 
     <div class="step-block" id="blockStart">
-      <a href="#" class="btn btn-start" id="btnStart" target="_blank">▶ Start</a>
+      <button class="btn btn-start" id="btnStart">▶ Start</button>
     </div>
     <div class="step-block" id="blockStep1">
       <button class="btn btn-step" id="btnStep1">Step 1</button>
@@ -288,7 +288,6 @@ async function loadSettings() {
 
     settings = data.settings;
     document.getElementById('domainLabel').textContent = settings.website_domain;
-    document.getElementById('btnStart').href = settings.start_link;
 
     hwid = hwid || localStorage.getItem('ntt_hwid') || null;
     if (hwid) localStorage.setItem('ntt_hwid', hwid);
@@ -644,7 +643,6 @@ async function init() {
         if (data.success) {
           settings = data.settings;
           document.getElementById('domainLabel').textContent = settings.website_domain;
-          document.getElementById('btnStart').href = settings.start_link;
         }
       } catch {}
       return;
