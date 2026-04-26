@@ -419,7 +419,11 @@ async function verifyCaptcha() {
       captchaToken = data.token;
       localStorage.setItem('ntt_captcha_token', data.token);
       document.getElementById('captchaModal').classList.remove('show');
-      proceedStart();
+      if (settings?.start_type === 'youtube') {
+        openYoutubeModal('start', settings.start_yt_links || '[]');
+      } else {
+        proceedStart();
+      }
     } else {
       const msg = data.error === 'Wrong answer' ? 'Incorrect code, try again.' : data.error === 'Captcha expired' ? 'Captcha expired, refreshing...' : 'Invalid captcha, refreshing...';
       errEl.textContent = msg;
