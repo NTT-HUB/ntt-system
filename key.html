@@ -150,6 +150,7 @@ const hash         = urlParams.get('hash') || '';
 const hasValidHash = hash.length > 10;
 
 let domain = urlParams.get('domain') || urlParams.get('id') || localStorage.getItem('ntt_domain') || '';
+const flowId = urlParams.get('flow') || localStorage.getItem('ntt_flow') || '';
 
 const hasStartParam = urlParams.has('start_done') || urlParams.has('start');
 const hasStep1Param = urlParams.has('step1_done') || urlParams.has('step1');
@@ -243,7 +244,8 @@ async function checkExistingKey() {
 async function loadSettings() {
   if (!domain) { showError('No domain specified.'); return; }
   try {
-    const res  = await fetch(`${API_BASE}/?type=get_settings_by_domain&domain=${encodeURIComponent(domain)}`);
+    const flowParam = flowId ? `&flow=${encodeURIComponent(flowId)}` : '';
+    const res  = await fetch(`${API_BASE}/?type=get_settings_by_domain&domain=${encodeURIComponent(domain)}${flowParam}`);
     const data = await res.json();
     if (!data.success) { showError('Domain not found.'); return; }
 
@@ -253,6 +255,7 @@ async function loadSettings() {
 
     hwid = hwid || localStorage.getItem('ntt_hwid') || null;
     if (hwid) localStorage.setItem('ntt_hwid', hwid);
+    if (flowId) localStorage.setItem('ntt_flow', flowId);
 
     if (hwid) {
       const hasKey = await checkExistingKey();
@@ -274,7 +277,8 @@ async function renderProgress() {
   if (document.getElementById('keyResult').classList.contains('show')) return;
 
   try {
-    const res  = await fetch(`${API_BASE}/?type=progress&hwid=${encodeURIComponent(hwid)}`);
+    const flowParam = flowId ? `&flow=${encodeURIComponent(flowId)}` : '';
+    const res  = await fetch(`${API_BASE}/?type=progress&hwid=${encodeURIComponent(hwid)}${flowParam}`);
     const data = await res.json();
 
     resetBlocks();
@@ -420,7 +424,7 @@ document.getElementById('btnGenerate').addEventListener('click', async () => {
   try {
     const res  = await fetch(`${API_BASE}/?type=create_key`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ hwid, domain: settings.website_domain, key_prefix: settings.key_domain }),
+      body: JSON.stringify({ hwid, domain: settings.website_domain, key_prefix: settings.key_domain, flow_id: flowId || undefined }),
     });
     const data = await res.json();
     if (data.success) {
@@ -450,7 +454,7 @@ async function completeStep(step) {
     const res = await fetch(`${API_BASE}/?type=complete_step`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ hwid, step, hash, domain }),
+      body: JSON.stringify({ hwid, step, hash, domain, flow_id: flowId || undefined }),
     });
     const data = await res.json();
     console.log('[NTT] completeStep response:', data);
@@ -470,12 +474,14 @@ async function init() {
 
     localStorage.setItem('ntt_domain', domain);
     localStorage.setItem('ntt_hwid',   hwid);
+    if (flowId) localStorage.setItem('ntt_flow', flowId);
 
     const step = hasStartParam ? 'start' : hasStep1Param ? 1 : 2;
     await completeStep(step);
 
-    const currentPage = window.location.pathname;
-    window.location.replace(`${currentPage}?domain=${encodeURIComponent(domain)}`);
+    const currentPage  = window.location.pathname;
+    const flowParam    = flowId ? `&flow=${encodeURIComponent(flowId)}` : '';
+    window.location.replace(`${currentPage}?domain=${encodeURIComponent(domain)}${flowParam}`);
     return;
   }
 
