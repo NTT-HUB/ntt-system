@@ -250,9 +250,9 @@
         <div class="form-group">
           <label>
             Encode Key
-            <span class="label-desc">Secret key for encoding/decoding (default: ntt-hub, max 10 chars)</span>
+            <span class="label-desc">Secret key for encoding/decoding (default: ntt-hub, max 20 chars)</span>
           </label>
-          <input type="text" id="encodeKey" placeholder="ntt-hub" value="ntt-hub" maxlength="10">
+          <input type="text" id="encodeKey" placeholder="ntt-hub" value="ntt-hub" maxlength="20">
         </div>
         <button type="button" class="btn-primary" id="saveKeyBtn" style="margin-top:1rem;">Save Key Settings</button>
       </div>
@@ -824,6 +824,7 @@ end`;
       const kd = document.getElementById('keyDomain').value.trim() || 'KEY';
       if (kd.length > 10) { showMessage('Key domain must be 10 characters or less'); return; }
       const ek = document.getElementById('encodeKey').value.trim() || 'ntt-hub';
+      if (ek.length > 20) { showMessage('Encode key must be 20 characters or less'); return; }
       await savePartial({ key_domain: kd, encode_key: ek }, 'saveKeyBtn', 'Key settings saved!');
     });
 
@@ -955,6 +956,9 @@ end`;
     function buildStepUI(flowId, stepNum, type, link, yt) {
       const ytLinks = JSON.parse(yt || '[]');
       const isYt = type === 'youtube';
+      const base = window.location.origin;
+      const wd   = document.getElementById('websiteDomain')?.value.trim() || '';
+      const destUrl = `${base}/key?domain=${wd}&flow=${flowId}&step${stepNum}`;
       return `
         <div style="margin-bottom:0.75rem;">
           <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Step ${stepNum} Platform</label>
@@ -969,6 +973,8 @@ end`;
         <div id="f${flowId}_step${stepNum}LinkGroup" style="display:${isYt?'none':'block'};margin-bottom:0.75rem;">
           <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Step ${stepNum} Shortened URL</label>
           <input type="text" id="f${flowId}_step${stepNum}Link" value="${link||''}" placeholder="https://..." style="${STEP_STYLE}">
+          <div style="font-size:0.75rem;color:var(--text-dim);margin-top:0.5rem;">Destination URL (copy to your platform):</div>
+          <div style="background:var(--bg-darker);border:1px solid var(--border);border-radius:6px;padding:0.6rem 0.875rem;font-size:0.8rem;color:var(--primary);word-break:break-all;margin-top:0.35rem;">${destUrl}</div>
         </div>
         <div id="f${flowId}_step${stepNum}YtGroup" style="display:${isYt?'block':'none'};margin-bottom:0.75rem;">
           <label style="font-size:0.75rem;display:block;margin-bottom:0.4rem;font-weight:600;text-transform:uppercase;">Video 1</label>
