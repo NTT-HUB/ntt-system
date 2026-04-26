@@ -555,6 +555,10 @@ function openYoutubeModal(step, ytLinksJson) {
 
     const ok = await completeStep(step);
     if (ok) {
+      if (step === 'start') {
+        captchaToken = null;
+        localStorage.removeItem('ntt_captcha_token');
+      }
       modal.classList.remove('show');
       await renderProgress();
     } else {
