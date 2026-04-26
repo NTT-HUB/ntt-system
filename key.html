@@ -369,8 +369,9 @@ async function init() {
 
     await new Promise(r => setTimeout(r, 3000));
 
-    window.location.replace(`/key.html?domain=${encodeURIComponent(domain)}`);
-    return;
+    const currentPage = window.location.pathname; // giữ nguyên /key hoặc /key.html
+window.location.replace(`${currentPage}?domain=${encodeURIComponent(domain)}`);
+return;
   }
 
   if (urlParams.get('domain')) localStorage.setItem('ntt_domain', domain);
