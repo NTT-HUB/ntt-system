@@ -442,6 +442,7 @@ function proceedStart() {
 
 document.getElementById('btnStart').addEventListener('click', (e) => {
   e.preventDefault();
+  console.log('[NTT] btnStart clicked | captchaToken:', captchaToken, '| start_type:', settings?.start_type);
   localStorage.setItem('ntt_domain', domain);
   if (hwid) localStorage.setItem('ntt_hwid', hwid);
   if (settings?.start_type === 'youtube') {
