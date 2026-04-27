@@ -422,6 +422,14 @@ document.getElementById('captchaInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') verifyCaptcha();
 });
 
+function getBypassSeconds(type) {
+  if (type === 'lootlab') return 40;
+  if (type === 'workink') return 30;
+  if (type === 'ads_oder') return 10;
+  if (type === 'youtube') return 15;
+  return 0;
+}
+
 document.getElementById('btnStep1').addEventListener('click', async () => {
   if (!settings) return;
   if (settings.step1_type === 'youtube') {
@@ -432,6 +440,11 @@ document.getElementById('btnStep1').addEventListener('click', async () => {
   localStorage.setItem('ntt_domain', domain);
   localStorage.setItem('ntt_hwid', hwid);
   window.open(settings.step1_link, '_blank');
+
+  const wait = getBypassSeconds(settings.step1_type);
+  if (wait > 0) {
+    await new Promise(r => setTimeout(r, wait * 1000));
+  }
   await completeStep(1);
   await renderProgress();
 });
@@ -446,6 +459,11 @@ document.getElementById('btnStep2').addEventListener('click', async () => {
   localStorage.setItem('ntt_domain', domain);
   localStorage.setItem('ntt_hwid', hwid);
   window.open(settings.step2_link, '_blank');
+
+  const wait = getBypassSeconds(settings.step2_type);
+  if (wait > 0) {
+    await new Promise(r => setTimeout(r, wait * 1000));
+  }
   await completeStep(2);
   await renderProgress();
 });
