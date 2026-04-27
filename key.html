@@ -195,6 +195,10 @@ let settings = null;
 
 const hwidRaw = urlParams.get('hwid') || '';
 let hwid = (hwidRaw.trim().length > 0 && hwidRaw.trim().length <= 50) ? hwidRaw.trim() : null;
+if (!hwid) {
+  const stored = localStorage.getItem('ntt_hwid') || '';
+  hwid = (stored.trim().length > 0 && stored.trim().length <= 50) ? stored.trim() : null;
+}
 
 function showError(msg) {
   const el = document.getElementById('errorMsg');
