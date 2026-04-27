@@ -830,7 +830,6 @@ end`;
 
     document.getElementById('saveLinkvertiseBtn').addEventListener('click', async () => {
       const lt = document.getElementById('linkvertiseToken').value.trim();
-      if (!lt) { showMessage('Linkvertise token is required'); return; }
       await savePartial({ linkvertise_token: lt }, 'saveLinkvertiseBtn', 'Linkvertise settings saved!');
     });
 
