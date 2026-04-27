@@ -80,6 +80,8 @@
     .btn-copy { width: 100%; padding: 0.875rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; cursor: pointer; transition: all 0.25s; }
     .btn-copy:hover { border-color: var(--primary); color: var(--primary); }
     .error-msg { display: none; margin-top: 0.75rem; padding: 0.75rem 1rem; background: rgba(255,77,109,0.1); border: 1px solid var(--error); border-radius: 8px; font-size: 0.8rem; color: var(--error); text-align: center; }
+    .no-hwid-msg { display: none; margin-top: 0.5rem; padding: 1.25rem 1rem; border-radius: 10px; font-size: 0.85rem; color: var(--text-dim); text-align: center; line-height: 1.6; }
+    .no-hwid-msg.show { display: block; }
     .error-msg.show { display: block; }
 
     .yt-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; align-items: center; justify-content: center; padding: 1rem; }
@@ -144,6 +146,10 @@
     </div>
 
     <div class="error-msg" id="errorMsg"></div>
+    <div class="no-hwid-msg" id="noHwidMsg">
+      Your HWID was not found.<br>
+      Please launch the script first to get your key.
+    </div>
   </div>
 
   <div class="yt-modal" id="ytModal">
@@ -617,6 +623,17 @@ async function init() {
   if (!domain) { showError('No domain specified.'); return; }
 
   hwid = hwid || null;
+
+  if (!hwid) {
+    // Ẩn hết, chỉ hiện thông báo no hwid
+    document.getElementById('domainLabel').style.display = 'none';
+    ['blockStart','blockStep1','blockStep2','blockGenerate'].forEach(id => {
+      const el = document.getElementById(id);
+      el.style.display = 'none';
+    });
+    document.getElementById('noHwidMsg').classList.add('show');
+    return;
+  }
 
   if (hwid) {
     const hasKey = await checkExistingKey();
