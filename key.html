@@ -538,6 +538,9 @@ document.getElementById('btnGenerate').addEventListener('click', async () => {
       localStorage.removeItem('ntt_domain');
       localStorage.removeItem('ntt_hwid');
       await showKey(data.key, data.expires_in || 86400);
+    } else if (data.error === 'bypass_detected') {
+      btn.disabled = false; btn.textContent = 'Generate Key';
+      await renderProgress();
     } else {
       showError(data.error || 'Failed.');
       btn.disabled = false; btn.textContent = 'Generate Key';
@@ -601,7 +604,8 @@ async function init() {
     const hasKey = await checkExistingKey();
     if (hasKey) {
       try {
-        const res  = await fetch(`${API_BASE}/?type=get_settings_by_domain&domain=${encodeURIComponent(domain)}`);
+        const flowParam = flowId ? `&flow=${encodeURIComponent(flowId)}` : '';
+        const res  = await fetch(`${API_BASE}/?type=get_settings_by_domain&domain=${encodeURIComponent(domain)}${flowParam}`);
         const data = await res.json();
         if (data.success) {
           settings = data.settings;
