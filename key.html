@@ -303,7 +303,6 @@ async function loadSettings() {
 
     if (hwid) {
       await renderProgress();
-      setInterval(renderProgress, 4000);
     }
   } catch { showError('Failed to load.'); }
 }
@@ -455,8 +454,12 @@ document.getElementById('btnStep1').addEventListener('click', async () => {
   if (wait > 0) {
     await new Promise(r => setTimeout(r, wait * 1000));
   }
-  await completeStep(1);
-  await renderProgress();
+  const ok1 = await completeStep(1);
+  if (ok1) {
+    await renderProgress();
+  } else {
+    window.location.reload();
+  }
 });
 
 document.getElementById('btnStep2').addEventListener('click', async () => {
@@ -474,8 +477,12 @@ document.getElementById('btnStep2').addEventListener('click', async () => {
   if (wait > 0) {
     await new Promise(r => setTimeout(r, wait * 1000));
   }
-  await completeStep(2);
-  await renderProgress();
+  const ok2 = await completeStep(2);
+  if (ok2) {
+    await renderProgress();
+  } else {
+    window.location.reload();
+  }
 });
 
 let ytWatchedAll = false;
@@ -546,9 +553,7 @@ function openYoutubeModal(step, ytLinksJson) {
       modal.classList.remove('show');
       await renderProgress();
     } else {
-      showError('Failed to complete step. Please try again.');
-      nextBtn.disabled    = false;
-      nextBtn.textContent = 'Next Step';
+      window.location.reload();
     }
   };
 }
