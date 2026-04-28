@@ -514,10 +514,18 @@ document.getElementById('btnStep2').addEventListener('click', async () => {
 
 let ytWatchedAll = false;
 
-function openYoutubeModal(step, ytLinksJson) {
+async function openYoutubeModal(step, ytLinksJson) {
   let links = [];
   try { links = JSON.parse(ytLinksJson).filter(l => l && l.trim()); } catch {}
   if (!links.length) { showError('No YouTube videos configured.'); return; }
+
+  // Lưu timestamp bắt đầu vào DB ngay khi mở modal
+  if (step === 1 || step === 2) {
+    await fetch(`${API_BASE}/?type=mark_step_start`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hwid, step, flow_id: flowId || undefined }),
+    });
+  }
 
   const modal    = document.getElementById('ytModal');
   const itemsDiv = document.getElementById('ytItems');
