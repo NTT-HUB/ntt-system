@@ -323,6 +323,27 @@ async function renderProgress() {
       return;
     }
 
+    // Nếu đã bấm nút nhưng chưa complete → tự gọi check bypass 1 lần
+    if (!data.step1 && data.step1_start_at) {
+      const ok = await completeStep(1);
+      if (ok) {
+        await renderProgress();
+      } else {
+        show('blockStep1');
+      }
+      return;
+    }
+
+    if (!data.step2 && data.step2_start_at && data.step1) {
+      const ok = await completeStep(2);
+      if (ok) {
+        await renderProgress();
+      } else {
+        show('blockStep2');
+      }
+      return;
+    }
+
     if (data.step1) {
       if (settings.ad_steps === 2 && !data.step2) {
         show('blockStep2');
@@ -448,18 +469,21 @@ document.getElementById('btnStep1').addEventListener('click', async () => {
   if (!settings.step1_link) return;
   localStorage.setItem('ntt_domain', domain);
   localStorage.setItem('ntt_hwid', hwid);
+
+  // Lưu timestamp bắt đầu vào DB trước khi mở tab
+  await fetch(`${API_BASE}/?type=mark_step_start`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ hwid, step: 1, flow_id: flowId || undefined }),
+  });
+
   window.open(settings.step1_link, '_blank');
 
   const wait = getBypassSeconds(settings.step1_type);
   if (wait > 0) {
     await new Promise(r => setTimeout(r, wait * 1000));
   }
-  const ok1 = await completeStep(1);
-  if (ok1) {
-    await renderProgress();
-  } else {
-    window.location.reload();
-  }
+  await completeStep(1);
+  await renderProgress();
 });
 
 document.getElementById('btnStep2').addEventListener('click', async () => {
@@ -471,18 +495,21 @@ document.getElementById('btnStep2').addEventListener('click', async () => {
   if (!settings.step2_link) return;
   localStorage.setItem('ntt_domain', domain);
   localStorage.setItem('ntt_hwid', hwid);
+
+  // Lưu timestamp bắt đầu vào DB trước khi mở tab
+  await fetch(`${API_BASE}/?type=mark_step_start`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ hwid, step: 2, flow_id: flowId || undefined }),
+  });
+
   window.open(settings.step2_link, '_blank');
 
   const wait = getBypassSeconds(settings.step2_type);
   if (wait > 0) {
     await new Promise(r => setTimeout(r, wait * 1000));
   }
-  const ok2 = await completeStep(2);
-  if (ok2) {
-    await renderProgress();
-  } else {
-    window.location.reload();
-  }
+  await completeStep(2);
+  await renderProgress();
 });
 
 let ytWatchedAll = false;
@@ -553,7 +580,9 @@ function openYoutubeModal(step, ytLinksJson) {
       modal.classList.remove('show');
       await renderProgress();
     } else {
-      window.location.reload();
+      showError('Failed to complete step. Please try again.');
+      nextBtn.disabled    = false;
+      nextBtn.textContent = 'Next Step';
     }
   };
 }
