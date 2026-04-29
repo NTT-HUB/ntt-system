@@ -1105,7 +1105,7 @@ end`;
 
       try {
         const res  = await fetch(`${API_BASE}/?type=save_flow`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: JSON.stringify({ user_id: currentUser.id, flow_id: flowId, name, ad_steps: steps, step1_type: s1type, step1_link: s1link, step1_yt_links: s1yt, step2_type: s2type, step2_link: s2link, step2_yt_links: s2yt }),
         });
         const data = await res.json();
@@ -1118,7 +1118,7 @@ end`;
       if (!confirm(`Delete Flow ${flowId}?`)) return;
       try {
         const res  = await fetch(`${API_BASE}/?type=delete_flow`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: JSON.stringify({ user_id: currentUser.id, flow_id: flowId }),
         });
         const data = await res.json();
@@ -1131,7 +1131,7 @@ end`;
       const nextId = flowsData.length ? Math.max(...flowsData.map(f => f.flow_id)) + 1 : 1;
       try {
         const res  = await fetch(`${API_BASE}/?type=save_flow`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: JSON.stringify({ user_id: currentUser.id, flow_id: nextId, name: `Flow ${nextId}`, ad_steps: 1, step1_type: 'linkvertise', step1_link: '', step1_yt_links: '[]', step2_type: 'linkvertise', step2_link: '', step2_yt_links: '[]' }),
         });
         const data = await res.json();
